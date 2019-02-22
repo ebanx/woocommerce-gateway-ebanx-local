@@ -364,7 +364,7 @@ li[class*="ebanx"] .payment_box .ebanx-credit-card-label > .ebanx-credit-card-bi
 }
 
 .button.banking-ticket__action {
-  width: calc(50% - 10px);
+  width: calc(50% - 15px);
   display: inline-block;
   margin: 0;
   box-sizing: border-box;
