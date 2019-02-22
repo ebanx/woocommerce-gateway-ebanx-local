@@ -6,7 +6,7 @@
     "minimum-stability": "dev",
     "require": {
         "php" : ">=5.6.0,<8.0.0-dev",
-        "ebanx/benjamin": "^1.16.0"
+        "ebanx/benjamin-local": "^1.17.0"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.4.3",
@@ -19,5 +19,12 @@
         "test": "phpunit",
         "test-all": "composer test && composer style-check",
         "style-check" : "phpcs -p ./"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:ebanx/benjamin-local.git",
+            "no-api": true
+        }
+    ]
 }
