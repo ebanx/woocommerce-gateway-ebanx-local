@@ -130,7 +130,7 @@ jQuery (function ($) {
 
 		if (wc_ebanx_checkout_params.is_sandbox) {
 			var messages = wc_ebanx_checkout_params.sandbox_tag_messages;
-			var localizedMessage = $( '#billing_country' ).val() === 'BR' ? messages['pt-br'] : messages['es'];
+			var localizedMessage = messages['pt-br'];
 			var methodsLabels = $( '.wc_payment_methods.payment_methods.methods > li > label' );
 			var ebanxMethodsLabels = methodsLabels.filter(function (index, elm) {
 				return /ebanx/.test( $( elm ).attr( 'for' ) );

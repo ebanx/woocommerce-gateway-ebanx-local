@@ -35,7 +35,7 @@ msgid "EBANX - Banking Ticket"
 msgstr ""
 
 #: includes/class-wc-ebanx-banking-ticket-gateway.php:16
-msgid "Boleto EBANX"
+msgid "Boleto bancário"
 msgstr ""
 
 #: includes/class-wc-ebanx-banking-ticket-gateway.php:17

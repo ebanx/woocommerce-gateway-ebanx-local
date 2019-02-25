@@ -50,7 +50,7 @@ msgid "EBANX - Banking Ticket"
 msgstr ""
 
 #: gateways/class-wc-ebanx-banking-ticket-gateway.php:18
-msgid "Boleto EBANX"
+msgid "Boleto bancário"
 msgstr ""
 
 #: gateways/class-wc-ebanx-banking-ticket-gateway.php:19

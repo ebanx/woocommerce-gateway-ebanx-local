@@ -186,7 +186,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'class'   => 'wc-enhanced-select',
 				'options' => array(
 					'ebanx-credit-card-br' => 'Credit Card',
-					'ebanx-banking-ticket' => 'Boleto EBANX',
+					'ebanx-banking-ticket' => 'Boleto bancário',
 					'ebanx-tef'            => 'Online Banking (TEF)',
 					'ebanx-account'        => 'EBANX Wallet',
 					'ebanx-banktransfer'   => 'EBANX Bank Transfer',

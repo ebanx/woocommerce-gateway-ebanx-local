@@ -1061,8 +1061,8 @@ msgstr "Número de Parcelas para Cartões de Crédito com EBANX:"
 #~ msgid "Paga con Baloto."
 #~ msgstr "Paga com Baloto."
 
-#~ msgid "Boleto EBANX"
-#~ msgstr "Boleto EBANX"
+#~ msgid "Boleto bancário"
+#~ msgstr "Boleto bancário"
 
 #~ msgid "Pague com boleto bancário."
 #~ msgstr "Pague com boleto bancário."
