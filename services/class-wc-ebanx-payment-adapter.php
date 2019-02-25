@@ -115,8 +115,8 @@ class WC_EBANX_Payment_Adapter {
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_postcode'] ) )
 			|| ( empty( WC_EBANX_Request::read( 'billing_address_1', null ) )
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_address_1'] ) )
-			|| ( empty( WC_EBANX_Request::read( 'billing_city', null ) )
-				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_city'] ) )
+			/* || ( empty( WC_EBANX_Request::read( 'billing_city', null ) )
+				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_city'] ) ) */
 			|| ( empty( WC_EBANX_Request::read( 'billing_state', null ) )
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_state'] ) )
 		) {
@@ -324,21 +324,18 @@ class WC_EBANX_Payment_Adapter {
 	 */
 	public static function get_person_type( $configs, $names ) {
 		$fields_options = array();
-		$person_type    = Person::TYPE_PERSONAL;
 
 		if ( isset( $configs->settings['brazil_taxes_options'] ) && is_array( $configs->settings['brazil_taxes_options'] ) ) {
 			$fields_options = $configs->settings['brazil_taxes_options'];
 		}
 
 		if ( count( $fields_options ) === 1 && 'cnpj' === $fields_options[0] ) {
-			$person_type = Person::TYPE_BUSINESS;
+ 			return Person::TYPE_BUSINESS;
 		}
 
-		if ( in_array( 'cpf', $fields_options ) && in_array( 'cnpj', $fields_options ) ) {
-			$person_type = 'cnpj' === WC_EBANX_Request::read( $names['ebanx_billing_brazil_person_type'], 'cpf' ) ? Person::TYPE_BUSINESS : Person::TYPE_PERSONAL;
-		}
-
-		return $person_type;
+		return 'cnpj' === WC_EBANX_Request::read( $names['ebanx_billing_brazil_person_type'], 'cpf' )
+			? Person::TYPE_BUSINESS
+			: Person::TYPE_PERSONAL;
 	}
 
 	/**
