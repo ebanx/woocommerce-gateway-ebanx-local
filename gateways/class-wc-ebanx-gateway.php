@@ -400,7 +400,7 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 		$texts = array(
 			'pt-br' => array(
 				'INTRO'                               => 'Total a pagar ',
-				WC_EBANX_Constants::CURRENCY_CODE_BRL => WC_EBANX_Helper::should_apply_taxes() ? 'com IOF (0.38%)' : 'em Reais',
+				WC_EBANX_Constants::CURRENCY_CODE_BRL => 'em Reais',
 			),
 			'es'    => array(
 				'INTRO'                               => 'Total a pagar en ',

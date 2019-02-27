@@ -566,7 +566,6 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 
 		$exchange              = $this->ebanx->exchange();
 		$local_amount          = $exchange->siteToLocal( strtoupper( $currency ), $amount );
-		$local_amount_with_tax = $exchange->siteToLocalWithTax( strtoupper( $currency ), $amount );
 
 		$credit_card_gateway = $this->ebanx->creditCard( $this->get_credit_card_config( $country ) );
 		$country_full_name   = Country::fromIso( $country );
@@ -576,13 +575,10 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 
 			// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 			$local_amount = round( $instalment_terms->instalmentNumber * $exchange->siteToLocal( Currency::localForCountry( $country_full_name ), $instalment_terms->baseAmount ), 2 );
-			// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-			$local_amount_with_tax = round( $instalment_terms->instalmentNumber * $instalment_terms->localAmountWithTax, 2 );
 		}
 
-		$total_local_amount = WC_EBANX_Helper::should_apply_taxes() ? $local_amount_with_tax : $local_amount;
 
-		$message               = $this->get_checkout_message( $total_local_amount, $currency, $country );
+		$message               = $this->get_checkout_message( $local_amount, $currency, $country );
 		$exchange_rate_message = $this->get_exchange_rate_message( $currency, $country );
 		if ( $template ) {
 			wc_get_template(
