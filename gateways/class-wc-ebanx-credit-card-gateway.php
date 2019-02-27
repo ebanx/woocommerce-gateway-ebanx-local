@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
+	const DEFAULT_CREDIT_CARD_COUNTRY = 'BR';
 	/**
 	 * The rates for each instalment
 	 *
@@ -322,7 +323,8 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$has_instalments = ( WC_EBANX_Request::has( 'ebanx_billing_instalments' ) || WC_EBANX_Request::has( 'ebanx-credit-card-installments' ) );
 		$order = wc_get_order($order_id);
 		$currency = strtoupper( $order->get_order_currency() );
-		$country_abbr = trim(strtolower(get_post_meta($order_id, '_billing_country', true)));
+		$billing_country = trim(strtolower(get_post_meta($order_id, '_billing_country', true)));
+		$country_abbr = empty($billing_country) ? strtolower( self::DEFAULT_CREDIT_CARD_COUNTRY ) : $billing_country;
 		$this->ebanx_gateway = $this->ebanx->creditCard( $this->get_credit_card_config( $country_abbr ) );
 
 		if ( $has_instalments ) {
@@ -354,10 +356,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$instalments_number = get_post_meta( $order->id, '_instalments_number', true ) ?: 1;
 		$country            = trim( strtolower( get_post_meta( $order->id, '_billing_country', true ) ) );
 		$currency           = $order->get_order_currency();
-
-		if ( WC_EBANX_Constants::COUNTRY_BRAZIL === $country && WC_EBANX_Helper::should_apply_taxes() ) {
-			$order_amount += round( ( $order_amount * WC_EBANX_Constants::BRAZIL_TAX ), 2 );
-		}
 
 		$data = array(
 			'data'         => array(

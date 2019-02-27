@@ -1,6 +1,9 @@
+const DEFAULT_CREDIT_CARD_COUNTRY = 'BR'
+
 /* global wc_ebanx_params */
 EBANX.config.setMode(wc_ebanx_params.mode);
 EBANX.config.setPublishableKey(wc_ebanx_params.key);
+
 
 jQuery( function($) {
 	/**
@@ -88,7 +91,7 @@ jQuery( function($) {
 				var cvv       = $('#ebanx-card-cvv').val();
 				var expires   = jQuery('#ebanx-card-expiry').payment('cardExpiryVal');
 				var card_name = $('#ebanx-card-holder-name').val() || ($('#billing_first_name').val() + ' ' + $('#billing_last_name').val());
-				var country   = $('#billing_country, input[name*="billing_country"]').val().toLowerCase();
+				var country = getCountry($('#billing_country, input[name*="billing_country"]'));
         var instalments = $('#ebanx-container-new-credit-card').find('select.ebanx-instalments').val();
 
 				EBANX.config.setCountry(country);
@@ -281,13 +284,27 @@ function CardNumberValidation($) {
 		var $cardNumber = $(cardNumberElementId);
 
 		if (!validateCardNumber($cardNumber.val())) {
-			var text = getInvalidCardNumberMessage($("#billing_country").val())
+			var text = getInvalidCardNumberMessage(getCountry($('#billing_country, input[name*="billing_country"]')))
 			$msg.text(text);
 			$msg.insertAfter($cardNumber.parent());
 		} else {
 			$msg.remove();
 		}
 	}
+}
+
+/**
+ * Get country on field or default value const
+ *
+ * @returns {string} The country
+ */
+function getCountry(countryField) {
+
+  if (typeof(countryField) !== "undefined" && countryField.length) {
+    countryField.val().toLowerCase()
+  }
+  // Assume country BR to default value when no field exists
+  return  DEFAULT_CREDIT_CARD_COUNTRY.toLowerCase();
 }
 
 function getInvalidCardNumberMessage(country) {

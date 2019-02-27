@@ -146,7 +146,7 @@ jQuery (function ($) {
 
 		paymentMethods.on( 'change', function( e ) {
 			disableFields(getBillingFields());
-			if (isEbanxMethodSelected()) {
+			if (isEbanxMethodSelected() && $( '#billing_country' ).length !== 0) {
 				enableFields( getBillingFields( $( '#billing_country' ).val().toLowerCase() ) );
 			}
 			if ($('#billing_country').val() === 'BR') {
