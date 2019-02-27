@@ -129,13 +129,14 @@ class WC_EBANX_Payment_Adapter {
 
 		$addresses     = WC_EBANX_Helper::split_street( $addresses );
 		$street_number = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
+		$addressCountry = empty($order->billing_country) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->billing_country;
 
 		return new Address(
 			[
 				'address'      => $addresses['streetName'],
 				'streetNumber' => $street_number,
 				'city'         => WC_EBANX_Request::read( 'billing_city', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_city'],
-				'country'      => Country::fromIso( $order->billing_country ),
+				'country'      => Country::fromIso( $addressCountry ),
 				'state'        => WC_EBANX_Request::read( 'billing_state', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_state'],
 				'zipcode'      => WC_EBANX_Request::read( 'billing_postcode', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_postcode'],
 			]
