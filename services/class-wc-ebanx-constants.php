@@ -14,6 +14,11 @@ use Ebanx\Benjamin\Models\Country;
 abstract class WC_EBANX_Constants {
 
 	/**
+	 * Define a default country for local payments
+	 */
+	const DEFAULT_COUNTRY = 'BR';
+
+	/**
 	 * Countries that EBANX processes
 	 */
 	const COUNTRY_PERU      = 'pe';

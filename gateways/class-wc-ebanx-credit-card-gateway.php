@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
-	const DEFAULT_CREDIT_CARD_COUNTRY = 'BR';
 	/**
 	 * The rates for each instalment
 	 *
@@ -179,7 +178,8 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		if ( is_checkout() ) {
 			wp_enqueue_script( 'wc-credit-card-form' );
 			// Using // to avoid conflicts between http and https protocols.
-			wp_enqueue_script( 'ebanx', '//js.ebanx.com/ebanx-1.5.min.js', '', null, true );
+			wp_enqueue_script( 'ebanx', plugins_url( 'assets/js/ebanx-1.6.min.js', WC_EBANX::DIR ), array( 'jquery' ), WC_EBANX::get_plugin_version(), true );
+//			wp_enqueue_script( 'ebanx', '//js.ebanx.com.br/ebanx-1.6.min.js', '', null, true );
 			wp_enqueue_script( 'woocommerce_ebanx_jquery_mask', plugins_url( 'assets/js/jquery-mask.js', WC_EBANX::DIR ), array( 'jquery' ), WC_EBANX::get_plugin_version(), true );
 			wp_enqueue_script( 'woocommerce_ebanx_credit_card', plugins_url( 'assets/js/credit-card.js', WC_EBANX::DIR ), array( 'jquery-payment', 'ebanx' ), WC_EBANX::get_plugin_version(), true );
 
@@ -324,7 +324,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$order = wc_get_order($order_id);
 		$currency = strtoupper( $order->get_order_currency() );
 		$billing_country = trim(strtolower(get_post_meta($order_id, '_billing_country', true)));
-		$country_abbr = empty($billing_country) ? strtolower( self::DEFAULT_CREDIT_CARD_COUNTRY ) : $billing_country;
+		$country_abbr = empty($billing_country) ? strtolower( WC_EBANX_Constants::DEFAULT_COUNTRY ) : $billing_country;
 		$this->ebanx_gateway = $this->ebanx->creditCard( $this->get_credit_card_config( $country_abbr ) );
 
 		if ( $has_instalments ) {
@@ -334,9 +334,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			$instalment_term = self::get_instalment_term( $this->ebanx_gateway->getPaymentTermsForCountryAndValue( $country, $total_price ), $instalments);
 
 			$total_price = $instalment_term->baseAmount;
-			if ( ! in_array( $currency, Currency::globalCurrencies() ) ) {
-				$total_price = $instalment_term->localAmountWithTax;
-			}
 
 			$total_price *= $instalment_term->instalmentNumber;
 			update_post_meta( $order_id, '_order_total', $total_price );
@@ -392,7 +389,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		foreach ( $instalments_terms as $term ) {
 			// phpcs:disable
 			$instalments[] = array(
-				'price'        => WC_EBANX_Helper::should_apply_taxes() ? ( $term->localAmountWithTax / $currency_rate ) : $term->baseAmount,
+				'price'        => $term->baseAmount,
 				'has_interest' => $term->hasInterests,
 				'number'       => $term->instalmentNumber,
 				// phpcs:enable
@@ -482,7 +479,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 				'place_order_enabled' => $save_card,
 				'instalments'         => self::get_instalment_title_by_country( $country ),
 				'id'                  => $this->id,
-				'add_tax'             => WC_EBANX_Helper::should_apply_taxes(),
+				'add_tax'             => false,
 				'with_interest'       => WC_EBANX_Constants::COUNTRY_BRAZIL === $country ? ' com taxas' : '',
 			),
 			'woocommerce/ebanx/',
