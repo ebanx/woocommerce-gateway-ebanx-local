@@ -115,8 +115,6 @@ class WC_EBANX_Payment_Adapter {
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_postcode'] ) )
 			|| ( empty( WC_EBANX_Request::read( 'billing_address_1', null ) )
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_address_1'] ) )
-			/* || ( empty( WC_EBANX_Request::read( 'billing_city', null ) )
-				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_city'] ) ) */
 			|| ( empty( WC_EBANX_Request::read( 'billing_state', null ) )
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_state'] ) )
 		) {
@@ -333,9 +331,13 @@ class WC_EBANX_Payment_Adapter {
  			return Person::TYPE_BUSINESS;
 		}
 
-		return 'cnpj' === WC_EBANX_Request::read( $names['ebanx_billing_brazil_person_type'], 'cpf' )
-			? Person::TYPE_BUSINESS
-			: Person::TYPE_PERSONAL;
+		$brazilPersonType = WC_EBANX_Request::read( $names['ebanx_billing_brazil_person_type'], 'cpf' );
+
+		if ('cpf' === $brazilPersonType || 1 == $brazilPersonType || 'pessoa física' === strtolower($brazilPersonType)) {
+			return Person::TYPE_PERSONAL;
+		}
+
+		return Person::TYPE_BUSINESS;
 	}
 
 	/**
