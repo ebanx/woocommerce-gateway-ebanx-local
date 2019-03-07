@@ -144,12 +144,6 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			add_action( 'woocommerce_checkout_process', array( 'WC_EBANX_Checker', 'validate_document' ), 10 );
 
 			/**
-			 * Payment by Link
-			 */
-			add_action( 'woocommerce_order_actions_end', array( $this, 'ebanx_metabox_save_post_render_button' ) );
-			add_action( 'save_post', array( $this, 'ebanx_metabox_payment_link_save' ) );
-
-			/**
 			 * My account
 			 */
 			if ( $configs
