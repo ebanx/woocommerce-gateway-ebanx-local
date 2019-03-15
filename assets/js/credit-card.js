@@ -316,7 +316,7 @@ function getInvalidCardNumberMessage(country) {
 		case 'CO':
 		case 'MX':
 		case 'PE': return 'Número de tarjeta no válida'
-		default: return "Invalid card number";
+		default: return "Número de cartão inválido";
 	}
 }
 
