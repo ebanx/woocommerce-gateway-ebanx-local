@@ -85,6 +85,175 @@ class WC_EBANX_Payment_Adapter {
 
 	/**
 	 *
+	 * @param WC_Order $order
+	 *
+	 * @param string   $gateway_id
+	 *
+	 * @return Address
+	 * @throws Exception Throws parameter missing exception.
+	 */
+	private static function transform_address_from_post_data( $order ) {
+
+		$order_data = self::get_order_data( $order );
+
+		if (
+			empty( $order_data['_billing_postcode'] )
+			|| empty( $order_data['_billing_address_1'] )
+			|| empty( $order_data['_billing_state'] )
+		) {
+			throw new Exception( 'INVALID-FIELDS' );
+		}
+
+		$addresses = $order_data['_billing_address_1'];
+
+		if ( ! empty( $order_data['_billing_address_2'] ) ) {
+			$addresses .= ' - ' . $order_data['_billing_address_2'];
+		}
+
+		$addresses      = WC_EBANX_Helper::split_street( $addresses );
+		$street_number  = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
+		$addressCountry = empty($order->billing_country) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->billing_country;
+
+		return new Address(
+			[
+				'address'      => $addresses['streetName'],
+				'streetNumber' => $street_number,
+				'city'         => $order_data['_billing_city'],
+				'country'      => Country::fromIso( $addressCountry ),
+				'state'        => $order_data['_billing_state'],
+				'zipcode'      => $order_data['_billing_postcode'],
+			]
+		);
+	}
+
+	/**
+	 *
+	 * @param WC_Order                $order
+	 * @param WC_EBANX_Global_Gateway $configs
+	 * @param array                   $names
+	 * @param string                  $gateway_id
+	 *
+	 * @return Payment
+	 * @throws Exception Throws parameter missing exception.
+	 */
+	public static function transform_from_post_data( $order, $configs ) {
+
+		return new Payment(
+			[
+				'amountTotal'         => $order->get_total(),
+				'orderNumber'         => $order->id,
+				'dueDate'             => static::transform_due_date( $configs ),
+				'address'             => static::transform_address_from_post_data( $order ),
+				'person'              => static::transform_person_from_post_data( $order, $configs ),
+				'responsible'         => static::transform_person_from_post_data( $order, $configs ),
+				'instalments'		  => '1',
+				'items'               => static::transform_items( $order ),
+				'merchantPaymentCode' => substr( $order->id . '-' . md5( rand( 123123, 9999999 ) ), 0, 40 ),
+				'riskProfileId'       => 'Wx' . str_replace( '.', 'x', WC_EBANX::get_plugin_version() ),
+			]
+		);
+	}
+
+	private static function get_order_data( $order ) {
+
+		$data =  get_post_meta($order->data['id']);
+
+		$data_values = array();
+
+		foreach ( $data as $key => $value ) {
+			$data_values[$key] = reset($value);
+		}
+
+		return $data_values;
+	}
+
+	/**
+	 *
+	 * @param WC_Order                $order
+	 * @param WC_EBANX_Global_Gateway $configs
+	 * @param array                   $names
+	 * @param string                  $gateway_id
+	 *
+	 * @return Payment
+	 * @throws Exception Throws parameter missing exception.
+	 */
+	public static function transform_card_subscription_payment( $order, $configs, $user_cc_token  ) {
+
+		$order_meta_data = self::get_order_data( $order );
+		$payment = self::transform_from_post_data( $order, $configs );
+
+		$payment->card = new Card(
+			[
+				'token'       => $user_cc_token,
+			]
+		);
+
+		$payment->manualReview = 'yes' === $configs->settings['manual_review_enabled']; // phpcs:ignore WordPress.NamingConventions.ValidVariableName
+
+		return $payment;
+	}
+
+	private static function get_person_type_from_order( $order_meta_data )
+	{
+		$order_person_type = strtolower( $order_meta_data['billing_persontype'] );
+
+		if ('cpf' === $order_person_type || 1 === $order_person_type || 'pessoa física' === $order_person_type) {
+			return Person::TYPE_PERSONAL;
+		}
+
+		return Person::TYPE_BUSINESS;
+	}
+
+	private static function get_document_from_order( $order_meta_data, $person_type )
+	{
+		$cpf  = $order_meta_data['billing_cpf'];
+		$cnpj = $order_meta_data['billing_cnpj'];
+
+		$has_cpf  = ! empty ( $cpf );
+		$has_cnpj = ! empty ( $cnpj );
+
+		if ( Person::TYPE_PERSONAL === $person_type && $has_cpf ) {
+			return $cpf;
+		}
+
+		if ( Person::TYPE_BUSINESS === $person_type && $has_cnpj ) {
+			return $cnpj;
+		}
+
+		throw new Exception( 'INVALID-FIELDS' );
+	}
+
+	/**
+	 *
+	 * @param WC_Order                $order
+	 * @param WC_EBANX_Global_Gateway $configs
+	 * @param array                   $names
+	 * @param string                  $gateway_id
+	 *
+	 * @return Person
+	 * @throws Exception Throws parameter missing exception.
+	 */
+	private static function transform_person_from_post_data( $order ) {
+
+		$order_meta_data = self::get_order_data( $order );
+
+		$person_type = self::get_person_type_from_order( $order_meta_data );
+		$document    = self::get_document_from_order( $order_meta_data, $person_type );
+
+		return new Person(
+			[
+				'type'        => $person_type,
+				'document'    => $document,
+				'email'       => $order->billing_email,
+				'ip'          => WC_Geolocation::get_ip_address(),
+				'name'        => $order->billing_first_name . ' ' . $order->billing_last_name,
+				'phoneNumber' => $order->billing_phone,
+			]
+		);
+	}
+
+	/**
+	 *
 	 * @param WC_EBANX_Global_Gateway $configs
 	 *
 	 * @return DateTime|string
