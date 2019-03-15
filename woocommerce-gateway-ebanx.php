@@ -1,13 +1,13 @@
 <?php //phpcs:disable WordPress.Files.FileName
 /**
- * Plugin Name: EBANX Payment Gateway for WooCommerce
+ * Plugin Name: EBANX Local Payment Gateway for WooCommerce
  * Plugin URI: https://www.ebanx.com/business/en/developers/integrations/extensions-and-plugins/woocommerce-plugin
- * Description: Offer Latin American local payment methods & increase your conversion rates with the solution used by AliExpress, AirBnB and Spotify in Brazil.
+ * Description: Offer local payment methods
  * Author: EBANX
  * Author URI: https://www.ebanx.com/business/en
- * Version: 1.36.0
+ * Version: 1.37.0
  * License: MIT
- * Text Domain: woocommerce-gateway-ebanx
+ * Text Domain: woocommerce-gateway-ebanx-local
  * Domain Path: /languages
  *
  * @package WooCommerce_EBANX

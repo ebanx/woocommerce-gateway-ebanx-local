@@ -20,7 +20,7 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 
 		$this->api_name = 'boleto';
 
-		$this->title = 'Boleto EBANX';
+		$this->title = 'Boleto bancário';
 
 		$this->description = 'Pague com boleto bancário.';
 
