@@ -1,5 +1,5 @@
 {
-    "name": "ebanx/woocommerce-gateway-ebanx",
+    "name": "ebanx/woocommerce-gateway-ebanx-local",
     "description": "This plugin enables you to integrate your WooCommerce store with the EBANX payment gateway.",
     "type": "project",
     "license": "Apache-2.0",
