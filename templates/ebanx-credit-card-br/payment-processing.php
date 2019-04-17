@@ -19,8 +19,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<p><strong><?php echo esc_html( $customer_name ); ?> seu pagamento de <?php echo $total; // phpcs:ignore WordPress.XSS.EscapeOutput ?>, à vista, foi aprovado o/</strong></p>
 	<?php endif ?>
 
-	<p>Se tiver alguma dúvida em relação ao seu pagamento, acesse a Conta EBANX com o email <strong><?php echo esc_html( $customer_email ); ?></strong>.</p>
-
-	<?php require WC_EBANX::get_templates_path() . 'apps-br.php'; ?>
 	<input type="hidden" id="ebanx-payment-hash" data-doraemon-hash="<?php echo esc_html( $hash ); ?>">
 </div>
