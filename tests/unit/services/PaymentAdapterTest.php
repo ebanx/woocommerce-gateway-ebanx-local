@@ -71,7 +71,7 @@ class PaymentAdapterTest extends TestCase {
 			->with_ebanx_billing_brazil_person_type($used_document_type)
 			->build();
 
-		$person_type = WC_EBANX_Payment_Adapter::get_person_type($configs, $this->names);
+		$person_type = WC_EBANX_Payment_Adapter::get_person_type($configs, $this->names );
 
 		$this->assertEquals($expected_person_type, $person_type);
 	}

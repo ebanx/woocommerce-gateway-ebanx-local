@@ -208,10 +208,8 @@ class WC_EBANX_Payment_Adapter {
 	 * @return string
 	 * @throws Exception Throws parameter missing exception.
 	 */
-	private static function get_person_type_from_order( $order, $configs )
-	{
+	private static function get_person_type_from_order( $order, $configs ) {
 		$fields_options = array();
-
 		if ( isset( $configs->settings['brazil_taxes_options'] ) && is_array( $configs->settings['brazil_taxes_options'] ) ) {
 			$fields_options = $configs->settings['brazil_taxes_options'];
 		}
@@ -223,7 +221,7 @@ class WC_EBANX_Payment_Adapter {
 		$brazilPersonType = get_post_meta( $order->id, '_billing_persontype', true );
 
 		if ( empty ($brazilPersonType) ) {
-			throw new Exception( 'INVALID-BRL-PERSON-TYPE' );
+			return Person::TYPE_PERSONAL;
 		}
 
 		if ('cpf' === $brazilPersonType || 1 == $brazilPersonType || 'pessoa física' === strtolower($brazilPersonType)) {
@@ -398,7 +396,7 @@ class WC_EBANX_Payment_Adapter {
 				return static::get_peruvian_document( $names, $gateway_id );
 				break;
 			default:
-				return '';
+				return static::get_brazilian_document( $configs, $names, $gateway_id );
 		}
 	}
 
