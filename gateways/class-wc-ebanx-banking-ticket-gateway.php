@@ -29,6 +29,49 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 		$this->ebanx_gateway = $this->ebanx->boleto();
 
 		$this->enabled = is_array( $this->configs->settings['brazil_payment_methods'] ) ? in_array( $this->id, $this->configs->settings['brazil_payment_methods'] ) ? 'yes' : false : false;
+
+		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_banking_ticket_instrictions' ), 50, 3 );
+
+	}
+
+	/**
+	 * Add banking ticket link on email.
+	 *
+	 * @param  object $order         Order object.
+	 * @param  bool   $sent_to_admin Send to admin.
+	 * @param  bool   $plain_text    Plain text or HTML.
+	 *
+	 * @return string                Payment instructions.
+	 */
+	public function email_banking_ticket_instrictions( $order, $sent_to_admin, $plain_text = false ) {
+
+		if ( $sent_to_admin || 'on-hold' !== $order->get_status() || 'ebanx-banking-ticket' !== $this->id ) {
+			return;
+		}
+
+		$boleto_url = get_post_meta( $order->id, '_boleto_url', true );
+
+		$data = array(
+			'boleto_url' => $boleto_url,
+		);
+
+		if ( ! empty( $boleto_url ) ) {
+			if ( $plain_text ) {
+				wc_get_template(
+					'banking-ticket/email-plain-instructions.php',
+					$data,
+					'woocommerce/ebanx/',
+					WC_EBANX::get_templates_path()
+				);
+			} else {
+				wc_get_template(
+					'banking-ticket/email-html-instructions.php',
+					$data,
+					'woocommerce/ebanx/',
+					WC_EBANX::get_templates_path()
+				);
+			}
+		}
 	}
 
 	/**
@@ -110,6 +153,7 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 * @return array|string
 	 */
 	public static function barcode_anti_fraud( $code ) {
+
 		if ( strlen( $code ) != 47 ) {
 			return '';
 		}
