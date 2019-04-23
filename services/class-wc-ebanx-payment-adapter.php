@@ -357,7 +357,7 @@ class WC_EBANX_Payment_Adapter {
 
 		return new Person(
 			[
-				'type'        => static::get_person_type( $configs, $names ),
+				'type'        => static::get_person_type( $configs, $names, $gateway_id ),
 				'document'    => $document,
 				'email'       => $order->billing_email,
 				'ip'          => WC_Geolocation::get_ip_address(),
@@ -437,7 +437,7 @@ class WC_EBANX_Payment_Adapter {
 		$cpf  = WC_EBANX_Request::read( $names['ebanx_billing_brazil_document'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_document'];
 		$cnpj = WC_EBANX_Request::read( $names['ebanx_billing_brazil_cnpj'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_cnpj'];
 
-		$person_type = static::get_person_type( $configs, $names );
+		$person_type = static::get_person_type( $configs, $names, $gateway_id );
 
 		$has_cpf  = ! empty( $cpf );
 		$has_cnpj = ! empty( $cnpj );
@@ -520,7 +520,7 @@ class WC_EBANX_Payment_Adapter {
 	 * @return string
 	 * @throws Exception Throws parameter missing exception.
 	 */
-	public static function get_person_type( $configs, $names ) {
+	public static function get_person_type( $configs, $names, $gateway_id ) {
 		$fields_options = array();
 
 		if ( isset( $configs->settings['brazil_taxes_options'] ) && is_array( $configs->settings['brazil_taxes_options'] ) ) {
@@ -531,7 +531,7 @@ class WC_EBANX_Payment_Adapter {
  			return Person::TYPE_BUSINESS;
 		}
 
-		$brazilPersonType = WC_EBANX_Request::read( $names['ebanx_billing_brazil_person_type'], 'cpf' );
+		$brazilPersonType = WC_EBANX_Request::read( $names['ebanx_billing_brazil_person_type'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_person_type'];
 
 		if ('cpf' === $brazilPersonType || 1 == $brazilPersonType || 'pessoa física' === strtolower($brazilPersonType)) {
 			return Person::TYPE_PERSONAL;

@@ -154,4 +154,32 @@ jQuery (function ($) {
 			}
 		} );
 	});
+
+	if ($('select[name="ebanx-banking-ticket[ebanx_billing_brazil_person_type]"]').length > 0) {
+      $('select[name="ebanx-banking-ticket[ebanx_billing_brazil_person_type]"]').on('change', function (e) {
+        if ($(this).val() == 'cpf') {
+          $('div.cpf-row').show();
+          $('div.cnpj-row').hide();
+        } else {
+          $('div.cnpj-row').show();
+          $('div.cpf-row').hide();
+        }
+      });
+    }
+
+	if ($('select[name="ebanx-credit-card-br[ebanx_billing_brazil_person_type]"]').length > 0) {
+      $('select[name="ebanx-credit-card-br[ebanx_billing_brazil_person_type]"]').on('change', function (e) {
+        if ($(this).val() != 'cpf') {
+          $('div.cnpj-row').show();
+          $('div.cpf-row').hide();
+        } else {
+          $('div.cpf-row').show();
+          $('div.cnpj-row').hide();
+        }
+      });
+    }
+
+	if  ($('.ebanx-person-type-field').length > 0) {
+      $('.ebanx-person-type-field').trigger('change');
+    }
 });
