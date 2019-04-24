@@ -92,7 +92,7 @@ if ( $order_id ) {
 		<div class="ebanx-form-row ebanx-form-row-wide">
 			<label for="<?php echo esc_attr( "{$id}[billing_state]" ); ?>"><?php esc_html_e( 'State / County', 'woocommerce-gateway-ebanx' ); ?></label>
 			<select name="<?php echo esc_attr( "{$id}[billing_state]" ); ?>" id="<?php echo esc_attr( "{$id}[billing_state]" ); ?>" class="ebanx-select-field">
-				<option value="" selected>Select...</option>
+				<option value="" selected><?php esc_html_e( 'Select...', 'woocommerce-gateway-ebanx' ); ?></option>
 				<?php foreach ( $states as $abbr => $name ) : ?>
 					<option value="<?php echo esc_attr( $abbr ); ?>" <?php echo strtolower( $abbr ) === strtolower( $address['state'] ) ? 'selected="selected"' : '' ?>><?php echo esc_html( $name ); ?></option>
 				<?php endforeach; ?>

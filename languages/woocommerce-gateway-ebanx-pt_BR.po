@@ -1013,6 +1013,26 @@ msgstr "Configurações"
 msgid "Instalment for EBANX Credit Card:"
 msgstr "Número de Parcelas para Cartões de Crédito com EBANX:"
 
+#: templates/compliance-fields-br.php
+msgid "Person type"
+msgstr "Tipo de pessoa"
+
+#: templates/compliance-fields-br.php
+msgid "Select..."
+msgstr "Selecione..."
+
+#: templates/compliance-fields-br.php
+msgid "Postcode / ZIP"
+msgstr "CEP"
+
+#: templates/compliance-fields-br.php
+msgid "Telephone"
+msgstr "Telefone"
+
+#: templates/compliance-fields-br.php
+msgid "Company name"
+msgstr "Nome da empresa"
+
 #~ msgid "EBANX only supports instalments between 1 and 12"
 #~ msgstr "O EBANX suporta apenas número de parcelas entre 1 e 12"
 
@@ -1030,9 +1050,6 @@ msgstr "Número de Parcelas para Cartões de Crédito com EBANX:"
 
 #~ msgid "eg: billing_chile_birth_date"
 #~ msgstr "ex: billing_chile_birth_date"
-
-#~ msgid "Postcode / ZIP"
-#~ msgstr "Código postal / CEP"
 
 #~ msgid "MM / AA"
 #~ msgstr "MM / AA"
