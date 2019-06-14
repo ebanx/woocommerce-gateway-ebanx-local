@@ -22,9 +22,8 @@
     },
     "repositories": [
         {
-            "type": "vcs",
             "url":  "git@github.com:ebanx/benjamin-local.git",
-            "no-api": true
+            "type": "git"
         }
     ]
 }

@@ -1,6 +1,7 @@
 <?php
 
 define('ABSPATH', realpath('.'));
+define('IS_TEST', true);
 
 function autoload_services($class_name) {
 	$base_dir = realpath('.')  . '/services/';
