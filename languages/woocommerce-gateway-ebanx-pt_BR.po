@@ -220,7 +220,7 @@ msgstr "EBANX"
 #: gateways/class-wc-ebanx-global-gateway.php:80
 msgid ""
 "EBANX easy-to-setup checkout allows your business to accept local payments "
-"in Brazil."
+"in Brazil, Mexico, Argentina, Colombia, Chile & Peru."
 msgstr ""
 "O checkout de fácil configuração do EBANX permite a seu negócio aceitar "
 "pagamento locais no Brasil, Mexico, Argentina, Colômbia, Chile e Peru."
