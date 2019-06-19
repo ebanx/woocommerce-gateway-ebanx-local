@@ -32,38 +32,13 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 		'brazil_payment_methods'          => array(
 			'ebanx-credit-card-br',
 			'ebanx-banking-ticket',
-			'ebanx-tef',
-			'ebanx-account',
-			'ebanx-banktransfer',
 		),
-		'mexico_payment_methods'          => array(
-			'ebanx-credit-card-mx',
-			'ebanx-debit-card',
-			'ebanx-oxxo',
-			'ebanx-spei',
-		),
-		'chile_payment_methods'           => array(
-			'ebanx-sencillito',
-			'ebanx-servipag',
-			'ebanx-webpay',
-			'ebanx-multicaja',
-		),
-		'colombia_payment_methods'        => array(
-			'ebanx-credit-card-co',
-			'ebanx-eft',
-			'ebanx-baloto',
-		),
-		'peru_payment_methods'            => array(
-			'ebanx-safetypay',
-			'ebanx-pagoefectivo',
-		),
-		'argentina_payment_methods'       => array(
-			'ebanx-credit-card-ar',
-			'ebanx-efectivo',
-		),
-		'ecuador_payment_methods'         => array(
-			'ebanx-safetypay',
-		),
+		'mexico_payment_methods'          => '',
+		'chile_payment_methods'           => '',
+		'colombia_payment_methods'        => '',
+		'peru_payment_methods'            => '',
+		'argentina_payment_methods'       => '',
+		'ecuador_payment_methods'         => '',
 		'save_card_data'                  => 'yes',
 		'one_click'                       => 'yes',
 		'capture_enabled'                 => 'yes',
@@ -79,7 +54,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 		'mx_interest_rates_enabled'       => 'no',
 		'manual_review_enabled'           => 'no',
 		'show_local_amount'               => 'yes',
-		'add_iof_to_local_amount_enabled' => 'yes',
+		'add_iof_to_local_amount_enabled' => 'no',
 		'show_exchange_rate'              => 'no',
 		'br_min_instalment_value_brl'     => '5',
 		'br_min_instalment_value_usd'     => '0',
@@ -187,16 +162,11 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'options' => array(
 					'ebanx-credit-card-br' => 'Credit Card',
 					'ebanx-banking-ticket' => 'Boleto bancário',
-					'ebanx-tef'            => 'Online Banking (TEF)',
-					'ebanx-account'        => 'EBANX Wallet',
 					'ebanx-banktransfer'   => 'EBANX Bank Transfer',
 				),
 				'default' => array(
 					'ebanx-credit-card-br',
 					'ebanx-banking-ticket',
-					'ebanx-tef',
-					'ebanx-account',
-					'ebanx-banktransfer',
 				),
 			),
 			'mexico_payment_methods'    => array(
@@ -209,12 +179,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					'ebanx-oxxo'           => 'OXXO',
 					'ebanx-spei'           => 'SPEI',
 				),
-				'default' => array(
-					'ebanx-credit-card-mx',
-					'ebanx-debit-card',
-					'ebanx-oxxo',
-					'ebanx-spei',
-				),
+				'default' => '',
 			),
 			'chile_payment_methods'     => array(
 				'title'   => __( 'Chile', 'woocommerce-gateway-ebanx' ),
@@ -226,12 +191,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					'ebanx-sencillito' => 'Sencillito',
 					'ebanx-servipag'   => 'Servipag',
 				),
-				'default' => array(
-					'ebanx-webpay',
-					'ebanx-multicaja',
-					'ebanx-sencillito',
-					'ebanx-servipag',
-				),
+                'default' => '',
 			),
 			'colombia_payment_methods'  => array(
 				'title'   => __( 'Colombia', 'woocommerce-gateway-ebanx' ),
@@ -242,11 +202,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					'ebanx-eft'            => 'PSE - Pago Seguros en Línea (EFT)',
 					'ebanx-baloto'         => 'Baloto',
 				),
-				'default' => array(
-					'ebanx-credit-card-co',
-					'ebanx-eft',
-					'ebanx-baloto',
-				),
+                'default' => '',
 			),
 			'peru_payment_methods'      => array(
 				'title'   => __( 'Peru', 'woocommerce-gateway-ebanx' ),
@@ -256,10 +212,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					'ebanx-safetypay'    => 'SafetyPay',
 					'ebanx-pagoefectivo' => 'PagoEfectivo',
 				),
-				'default' => array(
-					'ebanx-safetypay',
-					'ebanx-pagoefectivo',
-				),
+                'default' => '',
 			),
 			'argentina_payment_methods' => array(
 				'title'   => __( 'Argentina', 'woocommerce-gateway-ebanx' ),
@@ -269,10 +222,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					'ebanx-credit-card-ar' => 'Credit Card',
 					'ebanx-efectivo'       => 'Efectivo',
 				),
-				'default' => array(
-					'ebanx-credit-card-ar',
-					'ebanx-efectivo',
-				),
+                'default' => '',
 			),
 			'ecuador_payment_methods'   => array(
 				'title'   => __( 'Ecuador', 'woocommerce-gateway-ebanx' ),
@@ -281,9 +231,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'options' => array(
 					'ebanx-safetypay' => 'SafetyPay',
 				),
-				'default' => array(
-					'ebanx-safetypay',
-				),
+                'default' => '',
 			),
 			'payments_options_title'    => array(
 				'title' => __( 'Payment Options', 'woocommerce-gateway-ebanx' ),
@@ -544,6 +492,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					'class'       => 'ebanx-advanced-option ebanx-advanced-option-enable iof-checkbox',
 					'description' => 'IOF is a Brazilian Tax on Financial Operations applied on credit, foreign exchange, insurance and securities transactions.',
 					'desc_tip'    => true,
+                    'default' => 'no',
 				),
 			)
 		);
