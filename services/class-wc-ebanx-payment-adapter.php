@@ -151,7 +151,7 @@ class WC_EBANX_Payment_Adapter {
 				'address'             => static::transform_address_from_post_data( $order ),
 				'person'              => static::transform_person_from_post_data( $order, $configs ),
 				'responsible'         => static::transform_person_from_post_data( $order, $configs ),
-				'instalments'		  => '1',
+				'instalments'         => '1',
 				'items'               => static::transform_items( $order ),
 				'merchantPaymentCode' => substr( $order->id . '-' . md5( rand( 123123, 9999999 ) ), 0, 40 ),
 				'riskProfileId'       => 'Wx' . str_replace( '.', 'x', WC_EBANX::get_plugin_version() ),
@@ -167,11 +167,11 @@ class WC_EBANX_Payment_Adapter {
 	 */
 	private static function get_order_meta_data( $order ) {
 
-		$data        =  get_post_meta($order->data['id']);
+		$data        = get_post_meta( $order->data['id'] );
 		$data_values = array();
 
 		foreach ( $data as $key => $value ) {
-			$data_values[$key] = reset($value);
+			$data_values[ $key ] = reset( $value );
 		}
 
 		return $data_values;
@@ -220,11 +220,11 @@ class WC_EBANX_Payment_Adapter {
 
 		$brazilPersonType = get_post_meta( $order->id, '_billing_persontype', true );
 
-		if ( empty ($brazilPersonType) ) {
+		if ( empty( $brazilPersonType ) ) {
 			return Person::TYPE_PERSONAL;
 		}
 
-		if ('cpf' === $brazilPersonType || 1 == $brazilPersonType || 'pessoa física' === strtolower($brazilPersonType)) {
+		if ( 'cpf' === $brazilPersonType || 1 == $brazilPersonType || 'pessoa física' === strtolower( $brazilPersonType ) ) {
 			return Person::TYPE_PERSONAL;
 		}
 
@@ -233,19 +233,18 @@ class WC_EBANX_Payment_Adapter {
 
 	/**
 	 *
-	 * @param WC_Order  $order
-	 * @param string    $person_type
+	 * @param WC_Order $order
+	 * @param string   $person_type
 	 *
 	 * @return string
 	 * @throws Exception Throws parameter missing exception.
 	 */
-	private static function get_document_from_order( $order, $person_type )
-	{
+	private static function get_document_from_order( $order, $person_type ) {
 		$cpf  = get_post_meta( $order->id, '_billing_cpf', true );
 		$cnpj = get_post_meta( $order->id, '_billing_cnpj', true );
 
-		$has_cpf  = ! empty ( $cpf );
-		$has_cnpj = ! empty ( $cnpj );
+		$has_cpf  = ! empty( $cpf );
+		$has_cnpj = ! empty( $cnpj );
 
 		if ( Person::TYPE_PERSONAL === $person_type && $has_cpf ) {
 			return $cpf;
@@ -326,9 +325,9 @@ class WC_EBANX_Payment_Adapter {
 			$addresses .= ' - ' . WC_EBANX_Request::read( 'billing_address_2', null );
 		}
 
-		$addresses     = WC_EBANX_Helper::split_street( $addresses );
-		$street_number = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
-		$addressCountry = empty($order->billing_country) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->billing_country;
+		$addresses      = WC_EBANX_Helper::split_street( $addresses );
+		$street_number  = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
+		$addressCountry = empty( $order->billing_country ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->billing_country;
 
 		return new Address(
 			[
@@ -528,16 +527,16 @@ class WC_EBANX_Payment_Adapter {
 		}
 
 		if ( count( $fields_options ) === 1 && 'cnpj' === $fields_options[0] ) {
- 			return Person::TYPE_BUSINESS;
+			return Person::TYPE_BUSINESS;
 		}
 
-		$brazilPersonType = WC_EBANX_Request::read( $names['ebanx_billing_brazil_person_type'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_person_type'];
+		$brazil_person_type = WC_EBANX_Request::read( $names['ebanx_billing_brazil_person_type'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_person_type'];
 
-		if ('cpf' === $brazilPersonType || 1 == $brazilPersonType || 'pessoa física' === strtolower($brazilPersonType)) {
-			return Person::TYPE_PERSONAL;
+		if ( 'cnpj' === $brazil_person_type || 2 === $brazil_person_type || 'pessoa jurídica' === strtolower( $brazil_person_type ) ) {
+			return Person::TYPE_BUSINESS;
 		}
 
-		return Person::TYPE_BUSINESS;
+		return Person::TYPE_PERSONAL;
 	}
 
 	/**
