@@ -20,10 +20,7 @@ if ( ! defined( 'IS_TEST' ) ) {
  */
 final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 	const CC_COUNTRIES_FROM_ISO = [
-		WC_EBANX_Constants::COUNTRY_ARGENTINA => 'Argentina',
-		WC_EBANX_Constants::COUNTRY_BRAZIL    => 'Brazil',
-		WC_EBANX_Constants::COUNTRY_COLOMBIA  => 'Colombia',
-		WC_EBANX_Constants::COUNTRY_MEXICO    => 'Mexico',
+		WC_EBANX_Constants::COUNTRY_BRAZIL => 'Brazil',
 	];
 
 	/**
