@@ -286,7 +286,9 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 			}, array_keys( WC_EBANX_Constants::$credit_card_countries )
 		);
 
-		for ( $i = 0; $i < 4; $i++ ) {
+		$countries_length = count( self::CC_COUNTRIES_FROM_ISO );
+
+		for ( $i = 0; $i < $countries_length; $i++ ) {
 			$array_length = count( $interest_rates_array[ $i ] );
 			for ( $j = 0; $j < $array_length; $j++ ) {
 				$fields = array_merge( $fields, $interest_rates_array[ $i ] [ $j ] );
