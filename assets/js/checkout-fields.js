@@ -138,12 +138,6 @@ jQuery (function ($) {
 			$( ebanxMethodsLabels ).find( 'img' ).before( '<span id="sandbox-alert-tag">' + localizedMessage + '</span>' );
 		}
 
-        if (isEbanxMethodSelected()) {
-          setTimeout(() => (
-            $('.wc_payment_methods.payment_methods.methods > li > input:checked').trigger('change')
-          ), 0);
-        }
-
 		paymentMethods.on( 'change', function( e ) {
 			disableFields(getBillingFields());
 			if (isEbanxMethodSelected() && $( '#billing_country' ).length !== 0) {
