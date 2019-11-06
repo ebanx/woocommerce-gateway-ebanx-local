@@ -30,7 +30,7 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 
 		$this->enabled = is_array( $this->configs->settings['brazil_payment_methods'] ) ? in_array( $this->id, $this->configs->settings['brazil_payment_methods'] ) ? 'yes' : false : false;
 
-		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_banking_ticket_instrictions' ), 50, 3 );
+		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_banking_ticket_instructions' ), 50, 3 );
 
 	}
 
@@ -43,9 +43,9 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 *
 	 * @return string                Payment instructions.
 	 */
-	public function email_banking_ticket_instrictions( $order, $sent_to_admin, $plain_text = false ) {
+	public function email_banking_ticket_instructions( $order, $sent_to_admin, $plain_text = false ) {
 
-		if ( $sent_to_admin || 'on-hold' !== $order->get_status() || 'ebanx-banking-ticket' !== $this->id ) {
+		if ( $sent_to_admin || !$order->has_status( array( 'on-hold', 'processing' ) ) || 'ebanx-banking-ticket' !== $this->id ) {
 			return;
 		}
 
