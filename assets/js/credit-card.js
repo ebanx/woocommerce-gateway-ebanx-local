@@ -230,8 +230,12 @@ jQuery( function($) {
 			});
 	};
 
-	$(document).on('change', 'select.ebanx-instalments', function (){
-		update_converted($(this));
+	$(document).on('change', 'select.ebanx-instalments', function () {
+      // Prevent value updating when this is not a credit card selected
+      if ($(this).parents('div.ebanx-credit-card-option').find('input[name=ebanx-credit-card-use]').is(':checked') === false) {
+        return;
+      }
+      update_converted($(this));
 	});
 
 	$(document).on('change', 'input[name="ebanx-credit-card-use"]', function () {
