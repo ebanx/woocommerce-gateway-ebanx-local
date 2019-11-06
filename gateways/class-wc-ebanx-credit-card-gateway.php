@@ -430,6 +430,17 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	}
 
 	/**
+	 * Get request billing instalments if exists
+	 *
+	 * @param  int $default
+	 *
+	 * @return int
+	 */
+	public static function get_request_instalments( $default = 1 ) {
+		return WC_EBANX_Request::get_value_from_post_data_or_default( 'ebanx_billing_instalments', $default );
+	}
+
+	/**
 	 * The HTML structure on checkout page
 	 *
 	 * @throws Exception Throws missing param message.
@@ -472,6 +483,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			array(
 				'currency'            => $currency,
 				'country'             => $country,
+				'current_instalment'  => self::get_request_instalments(),
 				'instalments_terms'   => $instalments_terms,
 				'currency_code'       => $this->currency_code,
 				'currency_rate'       => $currency_rate,
