@@ -53,7 +53,7 @@ class WC_EBANX_Credit_Card_BR_Gateway extends WC_EBANX_Credit_Card_Gateway {
 			WC_EBANX_Constants::CURRENCY_CODE_BRL,
 			true,
 			null,
-			1
+			WC_EBANX_Credit_Card_Gateway::get_request_instalments()
 		);
 	}
 }

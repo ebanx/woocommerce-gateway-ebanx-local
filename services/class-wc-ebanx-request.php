@@ -91,4 +91,26 @@ class WC_EBANX_Request {
 		// @codingStandardsIgnoreLine
 		return empty( $_POST );
 	}
+
+	/**
+	 * Get value from $_POST['post_data'] or $default value
+	 *
+	 * @param $key
+	 * @param null $default
+	 *
+	 * @return mixed|null
+	 */
+	public static function get_value_from_post_data_or_default( $key, $default = null ) {
+		if ( self::is_post_empty() ) {
+			return $default;
+		}
+
+		if ( isset( $_POST['post_data'] ) ) {
+			parse_str( $_POST['post_data'], $post_data );
+		} else {
+			$post_data = $_POST;
+		}
+
+		return isset( $post_data[ $key ] ) ? $post_data[ $key ] : $default;
+	}
 }
