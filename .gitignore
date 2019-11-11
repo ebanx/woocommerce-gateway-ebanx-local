@@ -1,21 +1,16 @@
 .idea/
-wordpress/
 vendor/
 .DS_Store
 *.log
 *.gz
 *.gz.*
-cypress/videos
-cypress/screenshots
 node_modules
 .vscode
-apidocs/phpdoc-cache-*
 .data
-.phpintel
-phpcs.json
-diff.txt
 .env
 
 # Tests
 /report/
 /clover.xml
+
+build/*
