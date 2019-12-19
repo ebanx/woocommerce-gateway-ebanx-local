@@ -3,9 +3,9 @@
  * Plugin Name: EBANX Local Payment Gateway for WooCommerce
  * Plugin URI: https://www.ebanx.com/business/en/developers/integrations/extensions-and-plugins/woocommerce-plugin
  * Description: Offer local payment methods
- * Author: EBANX
+ * Author: EBANX Pay
  * Author URI: https://www.ebanx.com/business/en
- * Version: 1.39.1
+ * Version: 1.40.0
  * License: MIT
  * Text Domain: woocommerce-gateway-ebanx-local
  * Domain Path: /languages

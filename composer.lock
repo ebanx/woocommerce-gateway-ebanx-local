@@ -4,15 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "78a4803d6a4c806f5409fd85a6b045f7",
+    "content-hash": "05a94698e0e2f4241ce8e53b5e145efa",
     "packages": [
         {
             "name": "ebanx/benjamin-local",
-            "version": "1.17.1",
+            "version": "1.19.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ebanx/benjamin-local.git",
-                "reference": "30e68414402b9a8560fdb6731fe084afb41ee730"
+                "reference": "101f00e00050a5d472e6baaa5e0c36f93bd88a98"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ebanx/benjamin-local/zipball/101f00e00050a5d472e6baaa5e0c36f93bd88a98",
+                "reference": "101f00e00050a5d472e6baaa5e0c36f93bd88a98",
+                "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
@@ -35,36 +41,12 @@
                     "main.php"
                 ]
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "phpunit"
-                ],
-                "test-only": [
-                    "phpunit --filter"
-                ],
-                "dup-check": [
-                    "phpcpd src && phpcpd tests"
-                ],
-                "test-all": [
-                    "composer test && composer style-check && composer dup-check"
-                ],
-                "style-check": [
-                    "php-cs-fixer fix --dry-run --verbose --diff ./"
-                ],
-                "style-fix": [
-                    "php-cs-fixer fix --verbose ./"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "proprietary"
             ],
-            "description": "Business rule provider lib for plugin implementations",
-            "time": "2019-02-22T17:21:15+00:00"
+            "description": "EBANX Pay's API library for local payments",
+            "time": "2019-10-22T22:01:51+00:00"
         }
     ],
     "packages-dev": [
