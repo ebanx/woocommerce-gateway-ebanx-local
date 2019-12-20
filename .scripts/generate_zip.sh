@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-rm -Rf build/*
+mkdir build && rm -Rf build/*
 
 cd build
 
