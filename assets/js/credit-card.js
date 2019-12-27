@@ -198,61 +198,20 @@ jQuery( function($) {
 
 	wc_ebanx_form.toggleCardUse();
 
-	// Update IOF value when instalments is changed
-	var update_converted = function (self) {
-		var instalments = self.val();
-		var country = self.attr('data-country');
-		var amount = self.attr('data-amount');
-		var currency = self.attr('data-currency');
-		var order_id = self.attr('data-order-id');
-		var text = self.parents( '.payment_box' ).find( '#converted-amount' );
-		var spinner = self.parents('.payment_box').find('.ebanx-spinner');
+	var selected_instalment = 1;
 
-		spinner.fadeIn();
-
-		$.ajax({
-      url: wc_ebanx_params.ajaxurl,
-      type: 'POST',
-			data: {
-        action: 'ebanx_update_converted_value',
-        instalments: instalments,
-        country: country,
-        amount: amount,
-        currency: currency,
-        order_id: order_id
-      }
-		})
-			.done(function (data) {
-				text.html(data);
-			})
-			.always(function () {
-				spinner.fadeOut();
-			});
-	};
-
-	$(document).on('change', 'select.ebanx-instalments', function () {
-      // Prevent value updating when this is not a credit card selected
-      if ($(this).parents('div.ebanx-credit-card-option').find('input[name=ebanx-credit-card-use]').is(':checked') === false) {
-        return;
-      }
-      update_converted($(this));
-	});
-
-	$(document).on('change', 'input[name="ebanx-credit-card-use"]', function () {
-		update_converted($(this)
-				.parents('.ebanx-credit-card-option')
-				.find('select.ebanx-instalments'));
-	});
-
-	var selected_instalment;
-
-	$( document ).on( 'change', 'select[name="ebanx-credit-card-installments"]', function () {
-		selected_instalment = $( '#ebanx-container-new-credit-card' ).find( 'select.ebanx-instalments' ).val();
+	$( document ).on( 'change', 'select[name="ebanx-credit-card-installments"]', function (event) {
+      event.stopPropagation();
+      selected_instalment = $(this).val();
+      $('select[name="ebanx-credit-card-installments"]').val(selected_instalment).trigger('change.select2');
 	});
 
 	$( 'body' ).on( 'updated_checkout', function () {
-		$( '#ebanx-container-new-credit-card' ).find( 'select.ebanx-instalments' ).select2( 'val', selected_instalment );
-	} );
+	  let ebanx_instalments = $( document ).find( 'select.ebanx-instalments' );
+	  if (ebanx_instalments.length > 0) {
+        ebanx_instalments.val( (selected_instalment || 1) ).change();
+      }
+	});
 
 	$( document ).on( 'input', '#ebanx-card-number', function() {
 		var cvvTextField = $( '#ebanx-card-cvv' );

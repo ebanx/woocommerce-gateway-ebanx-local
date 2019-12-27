@@ -15,6 +15,7 @@ class WC_EBANX_Request {
 	 *
 	 * @param  string $param   The key from _REQUEST.
 	 * @param  mixed  $default What you want to return if there's no $_REQUEST[$param].
+	 *
 	 * @return mixed          $_REQUEST[$param] value OR default OR
 	 * @throws Exception Throws exception if there's no $_REQUEST[$param] and no $default.
 	 */
@@ -28,6 +29,7 @@ class WC_EBANX_Request {
 		if ( self::DEFAULT_VALUE == $default ) {
 			throw new Exception( 'Missing argument "' . $param . '".' );
 		}
+
 		return $default;
 	}
 
@@ -36,6 +38,7 @@ class WC_EBANX_Request {
 	 *
 	 * @param string $param The key from _REQUEST.
 	 * @param mixed  $value The value you want to set.
+	 *
 	 * @return void
 	 */
 	public static function set( $param, $value ) {
@@ -47,6 +50,7 @@ class WC_EBANX_Request {
 	 *
 	 * @param  array $params  Array of strings, the values you want to read.
 	 * @param  mixed $default What you want to return if there's no value in each $_REQUEST[$params[]].
+	 *
 	 * @return array          An array with results OR
 	 * @throws Exception Throws exception if there's no $_REQUEST[$param] and no $default.
 	 */
@@ -111,6 +115,6 @@ class WC_EBANX_Request {
 			$post_data = $_POST;
 		}
 
-		return isset( $post_data[ $key ] ) ? $post_data[ $key ] : $default;
+		return isset( $post_data[ $key ] ) ? sanitize_text_field( $post_data[ $key ] ) : $default;
 	}
 }

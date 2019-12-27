@@ -18,6 +18,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php else : ?>
 		<p><strong><?php echo esc_html( $customer_name ); ?> seu pagamento de <?php echo $total; // phpcs:ignore WordPress.XSS.EscapeOutput ?>, à vista, foi aprovado o/</strong></p>
 	<?php endif ?>
-
-	<input type="hidden" id="ebanx-payment-hash" data-doraemon-hash="<?php echo esc_html( $hash ); ?>">
 </div>

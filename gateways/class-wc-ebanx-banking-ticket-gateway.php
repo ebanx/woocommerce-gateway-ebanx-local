@@ -17,12 +17,9 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	public function __construct() {
 		$this->id           = 'ebanx-banking-ticket';
 		$this->method_title = __( 'EBANX - Banking Ticket', 'woocommerce-gateway-ebanx' );
-
-		$this->api_name = 'boleto';
-
-		$this->title = 'Boleto bancário';
-
-		$this->description = 'Pague com boleto bancário.';
+		$this->api_name     = 'boleto';
+		$this->title        = 'Boleto bancário';
+		$this->description  = 'Pague com boleto bancário.';
 
 		parent::__construct();
 
@@ -31,7 +28,6 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 		$this->enabled = is_array( $this->configs->settings['brazil_payment_methods'] ) ? in_array( $this->id, $this->configs->settings['brazil_payment_methods'] ) ? 'yes' : false : false;
 
 		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_banking_ticket_instructions' ), 50, 3 );
-
 	}
 
 	/**
@@ -45,11 +41,12 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 */
 	public function email_banking_ticket_instructions( $order, $sent_to_admin, $plain_text = false ) {
 
+
 		if ( $sent_to_admin || !$order->has_status( array( 'on-hold', 'processing' ) ) || 'ebanx-banking-ticket' !== $this->id ) {
 			return;
 		}
 
-		$boleto_url = get_post_meta( $order->id, '_boleto_url', true );
+		$boleto_url = get_post_meta( $order->get_id(), '_boleto_url', true );
 
 		$data = array(
 			'boleto_url' => $boleto_url,
@@ -114,8 +111,6 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 			'woocommerce/ebanx/',
 			WC_EBANX::get_templates_path()
 		);
-
-		parent::checkout_rate_conversion( WC_EBANX_Constants::CURRENCY_CODE_BRL );
 	}
 
 	/**
@@ -141,9 +136,9 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	protected function save_order_meta_fields( $order, $request ) {
 		parent::save_order_meta_fields( $order, $request );
 
-		update_post_meta( $order->id, '_payment_due_date', $request->payment->due_date );
-		update_post_meta( $order->id, '_boleto_url', $request->payment->boleto_url );
-		update_post_meta( $order->id, '_boleto_barcode', $request->payment->boleto_barcode );
+		update_post_meta( $order->get_id(), '_payment_due_date', $request->payment->due_date );
+		update_post_meta( $order->get_id(), '_boleto_url', $request->payment->boleto_url );
+		update_post_meta( $order->get_id(), '_boleto_barcode', $request->payment->boleto_barcode );
 	}
 
 	/**
@@ -177,16 +172,16 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 * @return void
 	 */
 	public static function thankyou_page( $order ) {
-		$boleto_url         = get_post_meta( $order->id, '_boleto_url', true );
+		$boleto_url         = get_post_meta( $order->get_id(), '_boleto_url', true );
 		$boleto_basic       = $boleto_url . '&format=basic';
 		$boleto_pdf         = $boleto_url . '&format=pdf';
 		$boleto_print       = $boleto_url . '&format=print';
 		$boleto_mobile      = $boleto_url . '&device_target=mobile';
-		$barcode            = get_post_meta( $order->id, '_boleto_barcode', true );
-		$customer_email     = get_post_meta( $order->id, '_billing_email', true );
-		$customer_name      = get_post_meta( $order->id, '_billing_first_name', true );
-		$boleto_due_date    = get_post_meta( $order->id, '_payment_due_date', true );
-		$boleto_hash        = get_post_meta( $order->id, '_ebanx_payment_hash', true );
+		$barcode            = get_post_meta( $order->get_id(), '_boleto_barcode', true );
+		$customer_email     = get_post_meta( $order->get_id(), '_billing_email', true );
+		$customer_name      = get_post_meta( $order->get_id(), '_billing_first_name', true );
+		$boleto_due_date    = get_post_meta( $order->get_id(), '_payment_due_date', true );
+		$boleto_hash        = get_post_meta( $order->get_id(), '_ebanx_payment_hash', true );
 		$barcode_anti_fraud = WC_EBANX_Banking_Ticket_Gateway::barcode_anti_fraud( $barcode );
 
 		$data = array(

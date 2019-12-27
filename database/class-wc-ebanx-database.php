@@ -24,7 +24,6 @@ class WC_EBANX_Database {
 	 */
 	public static function migrate() {
 		self::create_log_table();
-		self::update_log_table();
 	}
 
 	/**
@@ -43,8 +42,8 @@ class WC_EBANX_Database {
 		$sql = "CREATE TABLE $table_name (
 			id int NOT NULL AUTO_INCREMENT,
 			time datetime NOT NULL,
-			integration_key varchar(150) DEFAULT NULL,
-			event varchar(150) NOT NULL,
+			integration_key varchar(255) DEFAULT NULL,
+			event varchar(255) NOT NULL,
 			log blob NOT NULL,
 			UNIQUE KEY id (id)
 		) $charset_collate";
@@ -53,30 +52,12 @@ class WC_EBANX_Database {
 	}
 
 	/**
-	 * Updates table.
-	 */
-	private static function update_log_table() {
-		global $wpdb;
-
-		$table_name = self::tables()['logs'];
-		$row        = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = %s AND column_name = 'integration_key'", $table_name
-			)
-		);
-
-		if ( empty( $row ) ) {
-			// @codingStandardsIgnoreLine
-			$wpdb->query( "ALTER TABLE `$table_name` ADD integration_key VARCHAR(255) DEFAULT NULL AFTER time" );
-		}
-	}
-
-	/**
 	 * Wrapper for `$wpdb` `insert` method, getting table name from `tables` method
 	 *
 	 * @param string $table table name.
 	 * @param array  $data data to be inserted.
+	 *
+	 * @return int|false
 	 */
 	public static function insert( $table, $data ) {
 		global $wpdb;

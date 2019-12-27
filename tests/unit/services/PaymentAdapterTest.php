@@ -44,15 +44,6 @@ class PaymentAdapterTest extends TestCase {
 		];
 	}
 
-	public function getDocumentByCountryCasesData() {
-		return [
-			['12-34567890-1', 'get_argentinian_document', 'ebanx_billing_argentina_document'],
-			['1234567890', 'get_chilean_document', 'ebanx_billing_chile_document'],
-			['1245678901', 'get_colombian_document', 'ebanx_billing_colombia_document'],
-			['1234678901', 'get_peruvian_document', 'ebanx_billing_peru_document'],
-		];
-	}
-
 	/**
 	 * @dataProvider getPersonTypeCasesData()
 	 *
@@ -89,24 +80,5 @@ class PaymentAdapterTest extends TestCase {
 		$document = WC_EBANX_Payment_Adapter::get_brazilian_document($configs, $this->names, NULL);
 
 		$this->assertEquals($expected_document, $document);
-	}
-
-	/**
-	 * @dataProvider getDocumentByCountryCasesData()
-	 *
-	 * @param string $expected_document
-	 * @param string $adapter_country_function
-	 * @param string $document_type
-	 *
-	 * @throws Exception Shouldn't be thrown.
-	 */
-	public function testGetDocument($expected_document, $adapter_country_function, $document_type) {
-		$this->checkout_request_builder
-			->with_ebanx_billing_document($document_type, $expected_document)
-			->build();
-
-		$return_document = WC_EBANX_Payment_Adapter::$adapter_country_function($this->names, NULL);
-
-		$this->assertEquals($expected_document, $return_document);
 	}
 }

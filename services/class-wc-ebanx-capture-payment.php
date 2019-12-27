@@ -57,7 +57,7 @@ class WC_EBANX_Capture_Payment {
 	 *
 	 * @return array
 	 */
-	public function add_auto_capture_dropdown( $actions ) {
+	public static function add_auto_capture_dropdown( $actions ) {
 		global $theorder;
 
 		if ( is_array( $actions ) && $theorder->get_status() === 'on-hold'
@@ -73,7 +73,7 @@ class WC_EBANX_Capture_Payment {
 	 *
 	 * @param WC_Order $order
 	 */
-	public function capture_from_order_dropdown( $order ) {
+	public static function capture_from_order_dropdown( $order ) {
 		static::capture_payment( $order->get_id() );
 	}
 
@@ -87,6 +87,7 @@ class WC_EBANX_Capture_Payment {
 	public static function capture_payment( $order_id ) {
 		$configs = new WC_EBANX_Global_Gateway();
 		$order   = new WC_Order( $order_id );
+
 		$payment_hash = get_post_meta( $order_id, '_ebanx_payment_hash', true );
 		$ebanx        = ( new WC_EBANX_Api( $configs ) )->ebanx();
 		$payment_data = $ebanx->paymentInfo()->findByHash( $payment_hash );

@@ -25,13 +25,13 @@ class WC_EBANX_Payment_Adapter {
 		return new Payment(
 			[
 				'amountTotal'         => $order->get_total(),
-				'orderNumber'         => $order->id,
+				'orderNumber'         => $order->get_id(),
 				'dueDate'             => static::transform_due_date( $configs ),
 				'address'             => static::transform_address( $order, $gateway_id ),
 				'person'              => static::transform_person( $order, $configs, $names, $gateway_id ),
 				'responsible'         => static::transform_person( $order, $configs, $names, $gateway_id ),
 				'items'               => static::transform_items( $order ),
-				'merchantPaymentCode' => substr( $order->id . '-' . md5( rand( 123123, 9999999 ) ), 0, 40 ),
+				'merchantPaymentCode' => substr( $order->get_id() . '-' . md5( rand( 123123, 9999999 ) ), 0, 40 ),
 				'riskProfileId'       => 'Wx' . str_replace( '.', 'x', WC_EBANX::get_plugin_version() ),
 			]
 		);
@@ -120,7 +120,7 @@ class WC_EBANX_Payment_Adapter {
 		}
 
 		$number          = ! empty( $order_address['number'] ) ? trim( $order_address['number'] ) : 'S/N';
-		$address_country = empty( $order->billing_country ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->billing_country;
+		$address_country = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country();
 
 		return new Address(
 			[
@@ -146,14 +146,14 @@ class WC_EBANX_Payment_Adapter {
 		return new Payment(
 			[
 				'amountTotal'         => $order->get_total(),
-				'orderNumber'         => $order->id,
+				'orderNumber'         => $order->get_id(),
 				'dueDate'             => static::transform_due_date( $configs ),
 				'address'             => static::transform_address_from_post_data( $order ),
 				'person'              => static::transform_person_from_post_data( $order, $configs ),
 				'responsible'         => static::transform_person_from_post_data( $order, $configs ),
 				'instalments'         => '1',
 				'items'               => static::transform_items( $order ),
-				'merchantPaymentCode' => substr( $order->id . '-' . md5( rand( 123123, 9999999 ) ), 0, 40 ),
+				'merchantPaymentCode' => substr( $order->get_id() . '-' . md5( rand( 123123, 9999999 ) ), 0, 40 ),
 				'riskProfileId'       => 'Wx' . str_replace( '.', 'x', WC_EBANX::get_plugin_version() ),
 			]
 		);
@@ -166,7 +166,7 @@ class WC_EBANX_Payment_Adapter {
 	 * @return array
 	 */
 	private static function get_order_meta_data( $order ) {
-
+		//TODO: Refactor
 		$data        = get_post_meta( $order->data['id'] );
 		$data_values = array();
 
@@ -218,7 +218,7 @@ class WC_EBANX_Payment_Adapter {
 			return Person::TYPE_BUSINESS;
 		}
 
-		$brazilPersonType = get_post_meta( $order->id, '_billing_persontype', true );
+		$brazilPersonType = get_post_meta( $order->get_id(), '_billing_persontype', true );
 
 		if ( empty( $brazilPersonType ) ) {
 			return Person::TYPE_PERSONAL;
@@ -240,8 +240,8 @@ class WC_EBANX_Payment_Adapter {
 	 * @throws Exception Throws parameter missing exception.
 	 */
 	private static function get_document_from_order( $order, $person_type ) {
-		$cpf  = get_post_meta( $order->id, '_billing_cpf', true );
-		$cnpj = get_post_meta( $order->id, '_billing_cnpj', true );
+		$cpf  = get_post_meta( $order->get_id(), '_billing_cpf', true );
+		$cnpj = get_post_meta( $order->get_id(), '_billing_cnpj', true );
 
 		$has_cpf  = ! empty( $cpf );
 		$has_cnpj = ! empty( $cnpj );
@@ -263,9 +263,9 @@ class WC_EBANX_Payment_Adapter {
 	 * @param WC_EBANX_Global_Gateway $configs
 	 *
 	 * @return Person
+	 * @throws Exception
 	 */
 	private static function transform_person_from_post_data( $order, $configs ) {
-
 		$person_type = self::get_person_type_from_order( $order, $configs );
 		$document    = self::get_document_from_order( $order, $person_type );
 
@@ -273,10 +273,10 @@ class WC_EBANX_Payment_Adapter {
 			[
 				'type'        => $person_type,
 				'document'    => $document,
-				'email'       => $order->billing_email,
+				'email'       => $order->get_billing_email(),
 				'ip'          => WC_Geolocation::get_ip_address(),
-				'name'        => $order->billing_first_name . ' ' . $order->billing_last_name,
-				'phoneNumber' => $order->billing_phone,
+				'name'        => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+				'phoneNumber' => $order->get_billing_phone(),
 			]
 		);
 	}
@@ -286,6 +286,7 @@ class WC_EBANX_Payment_Adapter {
 	 * @param WC_EBANX_Global_Gateway $configs
 	 *
 	 * @return DateTime|string
+	 * @throws Exception
 	 */
 	private static function transform_due_date( $configs ) {
 		$due_date = '';
@@ -307,7 +308,6 @@ class WC_EBANX_Payment_Adapter {
 	 * @throws Exception Throws parameter missing exception.
 	 */
 	private static function transform_address( $order, $gateway_id ) {
-
 		if (
 			( empty( WC_EBANX_Request::read( 'billing_postcode', null ) )
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_postcode'] ) )
@@ -327,7 +327,7 @@ class WC_EBANX_Payment_Adapter {
 
 		$addresses      = WC_EBANX_Helper::split_street( $addresses );
 		$street_number  = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
-		$addressCountry = empty( $order->billing_country ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->billing_country;
+		$addressCountry = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country();
 
 		return new Address(
 			[
@@ -358,10 +358,10 @@ class WC_EBANX_Payment_Adapter {
 			[
 				'type'        => static::get_person_type( $configs, $names, $gateway_id ),
 				'document'    => $document,
-				'email'       => $order->billing_email,
+				'email'       => $order->get_billing_email(),
 				'ip'          => WC_Geolocation::get_ip_address(),
-				'name'        => $order->billing_first_name . ' ' . $order->billing_last_name,
-				'phoneNumber' => '' !== $order->billing_phone ? $order->billing_phone : WC_EBANX_Request::read( $gateway_id, null )['billing_phone'],
+				'name'        => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+				'phoneNumber' => '' !== $order->get_billing_phone() ? $order->get_billing_phone() : WC_EBANX_Request::read( $gateway_id, null )['billing_phone'],
 			]
 		);
 	}
@@ -379,48 +379,12 @@ class WC_EBANX_Payment_Adapter {
 		$country = trim( strtolower( WC()->customer->get_billing_country() ) );
 
 		switch ( $country ) {
-			case WC_EBANX_Constants::COUNTRY_ARGENTINA:
-				return static::get_argentinian_document( $names, $gateway_id );
-				break;
 			case WC_EBANX_Constants::COUNTRY_BRAZIL:
 				return static::get_brazilian_document( $configs, $names, $gateway_id );
-				break;
-			case WC_EBANX_Constants::COUNTRY_CHILE:
-				return static::get_chilean_document( $names, $gateway_id );
-				break;
-			case WC_EBANX_Constants::COUNTRY_COLOMBIA:
-				return static::get_colombian_document( $names, $gateway_id );
-				break;
-			case WC_EBANX_Constants::COUNTRY_PERU:
-				return static::get_peruvian_document( $names, $gateway_id );
 				break;
 			default:
 				return static::get_brazilian_document( $configs, $names, $gateway_id );
 		}
-	}
-
-	/**
-	 *
-	 * @param array  $names
-	 * @param string $gateway_id
-	 *
-	 * @return string
-	 * @throws Exception Throws parameter missing exception.
-	 */
-	public static function get_argentinian_document( $names, $gateway_id ) {
-		$document = WC_EBANX_Request::read( $names['ebanx_billing_argentina_document'], null );
-
-		if ( null === $document
-			&& is_array( WC_EBANX_Request::read( $gateway_id, null ) )
-			&& WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_argentina_document'] ) {
-			$document = WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_argentina_document'];
-		}
-
-		if ( null === $document ) {
-			throw new Exception( 'BP-DR-22' );
-		}
-
-		return $document;
 	}
 
 	/**
@@ -447,7 +411,7 @@ class WC_EBANX_Payment_Adapter {
 										&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_company'] ) ) ) )
 			|| ( Person::TYPE_PERSONAL === $person_type && ! $has_cpf )
 		) {
-			throw new Exception( 'INVALID-FIELDS' );
+			throw new Exception( 'INVALID-DOCUMENT' );
 		}
 
 		if ( Person::TYPE_BUSINESS === $person_type ) {
@@ -455,60 +419,6 @@ class WC_EBANX_Payment_Adapter {
 		}
 
 		return $cpf;
-	}
-
-	/**
-	 *
-	 * @param array  $names
-	 * @param string $gateway_id
-	 *
-	 * @return string
-	 * @throws Exception Throws parameter missing exception.
-	 */
-	public static function get_chilean_document( $names, $gateway_id ) {
-		$document = WC_EBANX_Request::read( $names['ebanx_billing_chile_document'], null )
-			?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_chile_document'];
-		if ( null === $document ) {
-			throw new Exception( 'BP-DR-22' );
-		}
-
-		return $document;
-	}
-
-	/**
-	 *
-	 * @param array  $names
-	 * @param string $gateway_id
-	 *
-	 * @return string
-	 * @throws Exception Throws parameter missing exception.
-	 */
-	public static function get_colombian_document( $names, $gateway_id ) {
-		$document = WC_EBANX_Request::read( $names['ebanx_billing_colombia_document'], null )
-		?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_colombia_document'];
-		if ( null === $document ) {
-			throw new Exception( 'BP-DR-22' );
-		}
-
-		return $document;
-	}
-
-	/**
-	 *
-	 * @param array  $names
-	 * @param string $gateway_id
-	 *
-	 * @return string
-	 * @throws Exception Throws parameter missing exception.
-	 */
-	public static function get_peruvian_document( $names, $gateway_id ) {
-		$document = WC_EBANX_Request::read( $names['ebanx_billing_peru_document'], null )
-			?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_peru_document'];
-		if ( null === $document ) {
-			throw new Exception( 'BP-DR-22' );
-		}
-
-		return $document;
 	}
 
 	/**

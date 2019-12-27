@@ -182,7 +182,7 @@ class WC_EBANX_Checker {
 	 * @param WC_EBANX $context
 	 */
 	private static function connection_error( $context ) {
-		$api_url = 'https://api.ebanx.com';
+		$api_url = 'https://api.ebanx.com.br';
 
 		$message = sprintf(
 			__( 'EBANX - Could not connect to our servers. Please check if your server can reach our API (<a href="%1$s">%1$s</a>).', 'woocommerce-gateway-ebanx' ),
@@ -281,21 +281,6 @@ class WC_EBANX_Checker {
 				->with_type( 'info' )
 				->persistent()
 				->enqueue();
-		}
-	}
-
-	/**
-	 *
-	 * @throws Exception Param not found exception.
-	 */
-	public function validate_document() {
-		if (
-			WC_EBANX_Request::has( 'billing_country' )
-			&& WC_EBANX_Request::read( 'billing_country' ) === 'AR'
-			&& WC_EBANX_Request::has( 'ebanx_billing_argentina_document' )
-			&& strlen( preg_replace( '/[^0-9]/', '', WC_EBANX_Request::read( 'ebanx_billing_argentina_document' ) ) ) !== 11
-		) {
-			wc_add_notice( '<strong>Document</strong> must have 11 digits and contain only numbers.', 'error' );
 		}
 	}
 }

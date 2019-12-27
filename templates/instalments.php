@@ -1,7 +1,6 @@
 <!-- Installments -->
 <?php
 $currency      = $currency ?: get_woocommerce_currency();
-$currency_rate = $currency_rate ?: 1;
 
 if ( count( $instalments_terms ) > 1 ) : ?>
 	<section class="ebanx-form-row">
@@ -10,7 +9,6 @@ if ( count( $instalments_terms ) > 1 ) : ?>
 		<?php else : ?>
 			<label for="ebanx-card-installments">
 				<?php
-					// @codingStandardsIgnoreLine
 					echo esc_html( $instalments );
 				?>
 				<span class="required">*</span>
@@ -24,10 +22,10 @@ if ( count( $instalments_terms ) > 1 ) : ?>
 				name="ebanx-credit-card-installments"
 			>
 				<?php foreach ( $instalments_terms as $instalment ) : ?>
-					<option value="<?php echo esc_attr( $instalment['number'] ); ?>" <?php echo $current_instalment == $instalment['number'] ? 'selected="selected"' : '' ?>">
+					<option value="<?php echo esc_attr( $instalment['number'] ); ?>" <?php echo $selected_instalment == $instalment['number'] ? 'selected="selected"' : '' ?>">
 						<?php
 							// @codingStandardsIgnoreLine
-							printf( __( '%1$dx %2$s', 'woocommerce-gateway-ebanx' ), absint( $instalment['number'] ), esc_html( strip_tags( wc_price( $instalment['price'] * $currency_rate , array( 'currency' => $currency ) ) ) ) );
+							printf( __( '%1$dx %2$s', 'woocommerce-gateway-ebanx' ), absint( $instalment['number'] ), esc_html( strip_tags( wc_price( $instalment['price'], array( 'currency' => $currency ) ) ) ) );
 							// @codingStandardsIgnoreLine
 							echo esc_html( $instalment['has_interest'] ? __( $with_interest, 'woocommerce-gateway-ebanx' ) : '' );
 						?>

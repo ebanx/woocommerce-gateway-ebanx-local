@@ -3,9 +3,9 @@
 
 if ( $order_id ) {
 	$order             = wc_get_order( $order_id );
-	$order_person_type = $order ? get_post_meta( $order->id, '_billing_persontype', true ) : null;
-	$cpf               = $order ? get_post_meta( $order->id, '_billing_cpf', true ) : null;
-	$cnpj              = $order ? get_post_meta( $order->id, '_billing_cnpj', true ) : null;
+	$order_person_type = $order ? get_post_meta( $order->get_id(), '_billing_persontype', true ) : null;
+	$cpf               = $order ? get_post_meta( $order->get_id(), '_billing_cpf', true ) : null;
+	$cnpj              = $order ? get_post_meta( $order->get_id(), '_billing_cnpj', true ) : null;
 
 	$address = $order->get_address();
 	$company = $order->get_billing_company();

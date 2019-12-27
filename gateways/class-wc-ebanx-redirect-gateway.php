@@ -35,7 +35,8 @@ abstract class WC_EBANX_Redirect_Gateway extends WC_EBANX_New_Gateway {
 
 		parent::process_response( $response, $order );
 
-		update_post_meta( $order->id, '_ebanx_payment_hash', $response['payment']['hash'] );
+		update_post_meta( $order->get_id(), '_ebanx_payment_hash', $response['payment']['hash'] );
+		update_post_meta( $order->get_id(), '_ebanx_payment_merchant_payment_code', $response['payment']['merchant_payment_code'] );
 
 		$this->redirect_url = $redirect;
 	}
