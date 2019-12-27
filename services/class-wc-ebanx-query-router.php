@@ -50,7 +50,6 @@ class WC_EBANX_Query_Router {
 	 * Just call this at the end of your setup
 	 *
 	 * @return void
-	 * @throws Exception
 	 */
 	public function serve() {
 		$route = $this->find_route_for_key();
@@ -73,7 +72,6 @@ class WC_EBANX_Query_Router {
 	 * @param  string $search_key A key to read the value from (optional).
 	 *
 	 * @return array              A callable array of your route handler
-	 * @throws Exception
 	 */
 	private function find_route_for_key( $search_key = null ) {
 		$key = $this->key;
@@ -107,7 +105,6 @@ class WC_EBANX_Query_Router {
 	 * @param  array $route Callable array.
 	 *
 	 * @return array
-	 * @throws Exception
 	 */
 	private static function read_request_for_route( $route ) {
 		self::validate_route( $route );

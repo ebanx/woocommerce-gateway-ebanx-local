@@ -99,8 +99,8 @@ class WC_EBANX_Request {
 	/**
 	 * Get value from $_POST['post_data'] or $default value
 	 *
-	 * @param $key
-	 * @param null $default
+	 * @param string $key
+	 * @param null   $default
 	 *
 	 * @return mixed|null
 	 */

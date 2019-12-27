@@ -10,9 +10,9 @@ if ( $order_id ) {
 	$address = $order->get_address();
 	$company = $order->get_billing_company();
 
-	$person_type = ('1' === $order_person_type ||
+	$person_type = ( '1' === $order_person_type ||
 		'cpf' === $order_person_type ||
-		'pessoa física' === strtolower($order_person_type)
+		'pessoa física' === strtolower( $order_person_type )
 	) ? 'cpf' : 'cnpj';
 
 	$fields = array(
@@ -63,8 +63,8 @@ if ( $order_id ) {
 		<div class="ebanx-form-row ebanx-form-row-wide">
 			<label for="<?php echo esc_attr( "{$id}[ebanx_billing_brazil_person_type]" ); ?>"><?php esc_html_e( 'Person type', 'woocommerce-gateway-ebanx' ); ?></label>
 			<select name="<?php echo esc_attr( "{$id}[ebanx_billing_brazil_person_type]" ); ?>" id="<?php echo esc_attr( "{$id}[ebanx_billing_brazil_person_type]" ); ?>" class="ebanx-select-field ebanx-person-type-field">
-				<option value="cpf" <?php echo 'cpf'=== $person_type ? 'selected="selected"' : '' ?>>CPF</option>
-				<option value="cnpj"<?php echo 'cnpj'=== $person_type ? 'selected="selected"' : '' ?>>CNPJ</option>
+				<option value="cpf" <?php echo 'cpf' === $person_type ? 'selected="selected"' : ''; ?>>CPF</option>
+				<option value="cnpj"<?php echo 'cnpj' === $person_type ? 'selected="selected"' : ''; ?>>CNPJ</option>
 			</select>
 		</div>
 
@@ -77,7 +77,7 @@ if ( $order_id ) {
 					class="input-text"
 				/>
 			<?php else : ?>
-				<div class="ebanx-form-row ebanx-form-row-wide <?php echo isset( $field['class_row'] ) ? $field['class_row'] : '' ?>">
+				<div class="ebanx-form-row ebanx-form-row-wide <?php echo isset( $field['class_row'] ) ? $field['class_row'] : ''; ?>">
 					<label for="<?php echo esc_attr( "{$id}[{$name}]" ); ?>"><?php echo esc_attr( $field['label'] ); ?></label>
 					<input
 						type="<?php echo esc_attr( isset( $field['type'] ) ? $field['type'] : 'text' ); ?>"
@@ -94,12 +94,9 @@ if ( $order_id ) {
 			<select name="<?php echo esc_attr( "{$id}[billing_state]" ); ?>" id="<?php echo esc_attr( "{$id}[billing_state]" ); ?>" class="ebanx-select-field">
 				<option value="" selected><?php esc_html_e( 'Select...', 'woocommerce-gateway-ebanx' ); ?></option>
 				<?php foreach ( $states as $abbr => $name ) : ?>
-					<option value="<?php echo esc_attr( $abbr ); ?>" <?php echo strtolower( $abbr ) === strtolower( $address['state'] ) ? 'selected="selected"' : '' ?>><?php echo esc_html( $name ); ?></option>
+					<option value="<?php echo esc_attr( $abbr ); ?>" <?php echo strtolower( $abbr ) === strtolower( $address['state'] ) ? 'selected="selected"' : ''; ?>><?php echo esc_html( $name ); ?></option>
 				<?php endforeach; ?>
 			</select>
 		</div>
 	</div>
 <?php endif ?>
-
-
-

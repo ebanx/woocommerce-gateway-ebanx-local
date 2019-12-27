@@ -87,8 +87,6 @@ class WC_EBANX_Payment_Adapter {
 	 *
 	 * @param WC_Order $order
 	 *
-	 * @param string   $gateway_id
-	 *
 	 * @return Address
 	 * @throws Exception Throws parameter missing exception.
 	 */
@@ -166,7 +164,6 @@ class WC_EBANX_Payment_Adapter {
 	 * @return array
 	 */
 	private static function get_order_meta_data( $order ) {
-		//TODO: Refactor
 		$data        = get_post_meta( $order->data['id'] );
 		$data_values = array();
 
@@ -194,8 +191,8 @@ class WC_EBANX_Payment_Adapter {
 				'token' => $user_cc_token,
 			]
 		);
-
-		$payment->manualReview = 'yes' === $configs->settings['manual_review_enabled']; // phpcs:ignore WordPress.NamingConventions.ValidVariableName
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
+		$payment->manualReview = 'yes' === $configs->settings['manual_review_enabled'];
 
 		return $payment;
 	}
@@ -217,13 +214,13 @@ class WC_EBANX_Payment_Adapter {
 		if ( count( $fields_options ) === 1 && 'cnpj' === $fields_options[0] ) {
 			return Person::TYPE_BUSINESS;
 		}
-
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 		$brazilPersonType = get_post_meta( $order->get_id(), '_billing_persontype', true );
-
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 		if ( empty( $brazilPersonType ) ) {
 			return Person::TYPE_PERSONAL;
 		}
-
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 		if ( 'cpf' === $brazilPersonType || 1 == $brazilPersonType || 'pessoa física' === strtolower( $brazilPersonType ) ) {
 			return Person::TYPE_PERSONAL;
 		}
@@ -263,7 +260,6 @@ class WC_EBANX_Payment_Adapter {
 	 * @param WC_EBANX_Global_Gateway $configs
 	 *
 	 * @return Person
-	 * @throws Exception
 	 */
 	private static function transform_person_from_post_data( $order, $configs ) {
 		$person_type = self::get_person_type_from_order( $order, $configs );
@@ -286,7 +282,6 @@ class WC_EBANX_Payment_Adapter {
 	 * @param WC_EBANX_Global_Gateway $configs
 	 *
 	 * @return DateTime|string
-	 * @throws Exception
 	 */
 	private static function transform_due_date( $configs ) {
 		$due_date = '';
@@ -327,6 +322,7 @@ class WC_EBANX_Payment_Adapter {
 
 		$addresses      = WC_EBANX_Helper::split_street( $addresses );
 		$street_number  = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 		$addressCountry = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country();
 
 		return new Address(
@@ -334,6 +330,7 @@ class WC_EBANX_Payment_Adapter {
 				'address'      => $addresses['streetName'],
 				'streetNumber' => $street_number,
 				'city'         => WC_EBANX_Request::read( 'billing_city', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_city'],
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 				'country'      => Country::fromIso( $addressCountry ),
 				'state'        => WC_EBANX_Request::read( 'billing_state', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_state'],
 				'zipcode'      => WC_EBANX_Request::read( 'billing_postcode', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_postcode'],
@@ -422,9 +419,9 @@ class WC_EBANX_Payment_Adapter {
 	}
 
 	/**
-	 *
 	 * @param WC_EBANX_Global_Gateway $configs
 	 * @param array                   $names
+	 * @param array                   $gateway_id
 	 *
 	 * @return string
 	 * @throws Exception Throws parameter missing exception.

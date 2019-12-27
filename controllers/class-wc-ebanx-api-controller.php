@@ -30,7 +30,7 @@ class WC_EBANX_Api_Controller {
 	 * @return void
 	 */
 	public function dashboard_check() {
-		echo json_encode(
+		echo wp_json_encode(
 			array(
 				'ebanx'   => true,
 				'version' => WC_EBANX::get_plugin_version(),
@@ -50,7 +50,7 @@ class WC_EBANX_Api_Controller {
 		if ( empty( WC_EBANX_Request::has( 'integration_key' ) )
 			|| ( WC_EBANX_Request::read( 'integration_key' ) !== $this->config->settings['live_private_key']
 			&& WC_EBANX_Request::read( 'integration_key' ) !== $this->config->settings['sandbox_private_key'] ) ) {
-			die( json_encode( [] ) );
+			die( wp_json_encode( [] ) );
 		}
 
 		$where = "integration_key = '" . WC_EBANX_Request::read( 'integration_key' ) . "'";
@@ -58,7 +58,7 @@ class WC_EBANX_Api_Controller {
 
 		WC_EBANX_Database::truncate( 'logs', $where );
 
-		die( json_encode( $logs ) );
+		die( wp_json_encode( $logs ) );
 	}
 
 	/**
@@ -94,9 +94,9 @@ class WC_EBANX_Api_Controller {
 	 */
 	public function cancel_order( $order_id, $user_id ) {
 		$order = new WC_Order( $order_id );
-		if ( get_current_user_id() != $user_id
+		if ( (int) get_current_user_id() !== (int) $user_id
 			|| $order->get_status() !== 'on-hold'
-			|| ! in_array( $order->get_payment_method(), WC_EBANX_Constants::$cash_payment_gateways_code )
+			|| ! in_array( $order->get_payment_method(), WC_EBANX_Constants::$cash_payment_gateways_code, true )
 			) {
 			wp_redirect( get_site_url() );
 			return;

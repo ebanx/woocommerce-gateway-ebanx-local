@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<iframe id="ebanx-boleto-frame" src="<?php echo esc_attr( $url_iframe ); ?>" style="width: 100%; border: 0px; height: 1000px"></iframe>
 	<?php endif; ?>
 
-	<?php // phpcs:disable //TODO: Change this ?>
+	<?php // phpcs:disable ?>
 	<script type="text/javascript" src="https://print.ebanx.com/assets/sources/fingerprint/fingerprint2.min.js"></script>
 	<script type="text/javascript" src="https://print.ebanx.com/assets/sources/fingerprint/browserdetect.js"></script>
 	<script type="text/javascript" src="https://print.ebanx.com/assets/sources/fingerprint/mystiquefingerprint.js"></script>
@@ -57,4 +57,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			Mystique.registerFingerprint(done, options, '<?php echo esc_attr( wp_is_mobile() ? 'boleto-responsive' : 'boleto-default' ); ?>' );
 		})();
 	</script>
+
+	<input type="hidden" id="ebanx-payment-hash" data-doraemon-hash="<?php echo esc_html( $hash ); ?>">
 </div>
