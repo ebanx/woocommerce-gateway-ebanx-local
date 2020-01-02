@@ -20,13 +20,7 @@ cache:
 
 env:
   matrix:
-    - TEST_COUNTRY=argentina
     - TEST_COUNTRY=brazil
-    - TEST_COUNTRY=chile
-    - TEST_COUNTRY=colombia
-    - TEST_COUNTRY=ecuador
-    - TEST_COUNTRY=mexico
-    - TEST_COUNTRY=peru
 
 before_install:
   - nvm install stable
@@ -65,32 +59,32 @@ jobs:
         - TEST_COUNTRY=
       script:
         - bash ./tests/bin/admin-test.sh
-    - stage: release
-      script:
-        - bash <(curl -s https://codecov.io/bash)
-        - bash .scripts/before_deploy.sh
-        - cd $TRAVIS_BUILD_DIR
-        - zip -r /tmp/ebanx-payment-gateway-for-woocommerce ./* -x "*.git*" "*tests*" "*_vendor*"
-      env:
-        - TEST_COUNTRY=
-      deploy:
-        - provider: releases
-          api_key:
-            secure: Uqy38CcSLLpRN53FwIQN9v0SyLRvV6Q47B27dBoMDG9p6qR9W4Nx6xAxi9NJCwDQR15j+WcgkR3iL8R8EXjFNJOpqBvCoWzgQZSNQY8NIOlchNGpVSULgR0r/UE526zoAAnYPu1QeQNTSdDkOCJdggZTYDo+GKqlFw0pd0J6JevktgovZwwy5sMLummfGQVj6VuT38ZIqZQI2ZJaY9iLAJYtLfGpud2xs7PmrccmRH/sYinUJRl+IZxT00oxLMgkk9wryj4ShMcuabHOR9J/3imsYohCpcoxHioedHItfRlVIQoF5Ss73cD2E8XR4kfJIJtuezTnl7bAyRGj5VUUy0EBavi7IizyhrS2vAPq7VastJn0wsxFI7vo9QMF2N0kxCtNo8a3Z5NX3bHBVAISiGFr9ruw9j/Lp9Hi0z+jfc4STUb7FXL+kvB46M9PALghp6KtoYUsOaa7m9XDzzMm7Cb1A7Gd8zcAtEalL2sRBnIEcN4V+K9S76ENSf0N0L6PJjiYG+s1/EtmFJCZfHvOEjoNz0q16jebCmPvAsAHrbvHZ5oUaPt9mTxpjIjQpursZc0GhBCNWbx7A2KfONtlxKUP7XXPFuF89Qg4av15AMPX+LSBKsUN89a3Hoxv+nuyQR+WjPYTdqxeUFa1e2THGceey/0n/FwwPB4awM1Ohs0=
-          file: /tmp/ebanx-payment-gateway-for-woocommerce.zip
-          skip_cleanup: true
-          on:
-            tags: true
-            all_branches: true
-    - stage: deploy
-      script:
-        - bash .scripts/before_deploy.sh
-      env:
-        - TEST_COUNTRY=
-      deploy:
-        - provider: script
-          skip_cleanup: true
-          script: ./deploy.sh
-          on:
-            tags: true
-            all_branches: true
+#    - stage: release
+#      script:
+#        - bash <(curl -s https://codecov.io/bash)
+#        - bash .scripts/before_deploy.sh
+#        - cd $TRAVIS_BUILD_DIR
+#        - zip -r /tmp/ebanx-payment-gateway-for-woocommerce ./* -x "*.git*" "*tests*" "*_vendor*"
+#      env:
+#        - TEST_COUNTRY=
+#      deploy:
+#        - provider: releases
+#          api_key:
+#            secure: change_this
+#          file: /tmp/ebanx-payment-gateway-for-woocommerce.zip
+#          skip_cleanup: true
+#          on:
+#            tags: true
+#            all_branches: true
+#    - stage: deploy
+#      script:
+#        - bash .scripts/before_deploy.sh
+#      env:
+#        - TEST_COUNTRY=
+#      deploy:
+#        - provider: script
+#          skip_cleanup: true
+#          script: ./deploy.sh
+#          on:
+#            tags: true
+#            all_branches: true
