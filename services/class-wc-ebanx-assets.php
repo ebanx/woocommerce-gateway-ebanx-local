@@ -13,7 +13,6 @@ class WC_EBANX_Assets {
 		self::adjust_dynamic_admin_options_sections();
 		self::resize_settings_menu_icon();
 		self::disable_ebanx_gateways();
-		self::render_iof_notice();
 		self::render_manual_review_alert();
 	}
 
@@ -52,16 +51,6 @@ SVG;
 	 */
 	private static function resize_settings_menu_icon() {
 		self::render_style( 'settings-menu-icon' );
-	}
-
-	/**
-	 * Renders the style tag to resize the menu icon to the correct size
-	 *
-	 * @return void
-	 */
-	private static function render_iof_notice() {
-		self::render_script( 'iof-options', array( 'jquery' ) );
-		self::localize_script( 'iof-options', array( 'confirm_message' => __( 'You need to validate this change with EBANX, only deselecting or selecting the box will not set this to your customer. Contact your EBANX Account Manager or Business Development Expert.', 'woocommerce-gateway-ebanx' ) ) );
 	}
 
 	/**

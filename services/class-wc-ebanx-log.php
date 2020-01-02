@@ -93,8 +93,6 @@ class WC_EBANX_Log {
 	 * Retrieve some options to be logged
 	 */
 	private static function get_options() {
-		$wp_theme = wp_get_theme();
-
 		return array(
 			'admin_email'     => get_option( 'admin_email' ),
 			'blogname'        => get_option( 'blogname' ),

@@ -24,6 +24,9 @@
 		})
 		.last();
 
+    if (last.length < 1)
+      return;
+
 	last.html(last.html().replace(/ \| ?/g, ''));
 
 	$('.ebanx-select').select2();

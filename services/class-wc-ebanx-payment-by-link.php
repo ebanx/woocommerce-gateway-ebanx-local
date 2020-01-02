@@ -73,7 +73,7 @@ class WC_EBANX_Payment_By_Link {
 			return;
 		}
 
-		self::post_request( $response['payment']['hash'], $response['redirect_url'] );
+		self::post_request( $response['payment']['hash'], $response['payment']['merchant_payment_code'], $response['redirect_url'] );
 	}
 
 	/**
@@ -109,22 +109,22 @@ class WC_EBANX_Payment_By_Link {
 	private static function send_request() {
 		$person = new Person(
 			[
-				'name'  => self::$order->billing_first_name . ' ' . self::$order->billing_last_name,
-				'email' => self::$order->billing_email,
+				'name'  => self::$order->get_billing_first_name() . ' ' . self::$order->get_billing_last_name(),
+				'email' => self::$order->get_billing_email(),
 			]
 		);
 
-		$address = new Address( [ 'country' => Country::fromIso( self::$order->billing_country ) ] );
+		$address = new Address( [ 'country' => Country::fromIso( self::$order->get_billing_country() ) ] );
 
 		$data = new Request(
 			[
 				'person'              => $person,
 				'address'             => $address,
-				'orderNumber'         => self::$order->id,
-				'type'                => empty( self::$order->payment_method ) ? '_all' : WC_EBANX_Constants::$gateway_to_payment_type_code[ self::$order->payment_method ],
-				'merchantPaymentCode' => substr( self::$order->id . '_' . md5( time() ), 0, 40 ),
+				'orderNumber'         => self::$order->get_id(),
+				'type'                => empty( self::$order->get_payment_method() ) ? '_all' : WC_EBANX_Constants::$gateway_to_payment_type_code[ self::$order->get_payment_method() ],
+				'merchantPaymentCode' => substr( self::$order->get_id() . '_' . md5( time() ), 0, 40 ),
 				'amount'              => self::$order->get_total(),
-				'maxInstalments'      => get_post_meta( self::$order->id, '_ebanx_instalments', true ),
+				'maxInstalments'      => get_post_meta( self::$order->get_id(), '_ebanx_instalments', true ),
 				'manualReview'        => 'yes' === self::$configs->settings['manual_review_enabled'],
 				'userValues'          => [
 					1 => 'from_woocommerce',
@@ -135,7 +135,7 @@ class WC_EBANX_Payment_By_Link {
 
 		$response = false;
 		try {
-			$response = ( new WC_EBANX_Api( self::$configs, self::$order->get_order_currency() ) )->ebanx()->hosted()->create( $data );
+			$response = ( new WC_EBANX_Api( self::$configs, self::$order->get_currency() ) )->ebanx()->hosted()->create( $data );
 		} catch ( Exception $e ) {
 			self::add_error( $e->getMessage() );
 			self::send_errors();
@@ -156,12 +156,15 @@ class WC_EBANX_Payment_By_Link {
 	 * If the request was successful, this method is called before ending the proccess
 	 *
 	 * @param  string $hash The payment hash.
+	 * @param  string $merchant_payment_code The payment merchant_payment_code.
 	 * @param  string $url  The payment url.
+	 *
 	 * @return void
 	 */
-	private static function post_request( $hash, $url ) {
+	private static function post_request( $hash, $merchant_payment_code, $url ) {
 		self::$order->add_order_note( __( 'EBANX: Your order was created via EBANX.', 'woocommerce-gateway-ebanx' ) );
 		update_post_meta( self::$post_id, '_ebanx_payment_hash', $hash );
+		update_post_meta( self::$post_id, '_ebanx_payment_merchant_payment_code', $merchant_payment_code );
 		update_post_meta( self::$post_id, '_ebanx_checkout_url', $url );
 	}
 

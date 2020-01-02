@@ -35,6 +35,7 @@ class WC_EBANX_Query_Router {
 	 *
 	 * @param  string $key_value The value which triggers this route.
 	 * @param  array  $handler   A callable array with instance/class and method.
+	 *
 	 * @return void
 	 */
 	public function map( $key_value, $handler ) {
@@ -49,6 +50,7 @@ class WC_EBANX_Query_Router {
 	 * Just call this at the end of your setup
 	 *
 	 * @return void
+	 * @throws Exception
 	 */
 	public function serve() {
 		$route = $this->find_route_for_key();
@@ -69,7 +71,9 @@ class WC_EBANX_Query_Router {
 	 * Locates the desired route based on the key value
 	 *
 	 * @param  string $search_key A key to read the value from (optional).
+	 *
 	 * @return array              A callable array of your route handler
+	 * @throws Exception
 	 */
 	private function find_route_for_key( $search_key = null ) {
 		$key = $this->key;
@@ -101,7 +105,9 @@ class WC_EBANX_Query_Router {
 	 * and assembles the parameter array
 	 *
 	 * @param  array $route Callable array.
+	 *
 	 * @return array
+	 * @throws Exception
 	 */
 	private static function read_request_for_route( $route ) {
 		self::validate_route( $route );
@@ -127,6 +133,7 @@ class WC_EBANX_Query_Router {
 	 * Validates a routing key
 	 *
 	 * @param  string $subject Routing key.
+	 *
 	 * @return void
 	 * @throws InvalidArgumentException When a query route key is not a string.
 	 */
@@ -140,6 +147,7 @@ class WC_EBANX_Query_Router {
 	 * Validates a query key value
 	 *
 	 * @param  string $subject Key value.
+	 *
 	 * @return void
 	 * @throws InvalidArgumentException When query route key is not a string.
 	 */
@@ -153,6 +161,7 @@ class WC_EBANX_Query_Router {
 	 * Validates a route handler
 	 *
 	 * @param  array $subject Route handler callable array.
+	 *
 	 * @return void
 	 * @throws InvalidArgumentException When specified route is not callable.
 	 */

@@ -2,7 +2,6 @@
 
 use Ebanx\Benjamin\Models\Configs\CreditCardConfig;
 use Ebanx\Benjamin\Models\Country;
-use Ebanx\Benjamin\Models\Currency;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -108,7 +107,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 				)
 			);
 
-			if ( 'ERROR' == $response['status'] ) {
+			if ( 'ERROR' === $response['status'] ) {
 				$order->payment_complete();
 				$order->update_status( 'failed' );
 				WC_EBANX::log( $response['status_message'] );
@@ -149,7 +148,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		return $actions;
 	}
 
-
 	/**
 	 *
 	 * @param int    $order_id
@@ -161,7 +159,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$action = WC_EBANX_Request::read( 'action', null );
 		$order  = wc_get_order( $order_id );
 
-		if ( $order->payment_method !== $this->id
+		if ( $order->get_payment_method() !== $this->id
 			|| 'processing' !== $status
 			|| 'woocommerce_mark_order_status' !== $action ) {
 			return;
@@ -179,8 +177,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		if ( is_checkout() ) {
 			wp_enqueue_script( 'wc-credit-card-form' );
 			// Using // to avoid conflicts between http and https protocols.
-			wp_enqueue_script( 'ebanx', plugins_url( 'assets/js/ebanx-1.6.min.js', WC_EBANX::DIR ), array( 'jquery' ), WC_EBANX::get_plugin_version(), true );
-//			wp_enqueue_script( 'ebanx', '//js.ebanx.com.br/ebanx-1.6.min.js', '', null, true );
+			wp_enqueue_script( 'ebanx', '//js.ebanxpay.com/ebanx-libjs-latest.min.js', '', null, true );
 			wp_enqueue_script( 'woocommerce_ebanx_jquery_mask', plugins_url( 'assets/js/jquery-mask.js', WC_EBANX::DIR ), array( 'jquery' ), WC_EBANX::get_plugin_version(), true );
 			wp_enqueue_script( 'woocommerce_ebanx_credit_card', plugins_url( 'assets/js/credit-card.js', WC_EBANX::DIR ), array( 'jquery-payment', 'ebanx' ), WC_EBANX::get_plugin_version(), true );
 
@@ -191,15 +188,15 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 				$order_id  = absint( $_GET['order_id'] );
 				$order     = wc_get_order( $order_id );
 
-				if ( $order->id === $order_id && $order->order_key === $order_key ) {
-					static::$ebanx_params['billing_first_name'] = $order->billing_first_name;
-					static::$ebanx_params['billing_last_name']  = $order->billing_last_name;
-					static::$ebanx_params['billing_address_1']  = $order->billing_address_1;
-					static::$ebanx_params['billing_address_2']  = $order->billing_address_2;
-					static::$ebanx_params['billing_state']      = $order->billing_state;
-					static::$ebanx_params['billing_city']       = $order->billing_city;
-					static::$ebanx_params['billing_postcode']   = $order->billing_postcode;
-					static::$ebanx_params['billing_country']    = $order->billing_country;
+				if ( $order->get_id() === $order_id && $order->get_order_key() === $order_key ) {
+					static::$ebanx_params['billing_first_name'] = $order->get_billing_first_name();
+					static::$ebanx_params['billing_last_name']  = $order->get_billing_last_name();
+					static::$ebanx_params['billing_address_1']  = $order->get_billing_address_1();
+					static::$ebanx_params['billing_address_2']  = $order->get_billing_address_2();
+					static::$ebanx_params['billing_state']      = $order->get_billing_state();
+					static::$ebanx_params['billing_city']       = $order->get_billing_city();
+					static::$ebanx_params['billing_postcode']   = $order->get_billing_postcode();
+					static::$ebanx_params['billing_country']    = $order->get_billing_country();
 				}
 			}
 		}
@@ -215,7 +212,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 * @throws Exception When missing card params or when missing device fingerprint.
 	 */
 	protected function transform_payment_data( $order ) {
-
 		if ( empty( WC_EBANX_Request::read( 'ebanx_token', null ) )
 			|| empty( WC_EBANX_Request::read( 'ebanx_masked_card_number', null ) )
 			|| empty( WC_EBANX_Request::read( 'ebanx_brand', null ) )
@@ -230,7 +226,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 		return WC_EBANX_Payment_Adapter::transform_card( $order, $this->configs, $this->names, $this->id );
 	}
-
 
 	/**
 	 *
@@ -253,27 +248,31 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 *
 	 * @param  WC_Order $order The order created.
 	 * @param  Object   $request The request from EBANX success response.
+	 *
+	 * @throws Exception
 	 * @return void
 	 */
 	protected function save_order_meta_fields( $order, $request ) {
 		parent::save_order_meta_fields( $order, $request );
 
-		update_post_meta( $order->id, '_cards_brand_name', $request->payment->payment_type_code );
-		update_post_meta( $order->id, '_instalments_number', $request->payment->instalments );
-		update_post_meta( $order->id, '_masked_card_number', WC_EBANX_Request::read( 'ebanx_masked_card_number' ) );
+		update_post_meta( $order->get_id(), '_cards_brand_name', $request->payment->payment_type_code );
+		update_post_meta( $order->get_id(), '_instalments_number', $request->payment->instalments );
+		update_post_meta( $order->get_id(), '_masked_card_number', WC_EBANX_Request::read( 'ebanx_masked_card_number' ) );
 	}
 
 	/**
 	 * Save user's meta fields for future use
 	 *
 	 * @param  WC_Order $order The order created.
+	 *
+	 * @throws Exception
 	 * @return void
 	 */
 	protected function save_user_meta_fields( $order ) {
 		parent::save_user_meta_fields( $order );
 
 		if ( ! $this->user_id ) {
-			$this->user_id = $order->user_id;
+			$this->user_id = $order->get_user_id();
 		}
 
 		if ( ! $this->user_id
@@ -320,17 +319,18 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 * @return array
 	 * @throws Exception Shows param missing message.
 	 */
-	public function process_payment( $order_id ) {// phpcs:disable
+	public function process_payment( $order_id ) {
+		//TODO: check if is token or new credit card
 		$has_instalments = ( WC_EBANX_Request::has( 'ebanx_billing_instalments' ) || WC_EBANX_Request::has( 'ebanx-credit-card-installments' ) );
-		$order = wc_get_order($order_id);
-		$currency = strtoupper( $order->get_order_currency() );
 		$billing_country = trim(strtolower(get_post_meta($order_id, '_billing_country', true)));
-		$country_abbr = empty($billing_country) ? strtolower( WC_EBANX_Constants::DEFAULT_COUNTRY ) : $billing_country;
+		$country_abbr    = empty($billing_country) ? strtolower( WC_EBANX_Constants::DEFAULT_COUNTRY ) : $billing_country;
+
 		$this->ebanx_gateway = $this->ebanx->creditCard( $this->get_credit_card_config( $country_abbr ) );
 
 		if ( $has_instalments ) {
 			$country         = Country::fromIso($country_abbr);
 			$total_price     = get_post_meta( $order_id, '_order_total', true );
+			//TODO: check if is token or new credit card
 			$instalments     = WC_EBANX_Request::has( 'ebanx_billing_instalments' ) ? WC_EBANX_Request::read( 'ebanx_billing_instalments' ) : WC_EBANX_Request::read( 'ebanx-credit-card-installments' );
 			$instalment_term = self::get_instalment_term( $this->ebanx_gateway->getPaymentTermsForCountryAndValue( $country, $total_price ), $instalments);
 
@@ -341,7 +341,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		}
 
 		return parent::process_payment( $order_id );
-	}// phpcs:enable
+	}
 
 	/**
 	 * The page of order received, we call them as "Thank you pages"
@@ -351,23 +351,22 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 */
 	public static function thankyou_page( $order ) {
 		$order_amount       = $order->get_total();
-		$instalments_number = get_post_meta( $order->id, '_instalments_number', true ) ?: 1;
-		$country            = trim( strtolower( get_post_meta( $order->id, '_billing_country', true ) ) );
-		$currency           = $order->get_order_currency();
+		$instalments_number = get_post_meta( $order->get_id(), '_instalments_number', true ) ?: 1;
+		$currency           = $order->get_currency();
 
 		$data = array(
 			'data'         => array(
-				'card_brand_name'    => get_post_meta( $order->id, '_cards_brand_name', true ),
+				'card_brand_name'    => get_post_meta( $order->get_id(), '_cards_brand_name', true ),
 				'instalments_number' => $instalments_number,
 				'instalments_amount' => wc_price( round( $order_amount / $instalments_number, 2 ), array( 'currency' => $currency ) ),
-				'masked_card'        => substr( get_post_meta( $order->id, '_masked_card_number', true ), -4 ),
-				'customer_email'     => $order->billing_email,
-				'customer_name'      => $order->billing_first_name,
+				'masked_card'        => substr( get_post_meta( $order->get_id(), '_masked_card_number', true ), -4 ),
+				'customer_email'     => $order->get_billing_email(),
+				'customer_name'      => $order->get_billing_first_name(),
 				'total'              => wc_price( $order_amount, array( 'currency' => $currency ) ),
-				'hash'               => get_post_meta( $order->id, '_ebanx_payment_hash', true ),
+				'hash'               => get_post_meta( $order->get_id(), '_ebanx_payment_hash', true ),
 			),
 			'order_status' => $order->get_status(),
-			'method'       => $order->payment_method,
+			'method'       => $order->get_payment_method(),
 		);
 
 		parent::thankyou_page( $data );
@@ -378,22 +377,19 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 *
 	 * @param string $country
 	 * @param int    $amount
-	 * @param float  $currency_rate
 	 *
 	 * @return array   An array of instalment with price, amount, if it has interests and the number
 	 */
-	public function get_payment_terms( $country, $amount, $currency_rate ) {
+	public function get_payment_terms( $country, $amount ) {
 		$credit_card_gateway = $this->ebanx->creditCard( $this->get_credit_card_config( $country ) );
 		$country_full_name   = Country::fromIso( $country );
 		$instalments_terms   = $credit_card_gateway->getPaymentTermsForCountryAndValue( $country_full_name, $amount );
 
 		foreach ( $instalments_terms as $term ) {
-			// phpcs:disable
 			$instalments[] = array(
 				'price'        => $term->baseAmount,
 				'has_interest' => $term->hasInterests,
 				'number'       => $term->instalmentNumber,
-				// phpcs:enable
 			);
 		}
 
@@ -430,13 +426,34 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	}
 
 	/**
+	 * Get request credit card instalments if exists
+	 *
+	 * @param  int $default
+	 *
+	 * @return int
+	 */
+	public static function get_request_credit_card_instalments( $default = 1 ) {
+		return WC_EBANX_Request::get_value_from_post_data_or_default( 'ebanx-credit-card-installments', $default );
+	}
+
+	/**
+	 * Get request billing instalments if exists
+	 *
+	 * @param  int $default
+	 *
+	 * @return int
+	 */
+	public static function get_request_billing_instalments( $default = 1 ) {
+		return WC_EBANX_Request::get_value_from_post_data_or_default( 'ebanx_billing_instalments', $default );
+	}
+
+	/**
 	 * The HTML structure on checkout page
 	 *
 	 * @throws Exception Throws missing param message.
 	 */
 	public function payment_fields() {
 		$cart_total = $this->get_order_total();
-		$currency_rate = round( floatval( $this->get_local_currency_rate_for_site( $this->currency_code ) ), 2 );
 
 		$cards = array();
 
@@ -450,9 +467,8 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			);
 		}
 
-		$country = $this->get_transaction_address( 'country' );
-
-		$instalments_terms = $this->get_payment_terms( $country, $cart_total, $currency_rate );
+		$country           = $this->get_transaction_address( 'country' );
+		$instalments_terms = $this->get_payment_terms( $country, $cart_total );
 
 		$currency = WC_EBANX_Constants::$local_currencies[ $country ];
 
@@ -472,9 +488,9 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			array(
 				'currency'            => $currency,
 				'country'             => $country,
+				'selected_instalment' => WC_EBANX_Request::read( 'ebanx_billing_instalments', 1 ),
 				'instalments_terms'   => $instalments_terms,
 				'currency_code'       => $this->currency_code,
-				'currency_rate'       => $currency_rate,
 				'cards'               => (array) $cards,
 				'cart_total'          => $cart_total,
 				'place_order_enabled' => $save_card,

@@ -20,7 +20,7 @@ if [[ -z "$TRAVIS_TAG" ]]; then
     exit 0
 fi
 
-SLUG="ebanx-payment-gateway-for-woocommerce"
+SLUG="ebanx-local-payment-gateway-for-woocommerce"
 SVN_ROOT_PATH="$TRAVIS_BUILD_DIR/build/svn"
 
 # Clean up any previous svn dir

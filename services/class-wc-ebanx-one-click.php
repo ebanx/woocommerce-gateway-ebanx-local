@@ -48,17 +48,8 @@ class WC_EBANX_One_Click {
 		$this->user_country = trim( strtolower( get_user_meta( $this->user_id, 'billing_country', true ) ) );
 
 		switch ( $this->user_country ) {
-			case WC_EBANX_Constants::COUNTRY_ARGENTINA:
-				$this->gateway = new WC_EBANX_Credit_Card_AR_Gateway();
-				break;
 			case WC_EBANX_Constants::COUNTRY_BRAZIL:
 				$this->gateway = new WC_EBANX_Credit_Card_BR_Gateway();
-				break;
-			case WC_EBANX_Constants::COUNTRY_COLOMBIA:
-				$this->gateway = new WC_EBANX_Credit_Card_CO_Gateway();
-				break;
-			case WC_EBANX_Constants::COUNTRY_MEXICO:
-				$this->gateway = new WC_EBANX_Credit_Card_MX_Gateway();
 				break;
 			default:
 				$this->gateway = false;
@@ -187,20 +178,20 @@ class WC_EBANX_One_Click {
 				'_order_total'        => WC()->cart->total,
 			);
 
-			$order->billing_country    = $user['country'];
-			$order->billing_first_name = $user['first_name'];
-			$order->billing_last_name  = $user['last_name'];
-			$order->billing_email      = $user['email'];
-			$order->billing_phone      = $user['phone'];
+			$order->set_billing_country( $user['country'] );
+			$order->set_billing_first_name( $user['first_name'] );
+			$order->set_billing_last_name( $user['last_name'] );
+			$order->set_billing_email( $user['email'] );
+			$order->set_billing_phone( $user['phone'] );
 			$order->save();
 
 			foreach ( $meta as $meta_key => $meta_value ) {
-				update_post_meta( $order->id, $meta_key, $meta_value );
+				update_post_meta( $order->get_id(), $meta_key, $meta_value );
 			}
 
 			$order->calculate_totals();
 
-			$response = $this->gateway->process_payment( $order->id );
+			$response = $this->gateway->process_payment( $order->get_id() );
 
 			if ( 'success' !== $response['result'] ) {
 				$message = __( 'EBANX: Unable to create the payment via one click.', 'woocommerce-gateway-ebanx' );
@@ -326,10 +317,6 @@ class WC_EBANX_One_Click {
 
 		WC_EBANX_Request::set( $names['ebanx_billing_brazil_document'], get_user_meta( $this->user_id, '_ebanx_billing_brazil_document', true ) );
 
-		WC_EBANX_Request::set( $names['ebanx_billing_colombia_document'], get_user_meta( $this->user_id, '_ebanx_billing_colombia_document', true ) );
-
-		WC_EBANX_Request::set( $names['ebanx_billing_argentina_document'], get_user_meta( $this->user_id, '_ebanx_billing_argentina_document', true ) );
-
 		WC_EBANX_Request::set( 'billing_postcode', $this->get_user_billing_address()['postcode'] );
 		WC_EBANX_Request::set( 'billing_address_1', $this->get_user_billing_address()['address_1'] );
 		WC_EBANX_Request::set( 'billing_city', $this->get_user_billing_address()['city'] );
@@ -338,13 +325,7 @@ class WC_EBANX_One_Click {
 		return ! empty( WC_EBANX_Request::read( 'ebanx-one-click-token', null ) )
 			&& ! empty( WC_EBANX_Request::read( 'ebanx-credit-card-installments', null ) )
 			&& ! empty( WC_EBANX_Request::read( 'ebanx-one-click-cvv', null ) )
-			&& ( ( WC_EBANX_Request::has( $names['ebanx_billing_brazil_document'] )
-			|| WC_EBANX_Request::has( $names['ebanx_billing_colombia_document'] )
-			|| WC_EBANX_Request::has( $names['ebanx_billing_argentina_document'] ) )
-			&& ( ! empty( WC_EBANX_Request::read( $names['ebanx_billing_brazil_document'], null ) )
-			|| ! empty( WC_EBANX_Request::read( $names['ebanx_billing_colombia_document'], null ) )
-			|| ! empty( WC_EBANX_Request::read( $names['ebanx_billing_argentina_document'], null ) ) )
-			|| 'mx' === $this->user_country );
+			&& ! empty( WC_EBANX_Request::read( $names['ebanx_billing_brazil_document'], null ) );
 	}
 
 	/**
@@ -362,10 +343,7 @@ class WC_EBANX_One_Click {
 	 */
 	public function should_show_button() {
 		return $this->cards
-			&& ( ! empty( get_user_meta( $this->user_id, '_ebanx_billing_brazil_document', true ) )
-			|| ! empty( get_user_meta( $this->user_id, '_ebanx_billing_colombia_document', true ) )
-			|| ! empty( get_user_meta( $this->user_id, '_ebanx_billing_argentina_document', true ) )
-			|| WC_EBANX_Constants::COUNTRY_MEXICO === $this->user_country );
+			&& ( ! empty( get_user_meta( $this->user_id, '_ebanx_billing_brazil_document', true ) ) );
 	}
 
 	/**
@@ -404,14 +382,10 @@ class WC_EBANX_One_Click {
 				break;
 		}
 
-		$country = $this->gateway->get_transaction_address( 'country' );
-
-		$cart_total = $product->price;
-
-		$ebanx             = new WC_EBANX_New_Gateway();
+		$country           = $this->gateway->get_transaction_address( 'country' );
+		$cart_total        = $product->price;
 		$currency          = WC_EBANX_Constants::$local_currencies[ $country ];
-		$currency_rate = round( floatval( $ebanx->get_local_currency_rate_for_site( $currency ) ), 2 );
-		$instalments_terms = $this->gateway->get_payment_terms( $country, $cart_total, $currency_rate );
+		$instalments_terms = $this->gateway->get_payment_terms( $country, $cart_total );
 
 		$args = apply_filters(
 			'ebanx_template_args', array(
@@ -420,7 +394,6 @@ class WC_EBANX_One_Click {
 				'product_id'         => $product->id,
 				'installment_taxes'  => $this->instalment_rates,
 				'currency'           => $currency,
-				'currency_rate'      => $currency_rate,
 				'label'              => __( 'Pay with one click', 'woocommerce-gateway-ebanx' ),
 				'instalments'        => $messages['instalments'],
 				'instalments_terms'  => $instalments_terms,

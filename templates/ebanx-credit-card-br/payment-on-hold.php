@@ -16,6 +16,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<p><strong><?php echo esc_html( $customer_name ); ?>, recebemos o seu pedido e estamos analisando a sua solicitação. :) </strong></p>
 
 	<p>Você deve receber um e-mail de confirmação em breve.</p>
-
-	<input type="hidden" id="ebanx-payment-hash" data-doraemon-hash="<?php echo esc_html( $hash ); ?>">
 </div>

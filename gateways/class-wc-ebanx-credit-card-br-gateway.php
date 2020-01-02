@@ -48,12 +48,5 @@ class WC_EBANX_Credit_Card_BR_Gateway extends WC_EBANX_Credit_Card_Gateway {
 	 */
 	public function payment_fields() {
 		parent::payment_fields();
-
-		parent::checkout_rate_conversion(
-			WC_EBANX_Constants::CURRENCY_CODE_BRL,
-			true,
-			null,
-			1
-		);
 	}
 }

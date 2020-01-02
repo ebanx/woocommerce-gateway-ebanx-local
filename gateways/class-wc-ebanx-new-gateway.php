@@ -265,12 +265,12 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			! isset( WC()->customer )
 			|| is_admin()
 			|| empty( WC_EBANX_Request::read( 'billing_country', null ) )
-			&& empty( WC()->customer->get_country() )
+			&& empty( WC()->customer->get_billing_country() )
 		) {
 			return false;
 		}
 
-		$address['country'] = trim( strtolower( WC()->customer->get_country() ) );
+		$address['country'] = trim( strtolower( WC()->customer->get_billing_country() ) );
 		if ( ! empty( WC_EBANX_Request::read( 'billing_country', null ) ) ) {
 			$address['country'] = trim( strtolower( WC_EBANX_Request::read( 'billing_country' ) ) );
 		}
@@ -344,7 +344,6 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			$code           = 'REFUSED-CC';
 			$status_message = $response['payment']['transaction_status']['description'];
 		}
-
 		// translators: placeholders contain bp-dr code and corresponding message.
 		$error_message = sprintf( __( 'EBANX: An error occurred: %1$s - %2$s', 'woocommerce-gateway-ebanx' ), $code, $status_message );
 
@@ -370,8 +369,8 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		if ( ! isset( $this->user_id ) ) {
 			return;
 		}
-		$country = trim( strtolower( $order->billing_country ) );
 
+		$country  = trim( strtolower( $order->get_billing_country() ) );
 		$document = $this->save_document( $country );
 
 		if ( false !== $document ) {
@@ -390,7 +389,6 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 		try {
 			$order = wc_get_order( $order_id );
-
 			$hash = get_post_meta( $order_id, '_ebanx_payment_hash', true );
 
 			do_action( 'ebanx_before_process_refund', $order, $hash );
@@ -439,160 +437,6 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		} catch ( Exception $e ) {
 			return new WP_Error( 'ebanx_process_refund_error', __( 'We could not finish processing this refund. Please try again.', 'woocommerce-gateway-ebanx' ) );
 		}
-	}
-
-	/**
-	 * Queries for a currency exchange rate against USD
-	 *
-	 * @param string $local_currency_code
-	 * @return double
-	 */
-	public function get_currency_rate( $local_currency_code ) {
-		$cache_key = 'EBANX_exchange_' . $local_currency_code;
-
-		$cache_time = date( 'YmdH' ) . floor( date( 'i' ) / 5 );
-
-		$cached = get_option( $cache_key );
-		if ( false !== $cached ) {
-			list( $rate, $time ) = explode( '|', $cached );
-			if ( $time === $cache_time ) {
-				return $rate;
-			}
-		}
-
-		$rate = $this->ebanx->exchange()->siteToLocal( $local_currency_code );
-		update_option( $cache_key, $rate . '|' . $cache_time );
-		return $rate;
-	}
-
-
-	/**
-	 *
-	 * @param string $currency
-	 * @param string $country
-	 *
-	 * @return string
-	 */
-	protected function get_exchange_rate_message( $currency, $country ) {
-		if ( $this->configs->get_setting_or_default( 'show_exchange_rate', 'no' ) === 'no' ) {
-			return '';
-		}
-
-		$rate = round( floatval( $this->get_local_currency_rate_for_site( $currency ) ), 2 );
-
-		if ( 1 === $rate ) {
-			return '';
-		}
-
-		$price    = wc_price( $rate, array( 'currency' => $currency ) );
-		$language = $this->get_language_by_country( $country );
-		$texts    = array(
-			'pt-br' => 'Taxa de câmbio: ',
-			'es'    => 'Tipo de cambio: ',
-		);
-
-		$message  = $texts[ $language ];
-		$message .= '<strong class="ebanx-exchange-rate">' . $price . '</strong>';
-
-		return $message;
-	}
-
-	/**
-	 * Queries for a currency exchange rate against site currency
-	 *
-	 * @param  string $local_currency_code
-	 * @return double
-	 */
-	public function get_local_currency_rate_for_site( $local_currency_code ) {
-		if ( strtoupper( $local_currency_code ) === $this->merchant_currency ) {
-			return 1;
-		}
-
-		$usd_to_site_rate     = 1;
-		$converted_currencies = [
-			WC_EBANX_Constants::CURRENCY_CODE_USD,
-			WC_EBANX_Constants::CURRENCY_CODE_EUR,
-		];
-
-		if ( ! in_array( $this->merchant_currency, $converted_currencies ) ) {
-			$usd_to_site_rate = $this->get_currency_rate( $this->merchant_currency );
-		}
-
-		return $this->get_currency_rate( $local_currency_code ) / $usd_to_site_rate;
-	}
-
-	/**
-	 * Create the converter amount on checkout page
-	 *
-	 * @param string  $currency Possible currencies: BRL, USD, EUR, PEN, CLP, COP, MXN.
-	 * @param boolean $template
-	 * @param boolean $country
-	 * @param boolean $instalments
-	 *
-	 * @return string|null
-	 * @throws Exception Throws missing parameter exception.
-	 */
-	public function checkout_rate_conversion( $currency, $template = true, $country = null, $instalments = null ) {
-		if ( ! in_array( $this->merchant_currency, WC_EBANX_Constants::$allowed_currency_codes )
-			|| 'yes' !== $this->configs->get_setting_or_default( 'show_local_amount', 'yes' ) ) {
-			return null;
-		}
-
-		$amount = WC()->cart->total;
-
-		try {
-			$amount = apply_filters( 'ebanx_get_custom_total_amount', $amount, $instalments );
-		} catch ( Exception $e ) {
-			WC_EBANX::log( $e->getMessage() );
-		}
-
-		$order_id = null;
-
-		if ( ! empty( get_query_var( 'order-pay' ) ) ) {
-			$order_id = get_query_var( 'order-pay' );
-		} elseif ( WC_EBANX_Request::has( 'order_id' ) && ! empty( WC_EBANX_Request::read( 'order_id', null ) ) ) {
-			$order_id = WC_EBANX_Request::read( 'order_id', null );
-		}
-
-		if ( ! is_null( $order_id ) ) {
-			$order = new WC_Order( $order_id );
-
-			$amount = $order->get_total();
-		}
-
-		if ( null === $country ) {
-			$country = trim( strtolower( WC()->customer->get_country() ) );
-		}
-
-		$exchange              = $this->ebanx->exchange();
-		$local_amount          = $exchange->siteToLocal( strtoupper( $currency ), $amount );
-
-		$credit_card_gateway = $this->ebanx->creditCard( $this->get_credit_card_config( $country ) );
-		$country_full_name   = Country::fromIso( $country );
-		if ( strpos( $this->id, 'ebanx-credit-card' ) !== false && $credit_card_gateway->isAvailableForCountry( $country_full_name ) ) {
-			$instalments      = $instalments > 0 ? intval( $instalments ) : 1;
-			$instalment_terms = self::get_instalment_term( $credit_card_gateway->getPaymentTermsForCountryAndValue( $country_full_name, $amount ), $instalments );
-
-			// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-			$local_amount = round( $instalment_terms->instalmentNumber * $exchange->siteToLocal( Currency::localForCountry( $country_full_name ), $instalment_terms->baseAmount ), 2 );
-		}
-
-
-		$message               = $this->get_checkout_message( $local_amount, $currency, $country );
-		$exchange_rate_message = $this->get_exchange_rate_message( $currency, $country );
-		if ( $template ) {
-			wc_get_template(
-				'checkout-conversion-rate.php',
-				[
-					'message'               => $message,
-					'exchange_rate_message' => $exchange_rate_message,
-				],
-				'woocommerce/ebanx/',
-				WC_EBANX::get_templates_path()
-			);
-		}
-
-		return $message;
 	}
 
 	/**
@@ -651,12 +495,8 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	final public function update_payment( $order, $data ) {
 		$request_status = strtoupper( $data['payment']['status'] );
 
-		if ( 'completed' === $order->status && 'CA' === $request_status ) {
+		if ( 'completed' === $order->get_status() && 'CA' === $request_status ) {
 			$order->add_order_note( sprintf( __( 'EBANX: The notification about change payment status was ignored, payment already Completed.', 'woocommerce-gateway-ebanx' ) ) );
-			return;
-		}
-
-		if ( 'completed' === $order->status && 'CA' !== $request_status ) {
 			return;
 		}
 
@@ -667,7 +507,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			'OP' => 'Opened',
 		];
 		$new_status = null;
-		$old_status = $order->status;
+		$old_status = $order->get_status();
 
 		switch ( $request_status ) {
 			case 'CO':
@@ -699,7 +539,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 * @return void
 	 */
 	final public function process_refund_hook( $order, $data ) {
-		$refunds = current( get_post_meta( $order->id, '_ebanx_payment_refunds' ) );
+		$refunds = current( get_post_meta( $order->get_id(), '_ebanx_payment_refunds' ) );
 
 		foreach ( $refunds as $k => $ref ) {
 			foreach ( $data['payment']['refunds'] as $refund ) {
@@ -722,7 +562,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			}
 		}
 
-		update_post_meta( $order->id, '_ebanx_payment_refunds', $refunds );
+		update_post_meta( $order->get_id(), '_ebanx_payment_refunds', $refunds );
 	}
 
 	/**

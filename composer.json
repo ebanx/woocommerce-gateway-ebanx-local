@@ -1,12 +1,12 @@
 {
     "name": "ebanx/woocommerce-gateway-ebanx-local",
-    "description": "This plugin enables you to integrate your WooCommerce store with the EBANX payment gateway.",
+    "description": "This plugin enables you to integrate your WooCommerce store with the EBANX Pay payment gateway.",
     "type": "project",
     "license": "Apache-2.0",
     "minimum-stability": "dev",
     "require": {
         "php" : ">=5.6.0,<8.0.0-dev",
-        "ebanx/benjamin-local": "^1.17.0"
+        "ebanx/benjamin-local": "^1.19"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
@@ -19,11 +19,5 @@
         "test": "phpunit",
         "test-all": "composer test && composer style-check",
         "style-check" : "phpcs -p ./"
-    },
-    "repositories": [
-        {
-            "type": "git",
-            "url":  "https://github.com/ebanx/benjamin-local.git"
-        }
-    ]
+    }
 }

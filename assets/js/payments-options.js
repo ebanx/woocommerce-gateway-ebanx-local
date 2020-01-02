@@ -1,5 +1,5 @@
 ;(function($){
-  var availableCountries = ['ar', 'br', 'co', 'mx'];
+  var availableCountries = ['br'];
 
   var getMaxInstalmentsFields = function (country) {
     return $('#woocommerce_ebanx-global_' + country + '_credit_card_instalments');
