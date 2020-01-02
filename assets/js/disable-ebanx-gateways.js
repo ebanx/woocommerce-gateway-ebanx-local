@@ -1,33 +1,35 @@
-;(function($){
-	var woocommerceSettings = $('.woocommerce_page_wc-settings');
+;(function ( $ ) {
+	let woocommerceSettings = $( '.woocommerce_page_wc-settings' );
 
-	if (woocommerceSettings.length < 1)
+	if (woocommerceSettings.length < 1) {
 		return;
-
-	var subsub = $('.subsubsub > li');
-
-	for (var i = 0, t = subsub.length; i < t; ++i) {
-		var s = $(subsub[i]);
-		var sub = $(s).find('a');
-
-		if (sub.text().indexOf('EBANX -') !== -1)
-			continue;
-
-		s.css({
-			display: 'inline-block'
-		});
 	}
 
-	var last = subsub
-		.filter(function () {
-			return $(this).css('display') === 'inline-block';
-		})
-		.last();
+	let subsub = $( '.subsubsub > li' );
 
-    if (last.length < 1)
-      return;
+	for (var i = 0, t = subsub.length; i < t; ++i) {
+		let s   = $( subsub[i] );
+		let sub = $( s ).find( 'a' );
 
-	last.html(last.html().replace(/ \| ?/g, ''));
+		if (sub.text().indexOf( 'EBANX -' ) !== -1) {
+			continue;
+		}
 
-	$('.ebanx-select').select2();
-})(jQuery);
+		s.css( {
+			display: 'inline-block'
+		} );
+	}
+
+	let last = subsub
+		.filter( function () {
+			return $( this ).css( 'display' ) === 'inline-block';
+		} ).last();
+
+	if (last.length < 1) {
+		return;
+	}
+
+	last.html( last.html().replace( / \| ?/g, '' ) );
+
+	$( '.ebanx-select' ).select2();
+})( jQuery );

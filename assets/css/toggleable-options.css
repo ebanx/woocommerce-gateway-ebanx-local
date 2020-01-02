@@ -2,9 +2,11 @@
 	cursor: pointer;
 	font-size: larger;
 }
+
 .wc-settings-sub-title.togglable:after {
 	content: ' ▲';
 }
+
 .wc-settings-sub-title.togglable.closed:after {
 	content: ' ▼';
 }

@@ -14,14 +14,13 @@ indent_style = tab
 indent_size = 4
 tab_width = 4
 
-[*.{js,html,css}]
-indent_style = space
+[*.{js,html}]
 indent_size = 2
+tab_width = 2
 
 [*.txt]
 trim_trailing_whitespace = false
 
 [*.{md,json,yml}]
-trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
