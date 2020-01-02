@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-php $(pwd)/vendor/squizlabs/php_codesniffer/bin/phpcs --extensions=php -v -n --parallel=5 .
+php $(pwd)/vendor/squizlabs/php_codesniffer/bin/phpcs --standard=WordPress --extensions=php -v -n --parallel=5 .
 
  # we need this script to fail if any command fails
  # when a command fails the variable `err` will turn 1
