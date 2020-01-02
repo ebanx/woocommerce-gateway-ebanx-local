@@ -51,7 +51,7 @@ class WC_EBANX_Payment_Adapter {
 		$payment = self::transform( $order, $configs, $names, $gateway_id );
 		$country = trim( strtolower( WC()->customer->get_billing_country() ) );
 
-		if ( in_array( $country, WC_EBANX_Constants::$credit_card_countries ) ) {
+		if ( in_array( $country, WC_EBANX_Constants::$credit_card_countries, true ) ) {
 			$payment->instalments = '1';
 
 			if ( $configs->settings[ "{$country}_credit_card_instalments" ] > 1 && WC_EBANX_Request::has( 'ebanx_billing_instalments' ) ) {
@@ -322,8 +322,7 @@ class WC_EBANX_Payment_Adapter {
 
 		$addresses      = WC_EBANX_Helper::split_street( $addresses );
 		$street_number  = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
-		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-		$addressCountry = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country();
+		$addressCountry = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country(); // phpcs:ignore WordPress.NamingConventions.ValidVariableName
 
 		return new Address(
 			[
@@ -375,13 +374,11 @@ class WC_EBANX_Payment_Adapter {
 	private static function get_document( $configs, $names, $gateway_id ) {
 		$country = trim( strtolower( WC()->customer->get_billing_country() ) );
 
-		switch ( $country ) {
-			case WC_EBANX_Constants::COUNTRY_BRAZIL:
-				return static::get_brazilian_document( $configs, $names, $gateway_id );
-				break;
-			default:
-				return static::get_brazilian_document( $configs, $names, $gateway_id );
+		if ( WC_EBANX_Constants::COUNTRY_BRAZIL === $country ) {
+			return static::get_brazilian_document( $configs, $names, $gateway_id );
 		}
+
+		return '';
 	}
 
 	/**
@@ -393,7 +390,7 @@ class WC_EBANX_Payment_Adapter {
 	 * @return string
 	 * @throws Exception Throws parameter missing exception.
 	 */
-	public static function get_brazilian_document( $configs, $names, $gateway_id ) {
+	private static function get_brazilian_document( $configs, $names, $gateway_id ) {
 		$cpf  = WC_EBANX_Request::read( $names['ebanx_billing_brazil_document'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_document'];
 		$cnpj = WC_EBANX_Request::read( $names['ebanx_billing_brazil_cnpj'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_cnpj'];
 

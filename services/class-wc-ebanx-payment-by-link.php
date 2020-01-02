@@ -175,7 +175,7 @@ class WC_EBANX_Payment_By_Link {
 	 * @param string $error The error message.
 	 */
 	private static function add_error( $error ) {
-		if ( ! in_array( $error, self::$errors ) ) {
+		if ( ! in_array( $error, self::$errors, true ) ) {
 			self::$errors[] = $error;
 		}
 	}

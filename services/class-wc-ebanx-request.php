@@ -26,7 +26,7 @@ class WC_EBANX_Request {
 				return $_REQUEST[ $param ];
 			}
 		}
-		if ( self::DEFAULT_VALUE == $default ) {
+		if ( self::DEFAULT_VALUE === $default ) {
 			throw new Exception( 'Missing argument "' . $param . '".' );
 		}
 
@@ -70,7 +70,6 @@ class WC_EBANX_Request {
 	 * @return boolean        True if $_REQUEST has $key key.
 	 */
 	public static function has( $key ) {
-		// @codingStandardsIgnoreLine
 		return array_key_exists( $key, $_REQUEST );
 	}
 
@@ -81,7 +80,6 @@ class WC_EBANX_Request {
 	 * @return boolean True if $_GET is empty
 	 */
 	public static function is_get_empty() {
-		// @codingStandardsIgnoreLine
 		return empty( $_GET );
 	}
 
@@ -94,27 +92,5 @@ class WC_EBANX_Request {
 	public static function is_post_empty() {
 		// @codingStandardsIgnoreLine
 		return empty( $_POST );
-	}
-
-	/**
-	 * Get value from $_POST['post_data'] or $default value
-	 *
-	 * @param string $key
-	 * @param null   $default
-	 *
-	 * @return mixed|null
-	 */
-	public static function get_value_from_post_data_or_default( $key, $default = null ) {
-		if ( self::is_post_empty() ) {
-			return $default;
-		}
-
-		if ( isset( $_POST['post_data'] ) ) {
-			parse_str( $_POST['post_data'], $post_data );
-		} else {
-			$post_data = $_POST;
-		}
-
-		return isset( $post_data[ $key ] ) ? sanitize_text_field( $post_data[ $key ] ) : $default;
 	}
 }

@@ -77,7 +77,7 @@ if ( $order_id ) {
 					class="input-text"
 				/>
 			<?php else : ?>
-				<div class="ebanx-form-row ebanx-form-row-wide <?php echo isset( $field['class_row'] ) ? $field['class_row'] : ''; ?>">
+				<div class="ebanx-form-row ebanx-form-row-wide <?php echo esc_attr( isset( $field['class_row'] ) ? $field['class_row'] : '' ); ?>">
 					<label for="<?php echo esc_attr( "{$id}[{$name}]" ); ?>"><?php echo esc_attr( $field['label'] ); ?></label>
 					<input
 						type="<?php echo esc_attr( isset( $field['type'] ) ? $field['type'] : 'text' ); ?>"

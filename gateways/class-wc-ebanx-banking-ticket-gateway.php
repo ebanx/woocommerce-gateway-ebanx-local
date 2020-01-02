@@ -205,7 +205,7 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 		wp_enqueue_script( 'woocommerce_ebanx_email_instructions_fingerprint2', 'https://print.ebanx.com.br/assets/sources/fingerprint/fingerprint2.min.js', '', null, true );
 		wp_enqueue_script( 'woocommerce_ebanx_email_instructions_browserdetect', 'https://print.ebanx.com.br/assets/sources/fingerprint/browserdetect.js', '', null, true );
 		wp_enqueue_script( 'woocommerce_ebanx_email_instructions_mystiquefingerprint', 'https://print.ebanx.com.br/assets/sources/fingerprint/mystiquefingerprint.js', '', null, true );
-		wp_add_inline_script( 'mystique',  '!function(){let t={justPrint:!1,paymentHash:boleto_hash};Mystique.registerFingerprint(null,t,boleto_type)}();' );
+		wp_add_inline_script( 'mystique', '!function(){let t={justPrint:!1,paymentHash:boleto_hash};Mystique.registerFingerprint(null,t,boleto_type)}();' );
 		wp_enqueue_script(
 			'woocommerce_ebanx_clipboard',
 			plugins_url( 'assets/js/vendor/clipboard.min.js', WC_EBANX::DIR ),

@@ -174,7 +174,7 @@ class WC_EBANX_Capture_Payment {
 	 */
 	private static function get_credit_card_config( $country_abbr ) {
 		$currency_code = strtolower( get_woocommerce_currency() );
-		$configs = new WC_EBANX_Global_Gateway();
+		$configs       = new WC_EBANX_Global_Gateway();
 
 		$credit_card_config = new CreditCardConfig(
 			array(

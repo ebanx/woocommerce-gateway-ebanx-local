@@ -138,7 +138,7 @@ class WC_EBANX_Payment_Validator {
 	 * @return bool Problems found
 	 */
 	private function validate_country() {
-		if ( ! in_array( strtolower( $this->order->get_billing_country() ), WC_EBANX_Constants::$all_countries ) ) {
+		if ( ! in_array( strtolower( $this->order->get_billing_country() ), WC_EBANX_Constants::$all_countries, true ) ) {
 			$this->add_error( __( 'EBANX only support the following Countries: Brazil, Mexico, Peru, Colombia and Chile. Select one of these to complete your order.', 'woocommerce-gateway-ebanx' ) );
 			return true;
 		}
@@ -219,7 +219,7 @@ class WC_EBANX_Payment_Validator {
 	 */
 	private function validate_payment_method_country() {
 		if ( array_key_exists( strtolower( $this->order->get_billing_country() ), WC_EBANX_Constants::$ebanx_gateways_by_country )
-			&& ! in_array( $this->order->get_payment_method(), WC_EBANX_Constants::$ebanx_gateways_by_country[ strtolower( $this->order->get_billing_country() ) ] ) ) {
+			&& ! in_array( $this->order->get_payment_method(), WC_EBANX_Constants::$ebanx_gateways_by_country[ strtolower( $this->order->get_billing_country() ) ], true ) ) {
 			$this->add_error( __( 'The selected payment method is not available on the chosen Country.', 'woocommerce-gateway-ebanx' ) );
 			return true;
 		}
