@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-php $(pwd)/vendor/squizlabs/php_codesniffer/bin/phpcs --standard=WordPress --extensions=php -v -n --parallel=5 .
+php $(pwd)/vendor/squizlabs/php_codesniffer/bin/phpcs --ignore=*/tests/*,/vendor/* --standard=WordPress --extensions=php -v -n --parallel=5 .
 
  # we need this script to fail if any command fails
  # when a command fails the variable `err` will turn 1
@@ -9,7 +9,7 @@ php $(pwd)/vendor/squizlabs/php_codesniffer/bin/phpcs --standard=WordPress --ext
 
  # get all the style errors
  # `|| true` makes sure it returns 0 even when phpcs fails
- ./vendor/bin/phpcs ./ || true
+# ./vendor/bin/phpcs ./ || true
 
  # 0 if no command failed
  # 1 if a command failed
