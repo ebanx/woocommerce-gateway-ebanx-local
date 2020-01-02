@@ -495,7 +495,8 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	final public function update_payment( $order, $data ) {
 		$request_status = strtoupper( $data['payment']['status'] );
 
-		if ( 'completed' === $order->get_status() && 'CA' !== $request_status ) {
+		if ( 'completed' === $order->get_status() && 'CA' === $request_status ) {
+			$order->add_order_note( sprintf( __( 'EBANX: The notification about change payment status was ignored, payment already Completed.', 'woocommerce-gateway-ebanx' ) ) );
 			return;
 		}
 

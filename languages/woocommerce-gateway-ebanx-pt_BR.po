@@ -203,6 +203,10 @@ msgstr "EBANX: A transação foi paga."
 msgid "EBANX: The payment has been updated to: %s."
 msgstr "EBANX: O pagamento foi atualizado para: %s."
 
+#: gateways/class-wc-ebanx-gateway.php:655
+msgid "EBANX: The notification about change payment status was ignored, payment already Completed."
+msgstr "EBANX: A notificação sobre a mudança do status do pagamento foi ignorado, pagamento já está Completo"
+
 #: gateways/class-wc-ebanx-gateway.php:1210
 #, php-format
 msgid "EBANX: Your Refund was confirmed to EBANX - Refund ID: %s"
