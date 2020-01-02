@@ -111,7 +111,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 				$order->payment_complete();
 				$order->update_status( 'failed' );
 				WC_EBANX::log( $response['status_message'] );
-			} elseif ( 'SUCCESS' == $response['status'] ) {
+			} elseif ( 'SUCCESS' === $response['status'] ) {
 				switch ( $response['payment']['status'] ) {
 					case 'CO':
 						$order->payment_complete( $response['payment']['hash'] );
@@ -176,8 +176,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	public function checkout_assets() {
 		if ( is_checkout() ) {
 			wp_enqueue_script( 'wc-credit-card-form' );
-			// Using // to avoid conflicts between http and https protocols.
-			wp_enqueue_script( 'ebanx', '//js.ebanxpay.com/ebanx-libjs-latest.min.js', '', null, true );
+			wp_enqueue_script( 'ebanx', 'https://js.ebanxpay.com/ebanx-libjs-latest.min.js', '', null, true );
 			wp_enqueue_script( 'woocommerce_ebanx_jquery_mask', plugins_url( 'assets/js/jquery-mask.js', WC_EBANX::DIR ), array( 'jquery' ), WC_EBANX::get_plugin_version(), true );
 			wp_enqueue_script( 'woocommerce_ebanx_credit_card', plugins_url( 'assets/js/credit-card.js', WC_EBANX::DIR ), array( 'jquery-payment', 'ebanx' ), WC_EBANX::get_plugin_version(), true );
 
@@ -249,7 +248,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 * @param  WC_Order $order The order created.
 	 * @param  Object   $request The request from EBANX success response.
 	 *
-	 * @throws Exception
 	 * @return void
 	 */
 	protected function save_order_meta_fields( $order, $request ) {
@@ -265,7 +263,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 *
 	 * @param  WC_Order $order The order created.
 	 *
-	 * @throws Exception
 	 * @return void
 	 */
 	protected function save_user_meta_fields( $order ) {
@@ -296,7 +293,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 				continue;
 			}
 
-			if ( $cd->masked_number == $card->masked_number && $cd->brand == $card->brand ) {
+			if ( $cd->masked_number === $card->masked_number && $cd->brand === $card->brand ) {
 				$cd->token = $card->token;
 				unset( $card );
 			}
@@ -320,22 +317,22 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 * @throws Exception Shows param missing message.
 	 */
 	public function process_payment( $order_id ) {
-		//TODO: check if is token or new credit card
+		// TODO: check if is token or new credit card.
 		$has_instalments = ( WC_EBANX_Request::has( 'ebanx_billing_instalments' ) || WC_EBANX_Request::has( 'ebanx-credit-card-installments' ) );
-		$billing_country = trim(strtolower(get_post_meta($order_id, '_billing_country', true)));
-		$country_abbr    = empty($billing_country) ? strtolower( WC_EBANX_Constants::DEFAULT_COUNTRY ) : $billing_country;
+		$billing_country = trim( strtolower( get_post_meta( $order_id, '_billing_country', true ) ) );
+		$country_abbr    = empty( $billing_country ) ? strtolower( WC_EBANX_Constants::DEFAULT_COUNTRY ) : $billing_country;
 
 		$this->ebanx_gateway = $this->ebanx->creditCard( $this->get_credit_card_config( $country_abbr ) );
 
 		if ( $has_instalments ) {
-			$country         = Country::fromIso($country_abbr);
-			$total_price     = get_post_meta( $order_id, '_order_total', true );
-			//TODO: check if is token or new credit card
+			$country     = Country::fromIso( $country_abbr );
+			$total_price = get_post_meta( $order_id, '_order_total', true );
+			// TODO: check if is token or new credit card.
 			$instalments     = WC_EBANX_Request::has( 'ebanx_billing_instalments' ) ? WC_EBANX_Request::read( 'ebanx_billing_instalments' ) : WC_EBANX_Request::read( 'ebanx-credit-card-installments' );
-			$instalment_term = self::get_instalment_term( $this->ebanx_gateway->getPaymentTermsForCountryAndValue( $country, $total_price ), $instalments);
-
+			$instalment_term = self::get_instalment_term( $this->ebanx_gateway->getPaymentTermsForCountryAndValue( $country, $total_price ), $instalments );
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 			$total_price = $instalment_term->baseAmount;
-
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 			$total_price *= $instalment_term->instalmentNumber;
 			update_post_meta( $order_id, '_order_total', $total_price );
 		}
@@ -387,8 +384,11 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 		foreach ( $instalments_terms as $term ) {
 			$instalments[] = array(
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 				'price'        => $term->baseAmount,
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 				'has_interest' => $term->hasInterests,
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 				'number'       => $term->instalmentNumber,
 			);
 		}
@@ -409,42 +409,11 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 * @return string
 	 */
 	public static function get_instalment_title_by_country( $country ) {
-		switch ( $country ) {
-			case WC_EBANX_Constants::COUNTRY_BRAZIL:
-				return 'Número de parcelas';
-				break;
-			case WC_EBANX_Constants::COUNTRY_COLOMBIA:
-				return 'Cuota';
-				break;
-			case WC_EBANX_Constants::COUNTRY_CHILE:
-				return 'Cuota';
-				break;
-			default:
-				return 'Mensualidades';
-				break;
+		if ( WC_EBANX_Constants::COUNTRY_BRAZIL === $country ) {
+			return 'Número de parcelas';
 		}
-	}
 
-	/**
-	 * Get request credit card instalments if exists
-	 *
-	 * @param  int $default
-	 *
-	 * @return int
-	 */
-	public static function get_request_credit_card_instalments( $default = 1 ) {
-		return WC_EBANX_Request::get_value_from_post_data_or_default( 'ebanx-credit-card-installments', $default );
-	}
-
-	/**
-	 * Get request billing instalments if exists
-	 *
-	 * @param  int $default
-	 *
-	 * @return int
-	 */
-	public static function get_request_billing_instalments( $default = 1 ) {
-		return WC_EBANX_Request::get_value_from_post_data_or_default( 'ebanx_billing_instalments', $default );
+		return 'Número de parcelas';
 	}
 
 	/**

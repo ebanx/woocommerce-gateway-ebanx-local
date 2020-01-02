@@ -216,8 +216,6 @@ class WC_EBANX_One_Click {
 		}
 
 		$this->restore_cart();
-
-		return;
 	}
 
 	/**
@@ -300,7 +298,7 @@ class WC_EBANX_One_Click {
 		$card = current(
 			array_filter(
 				(array) array_filter( get_user_meta( $this->user_id, '_ebanx_credit_card_token', true ) ), function ( $card ) {
-					return WC_EBANX_Request::read( 'ebanx-one-click-token' ) == $card->token;
+					return WC_EBANX_Request::read( 'ebanx-one-click-token' ) === $card->token;
 				}
 			)
 		);

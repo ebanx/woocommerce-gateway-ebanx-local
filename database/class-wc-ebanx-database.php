@@ -94,7 +94,6 @@ class WC_EBANX_Database {
 
 		$table_name = self::tables()[ $table ];
 
-		// @codingStandardsIgnoreLine
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `$table_name` WHERE $where", null ) );
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %s WHERE %s', $table_name, $where ) );
 	}
 }

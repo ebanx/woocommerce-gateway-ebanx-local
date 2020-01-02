@@ -58,11 +58,11 @@ class WC_EBANX_Environment {
 			$platform->error   = 'Unable to detect the version number. Make sure you are calling this inside WordPress.';
 		}
 
-		$this->platform                = $platform;
-		$interpreter                   = new stdClass();
-		$interpreter->name             = 'PHP';
-		$interpreter->version          = PHP_VERSION;
-		$this->interpreter             = $interpreter;
+		$this->platform       = $platform;
+		$interpreter          = new stdClass();
+		$interpreter->name    = 'PHP';
+		$interpreter->version = PHP_VERSION;
+		$this->interpreter    = $interpreter;
 
 		if ( PHP_SAPI !== 'cgi-fcgi' && PHP_SAPI !== 'cli' ) {
 			$web_server_information_string = filter_input( INPUT_SERVER, 'SERVER_SOFTWARE' );
@@ -73,27 +73,24 @@ class WC_EBANX_Environment {
 			$web_server->version           = $web_server_parts[1];
 		} else {
 			if ( isset( $_SERVER ) && isset( $_SERVER['SERVER_NAME'] ) ) {
-				$web_server                    = new stdClass();
-				$web_server->name              = sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) );
-				$web_server->version           = PHP_SAPI;
+				$web_server          = new stdClass();
+				$web_server->name    = sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) );
+				$web_server->version = PHP_SAPI;
 			}
 		}
 
 		$this->web_server = $web_server;
 
 		$database_server = new stdClass();
-		// @codingStandardsIgnoreStart
-		$database        = new mysqli( DB_HOST, DB_USER, DB_PASSWORD );
-		if ( ! mysqli_connect_errno() ) {
-			// @codingStandardsIgnoreEnd
-			if ( strpos( $database->server_info, 'MariaDB' ) !== false ) {
+		global $wpdb;
+		if ( $wpdb->check_connection() ) {
+			if ( strpos( $wpdb->db_version(), 'MariaDB' ) !== false ) {
 				$database_server->name = 'MariaDB';
 			} else {
 				$database_server->name = 'MySQL';
 			}
-			$result                   = $database->query( 'SELECT version() AS version' );
-			$row                      = $result->fetch_assoc();
-			$database_server->version = $row['version'];
+
+			$database_server->version = $wpdb->get_var( $wpdb->prepare( 'SELECT version() AS version', 'version' ) );
 		} else {
 			$database_server->name    = 'Unconnected';
 			$database_server->version = 'Unknown';
@@ -112,6 +109,8 @@ class WC_EBANX_Environment {
 	 * Extracts version number from a string
 	 *
 	 * @param string $haystack
+	 *
+	 * @return string
 	 */
 	public function extract_version_number_from( $haystack ) {
 		preg_match( '/((\d)+(\.|\D))+/', $haystack, $version_candidates_array );
@@ -130,8 +129,10 @@ class WC_EBANX_Environment {
 
 	/**
 	 * Stringifies this object
+	 *
+	 * @return string
 	 */
 	public function __toString() {
-		return json_encode( $this, JSON_PRETTY_PRINT );
+		return wp_json_encode( $this, JSON_PRETTY_PRINT );
 	}
 }

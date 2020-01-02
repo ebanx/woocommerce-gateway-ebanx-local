@@ -39,7 +39,7 @@ class WC_EBANX_Hooks {
 		ob_start();
 
 		if ( ( WC_EBANX_Request::has( 'operation' )
-			&& WC_EBANX_Request::read( 'operation' ) == 'payment_status_change'
+			&& WC_EBANX_Request::read( 'operation' ) === 'payment_status_change'
 			&& WC_EBANX_Request::has( 'notification_type' )
 			&& ( WC_EBANX_Request::has( 'hash_codes' )
 			|| WC_EBANX_Request::has( 'codes' ) ) )

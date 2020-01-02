@@ -48,7 +48,7 @@ class WC_EBANX_My_Account {
 	 * @return array
 	 */
 	public function my_orders_banking_ticket_link( $actions, $order ) {
-		if ( 'ebanx-banking-ticket' === $order->get_payment_method() && in_array( $order->get_status(), array( 'pending', 'on-hold' ) ) ) {
+		if ( 'ebanx-banking-ticket' === $order->get_payment_method() && in_array( $order->get_status(), array( 'pending', 'on-hold' ), true ) ) {
 			$url = get_post_meta( $order->get_id(), 'Banking Ticket URL', true );
 
 			if ( ! empty( $url ) ) {

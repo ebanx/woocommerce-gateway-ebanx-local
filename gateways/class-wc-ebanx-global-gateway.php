@@ -5,14 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'IS_TEST' ) ) {
-    $active_plugins = get_option('active_plugins');
-    if ( !in_array('woocommerce/woocommerce.php', $active_plugins ) ) {
-        wp_die( 'Sorry, but this plugin requires the Woocommerce plugin to be installed and active.', null, array( 'back_link' => true ) );
-    }
+	$active_plugins = get_option( 'active_plugins' );
+	if ( ! in_array( 'woocommerce/woocommerce.php', $active_plugins, true ) ) {
+		wp_die( 'Sorry, but this plugin requires the Woocommerce plugin to be installed and active.', null, array( 'back_link' => true ) );
+	}
 
-    require_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-notice.php';
-    require_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-constants.php';
-    require_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-helper.php';
+	require_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-notice.php';
+	require_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-constants.php';
+	require_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-helper.php';
 }
 
 /**
@@ -29,23 +29,23 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 	 * @var array
 	 */
 	public static $defaults = array(
-		'sandbox_private_key'             => '',
-		'sandbox_public_key'              => '',
-		'sandbox_mode_enabled'            => 'yes',
-		'debug_enabled'                   => 'yes',
-		'brazil_payment_methods'          => array(
+		'sandbox_private_key'         => '',
+		'sandbox_public_key'          => '',
+		'sandbox_mode_enabled'        => 'yes',
+		'debug_enabled'               => 'yes',
+		'brazil_payment_methods'      => array(
 			'ebanx-credit-card-br',
 			'ebanx-banking-ticket',
 		),
-		'save_card_data'                  => 'yes',
-		'one_click'                       => 'yes',
-		'capture_enabled'                 => 'yes',
-		'br_credit_card_instalments'      => '1',
-		'due_date_days'                   => '3',
-		'brazil_taxes_options'            => 'cpf',
-		'br_interest_rates_enabled'       => 'no',
-		'manual_review_enabled'           => 'no',
-		'br_min_instalment_value_brl'     => '5',
+		'save_card_data'              => 'yes',
+		'one_click'                   => 'yes',
+		'capture_enabled'             => 'yes',
+		'br_credit_card_instalments'  => '1',
+		'due_date_days'               => '3',
+		'brazil_taxes_options'        => 'cpf',
+		'br_interest_rates_enabled'   => 'no',
+		'manual_review_enabled'       => 'no',
+		'br_min_instalment_value_brl' => '5',
 	);
 
 	/**
@@ -90,7 +90,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 			return;
 		}
 
-		return sanitize_text_field( $_POST['woocommerce_ebanx-global_due_date_days'] );
+		return WC_EBANX_Request::read( 'woocommerce_ebanx-global_due_date_days' );
 	}
 
 	/**
@@ -100,51 +100,51 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 	 */
 	public function init_form_fields() {
 		$fields = array(
-			'integration_title' => array(
-				'title'         => __( 'Integration', 'woocommerce-gateway-ebanx' ),
-				'type'          => 'title',
-				'description'   => __( 'You can obtain the integration keys sending email to <a href="mailto:integration@ebanxpay.com">integration@ebanxpay.com</a>', 'woocommerce-gateway-ebanx' ),
+			'integration_title'         => array(
+				'title'       => __( 'Integration', 'woocommerce-gateway-ebanx' ),
+				'type'        => 'title',
+				'description' => __( 'You can obtain the integration keys sending email to <a href="mailto:integration@ebanxpay.com">integration@ebanxpay.com</a>', 'woocommerce-gateway-ebanx' ),
 			),
-			'sandbox_private_key' => array(
-				'title'           => __( 'Sandbox Integration Key', 'woocommerce-gateway-ebanx' ),
-				'type'            => 'text',
+			'sandbox_private_key'       => array(
+				'title' => __( 'Sandbox Integration Key', 'woocommerce-gateway-ebanx' ),
+				'type'  => 'text',
 			),
-			'sandbox_public_key' => array(
-				'title'          => __( 'Sandbox Public Integration Key', 'woocommerce-gateway-ebanx' ),
-				'type'           => 'text',
+			'sandbox_public_key'        => array(
+				'title' => __( 'Sandbox Public Integration Key', 'woocommerce-gateway-ebanx' ),
+				'type'  => 'text',
 			),
-			'live_private_key' => array(
-				'title'        => __( 'Live Integration Key', 'woocommerce-gateway-ebanx' ),
-				'type'         => 'text',
+			'live_private_key'          => array(
+				'title' => __( 'Live Integration Key', 'woocommerce-gateway-ebanx' ),
+				'type'  => 'text',
 			),
-			'live_public_key' => array(
-				'title'       => __( 'Live Public Integration Key', 'woocommerce-gateway-ebanx' ),
-				'type'        => 'text',
+			'live_public_key'           => array(
+				'title' => __( 'Live Public Integration Key', 'woocommerce-gateway-ebanx' ),
+				'type'  => 'text',
 			),
-			'sandbox_mode_enabled' => array(
-				'title'            => __( 'EBANX Sandbox', 'woocommerce-gateway-ebanx' ),
-				'type'             => 'checkbox',
-				'label'            => __( 'Enable Sandbox Mode', 'woocommerce-gateway-ebanx' ),
-				'description'      => __( 'EBANX Sandbox is a testing environment that mimics the live environment. Use it to make payment requests to see how your ecommerce processes them.', 'woocommerce-gateway-ebanx' ),
-				'desc_tip'         => true,
+			'sandbox_mode_enabled'      => array(
+				'title'       => __( 'EBANX Sandbox', 'woocommerce-gateway-ebanx' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Enable Sandbox Mode', 'woocommerce-gateway-ebanx' ),
+				'description' => __( 'EBANX Sandbox is a testing environment that mimics the live environment. Use it to make payment requests to see how your ecommerce processes them.', 'woocommerce-gateway-ebanx' ),
+				'desc_tip'    => true,
 			),
-			'debug_enabled'   => array(
+			'debug_enabled'             => array(
 				'title'       => __( 'Debug Log', 'woocommerce-gateway-ebanx' ),
 				'label'       => __( 'Enable Debug Log', 'woocommerce-gateway-ebanx' ),
 				'description' => __( 'Record all errors that occur when executing a transaction.', 'woocommerce-gateway-ebanx' ),
 				'type'        => 'checkbox',
 				'desc_tip'    => true,
 			),
-			'display_methods_title' => array(
-				'title'             => __( 'Enable Payment Methods', 'woocommerce-gateway-ebanx' ),
-				'type'              => 'title',
-				'description'       => sprintf( __( 'Set up payment methods for your checkout. Confirm that method is enabled on your contract.', 'woocommerce-gateway-ebanx' ), 'http://google.com' ),
+			'display_methods_title'     => array(
+				'title'       => __( 'Enable Payment Methods', 'woocommerce-gateway-ebanx' ),
+				'type'        => 'title',
+				'description' => sprintf( __( 'Set up payment methods for your checkout. Confirm that method is enabled on your contract.', 'woocommerce-gateway-ebanx' ), 'http://google.com' ),
 			),
-			'brazil_payment_methods' => array(
-				'title'              => __( 'Brazil', 'woocommerce-gateway-ebanx' ),
-				'type'               => 'multiselect',
-				'class'              => 'wc-enhanced-select',
-				'options'            => array(
+			'brazil_payment_methods'    => array(
+				'title'   => __( 'Brazil', 'woocommerce-gateway-ebanx' ),
+				'type'    => 'multiselect',
+				'class'   => 'wc-enhanced-select',
+				'options' => array(
 					'ebanx-credit-card-br' => 'Credit Card',
 					'ebanx-banking-ticket' => 'Boleto bancário',
 				),
@@ -153,16 +153,16 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					'ebanx-banking-ticket',
 				),
 			),
-			'payments_options_title' => array(
-				'title'              => __( 'Payment Options', 'woocommerce-gateway-ebanx' ),
-				'type'               => 'title',
+			'payments_options_title'    => array(
+				'title' => __( 'Payment Options', 'woocommerce-gateway-ebanx' ),
+				'type'  => 'title',
 			),
 			'credit_card_options_title' => array(
-				'title'                 => __( 'Credit Card', 'woocommerce-gateway-ebanx' ),
-				'type'                  => 'title',
-				'class'                 => 'ebanx-payments-option',
+				'title' => __( 'Credit Card', 'woocommerce-gateway-ebanx' ),
+				'type'  => 'title',
+				'class' => 'ebanx-payments-option',
 			),
-			'save_card_data'  => array(
+			'save_card_data'            => array(
 				'title'       => __( 'Save Card Data', 'woocommerce-gateway-ebanx' ),
 				'type'        => 'checkbox',
 				'label'       => __( 'Enable saving card data', 'woocommerce-gateway-ebanx' ),
@@ -170,7 +170,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'class'       => 'ebanx-payments-option',
 			),
-			'one_click'       => array(
+			'one_click'                 => array(
 				'type'        => 'checkbox',
 				'title'       => __( 'One-Click Payment', 'woocommerce-gateway-ebanx' ),
 				'label'       => __( 'Enable one-click-payment', 'woocommerce-gateway-ebanx' ),
@@ -178,7 +178,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'class'       => 'ebanx-payments-option',
 			),
-			'capture_enabled' => array(
+			'capture_enabled'           => array(
 				'type'        => 'checkbox',
 				'title'       => __( 'Enable Auto-Capture', 'woocommerce-gateway-ebanx' ),
 				'label'       => __( 'Capture the payment immediately', 'woocommerce-gateway-ebanx' ),
@@ -186,13 +186,13 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'class'       => 'ebanx-payments-option',
 			),
-			'manual_review_enabled' => array(
-				'type'              => 'checkbox',
-				'title'             => __( 'Manual Transactions’ Review', 'woocommerce-gateway-ebanx' ),
-				'label'             => __( 'Manual analysis of each credit card transaction by EBANX.', 'woocommerce-gateway-ebanx' ),
-				'description'       => __( 'Enabling Manual Review all your transactions will be analyzed manually by EBANX who will approve it or not. The decision will be made according to our risk policy, trying to reduce the number of chargebacks.', 'woocommerce-gateway-ebanx' ),
-				'desc_tip'          => true,
-				'class'             => 'ebanx-payments-option manual-review-checkbox',
+			'manual_review_enabled'     => array(
+				'type'        => 'checkbox',
+				'title'       => __( 'Manual Transactions’ Review', 'woocommerce-gateway-ebanx' ),
+				'label'       => __( 'Manual analysis of each credit card transaction by EBANX.', 'woocommerce-gateway-ebanx' ),
+				'description' => __( 'Enabling Manual Review all your transactions will be analyzed manually by EBANX who will approve it or not. The decision will be made according to our risk policy, trying to reduce the number of chargebacks.', 'woocommerce-gateway-ebanx' ),
+				'desc_tip'    => true,
+				'class'       => 'ebanx-payments-option manual-review-checkbox',
 			),
 		);
 
@@ -229,7 +229,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 						),
 					);
 
-				if ( in_array( strtoupper( $currency_code ), WC_EBANX_Constants::$credit_card_currencies ) ) {
+				if ( in_array( strtoupper( $currency_code ), WC_EBANX_Constants::$credit_card_currencies, true ) ) {
 					$interest_rates_array[] = array(
 						"{$country_abbr}_min_instalment_value_$currency_code" => array(
 							'title'             => sprintf( __( 'Minimum Instalment for %1$s (%2$s)', 'woocommerce-gateway-ebanx' ), $country, strtoupper( $currency_code ) ),
@@ -294,11 +294,11 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 		);
 
 		$fields['due_date_days']['type'] = (
-			in_array( $this->merchant_currency, WC_EBANX_Constants::$local_currencies ) ?
+			in_array( $this->merchant_currency, WC_EBANX_Constants::$local_currencies, true ) ?
 				'number' : 'select'
 		);
 
-		if ( ! in_array( $this->merchant_currency, WC_EBANX_Constants::$local_currencies ) ) {
+		if ( ! in_array( $this->merchant_currency, WC_EBANX_Constants::$local_currencies, true ) ) {
 			$fields['due_date_days']['class']  .= ' wc-enhanced-select';
 			$fields['due_date_days']['options'] = array(
 				'1' => '1',
@@ -309,11 +309,11 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 
 		$fields = array_merge(
 			$fields, array(
-				'advanced_options_title'                   => array(
+				'advanced_options_title'              => array(
 					'title' => __( 'Advanced Options', 'woocommerce-gateway-ebanx' ),
 					'type'  => 'title',
 				),
-				'brazil_taxes_options'                     => array(
+				'brazil_taxes_options'                => array(
 					'title'       => __( 'Enable Checkout for:', 'woocommerce-gateway-ebanx' ),
 					'type'        => 'multiselect',
 					'required'    => true,
@@ -326,7 +326,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					'description' => __( 'In order to process with the EBANX Plugin in Brazil there a few mandatory fields such as CPF identification for individuals and CNPJ for companies.', 'woocommerce-gateway-ebanx' ),
 					'desc_tip'    => true,
 				),
-				'checkout_manager_enabled'                 => array(
+				'checkout_manager_enabled'            => array(
 					'title'       => __( 'Checkout Manager', 'woocommerce-gateway-ebanx' ),
 					'label'       => __( 'Use my checkout manager fields', 'woocommerce-gateway-ebanx' ),
 					'type'        => 'checkbox',
@@ -334,19 +334,19 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					'description' => __( 'If you make use of a Checkout Manager, please identify the HTML name attribute of the fields.', 'woocommerce-gateway-ebanx' ),
 					'desc_tip'    => true,
 				),
-				'checkout_manager_brazil_person_type'      => array(
+				'checkout_manager_brazil_person_type' => array(
 					'title'       => __( 'Entity Type Selector', 'woocommerce-gateway-ebanx' ),
 					'type'        => 'text',
 					'class'       => 'ebanx-advanced-option ebanx-checkout-manager-field cpf_cnpj',
 					'placeholder' => __( 'eg: billing_brazil_persontype', 'woocommerce-gateway-ebanx' ),
 				),
-				'checkout_manager_cpf_brazil'              => array(
+				'checkout_manager_cpf_brazil'         => array(
 					'title'       => __( 'CPF', 'woocommerce-gateway-ebanx' ),
 					'type'        => 'text',
 					'class'       => 'ebanx-advanced-option ebanx-checkout-manager-field cpf',
 					'placeholder' => __( 'eg: billing_brazil_cpf', 'woocommerce-gateway-ebanx' ),
 				),
-				'checkout_manager_cnpj_brazil'             => array(
+				'checkout_manager_cnpj_brazil'        => array(
 					'title'       => __( 'CNPJ', 'woocommerce-gateway-ebanx' ),
 					'type'        => 'text',
 					'class'       => 'ebanx-advanced-option ebanx-checkout-manager-field cnpj',
@@ -386,7 +386,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 		if ( null === $currency_code ) {
 			$currency_code = strtolower( $this->merchant_currency );
 		}
-		if ( ! in_array( strtoupper( $currency_code ), WC_EBANX_Constants::$credit_card_currencies ) ) {
+		if ( ! in_array( strtoupper( $currency_code ), WC_EBANX_Constants::$credit_card_currencies, true ) ) {
 			throw new InvalidArgumentException( "The provided currency code doesn't accept Credit Card payment", 1 );
 		}
 

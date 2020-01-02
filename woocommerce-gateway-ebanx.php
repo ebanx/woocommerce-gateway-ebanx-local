@@ -267,7 +267,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 				$cards = get_user_meta( get_current_user_id(), '_ebanx_credit_card_token', true );
 
 				foreach ( $cards as $k => $cd ) {
-					if ( $cd && in_array( $cd->masked_number, WC_EBANX_Request::read( 'credit-card-delete' ) ) ) {
+					if ( $cd && in_array( $cd->masked_number, WC_EBANX_Request::read( 'credit-card-delete' ), true ) ) {
 						unset( $cards[ $k ] );
 					}
 				}
@@ -616,7 +616,6 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 		 * @param  int $post_id The post id.
 		 *
 		 * @return void
-		 * @throws Exception
 		 */
 		public function ebanx_metabox_payment_link_save( $post_id ) {
 			$order        = wc_get_order( $post_id );
@@ -679,7 +678,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 						'payment_hash'         => $payment_hash,
 						'payment_checkout_url' => get_post_meta( $order->get_id(), '_ebanx_checkout_url', true ),
 						'is_sandbox_mode'      => $this->is_sandbox_mode,
-						'dashboard_link'       =>  sprintf( 'https://dashboard.ebanx.com.br/transaction/%s', ! empty( $merchant_payment_code ) ? base64_encode( $merchant_payment_code ) : '' ),
+						'dashboard_link'       => sprintf( 'https://dashboard.ebanx.com.br/transaction/%s', ! empty( $merchant_payment_code ) ? base64_encode( $merchant_payment_code ) : '' ),
 					),
 					'woocommerce/ebanx/',
 					WC_EBANX::get_templates_path()

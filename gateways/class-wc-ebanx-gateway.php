@@ -95,7 +95,7 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 
 		$disable_own_fields = isset( $this->configs->settings['checkout_manager_enabled'] ) && 'yes' === $this->configs->settings['checkout_manager_enabled'];
 
-		$cpf = get_user_meta( $this->user_id, '_ebanx_billing_brazil_document', true );
+		$cpf  = get_user_meta( $this->user_id, '_ebanx_billing_brazil_document', true );
 		$cnpj = get_user_meta( $this->user_id, '_ebanx_billing_brazil_cnpj', true );
 
 		$ebanx_billing_brazil_person_type = array(
@@ -125,17 +125,17 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 
 		if ( ! $disable_own_fields ) {
 			// CPF and CNPJ are enabled.
-			if ( in_array( 'cpf', $fields_options ) && in_array( 'cnpj', $fields_options ) ) {
+			if ( in_array( 'cpf', $fields_options, true ) && in_array( 'cnpj', $fields_options, true ) ) {
 				$fields['billing']['ebanx_billing_brazil_person_type'] = $ebanx_billing_brazil_person_type;
 			}
 
 			// CPF is enabled.
-			if ( in_array( 'cpf', $fields_options ) ) {
+			if ( in_array( 'cpf', $fields_options, true ) ) {
 				$fields['billing']['ebanx_billing_brazil_document'] = $ebanx_billing_brazil_document;
 			}
 
 			// CNPJ is enabled.
-			if ( in_array( 'cnpj', $fields_options ) ) {
+			if ( in_array( 'cnpj', $fields_options, true ) ) {
 				$fields['billing']['ebanx_billing_brazil_cnpj'] = $ebanx_billing_brazil_cnpj;
 			}
 		}
@@ -240,7 +240,6 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 	 * @param  WC_Order $order The order created.
 	 * @param  Object   $request The request from EBANX success response.
 	 *
-	 * @throws Exception
 	 * @return void
 	 */
 	protected function save_order_meta_fields( $order, $request ) {

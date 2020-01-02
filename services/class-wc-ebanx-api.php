@@ -34,9 +34,9 @@ class WC_EBANX_Api {
 	 * @param string                  $currency
 	 */
 	public function __construct( WC_EBANX_Global_Gateway $configs, $currency = null ) {
-		$this->configs = $configs;
+		$this->configs  = $configs;
 		$this->currency = is_null( $currency ) ? strtoupper( get_woocommerce_currency() ) : $currency;
-		$this->ebanx   = EBANX( $this->get_config( $currency ), $this->get_credit_card_config( 'br' ) );
+		$this->ebanx    = EBANX( $this->get_config( $currency ), $this->get_credit_card_config( 'br' ) );
 	}
 
 	/**

@@ -24,7 +24,7 @@ class WC_EBANX_Credit_Card_BR_Gateway extends WC_EBANX_Credit_Card_Gateway {
 		parent::__construct();
 
 		$this->enabled = is_array( $this->configs->settings['brazil_payment_methods'] )
-			&& in_array( $this->id, $this->configs->settings['brazil_payment_methods'] )
+			&& in_array( $this->id, $this->configs->settings['brazil_payment_methods'], true )
 			? 'yes'
 			: false;
 	}

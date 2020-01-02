@@ -18,7 +18,7 @@ abstract class WC_EBANX_Logger {
 				'time'            => current_time( 'mysql' ),
 				'integration_key' => WC_EBANX_Helper::get_integration_key(),
 				'event'           => $event,
-				'log'             => json_encode( $log_data ),
+				'log'             => wp_json_encode( $log_data ),
 			)
 		);
 	}

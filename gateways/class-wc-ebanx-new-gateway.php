@@ -304,7 +304,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 
 		// Save post's meta fields.
 		$this->save_order_meta_fields( $order, WC_EBANX_Helper::array_to_object( $response ) );
-		
+
 		$payment_status = $response['payment']['status'];
 		if ( $response['payment']['pre_approved'] && 'CO' === $payment_status ) {
 			$order->payment_complete( $response['payment']['hash'] );
@@ -389,7 +389,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 		try {
 			$order = wc_get_order( $order_id );
-			$hash = get_post_meta( $order_id, '_ebanx_payment_hash', true );
+			$hash  = get_post_meta( $order_id, '_ebanx_payment_hash', true );
 
 			do_action( 'ebanx_before_process_refund', $order, $hash );
 

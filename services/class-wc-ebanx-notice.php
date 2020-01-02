@@ -99,7 +99,7 @@ class WC_EBANX_Notice {
 	 * @return WC_EBANX_Notices_Notice
 	 */
 	public function with_type( $type ) {
-		if ( ! in_array( $type, $this->allowed_types ) ) {
+		if ( ! in_array( $type, $this->allowed_types, true ) ) {
 			throw new InvalidArgumentException( 'Unknown notice type' );
 		}
 		$this->type = $type;

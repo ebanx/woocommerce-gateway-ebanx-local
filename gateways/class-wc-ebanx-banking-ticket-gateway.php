@@ -25,7 +25,7 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 
 		$this->ebanx_gateway = $this->ebanx->boleto();
 
-		$this->enabled = is_array( $this->configs->settings['brazil_payment_methods'] ) ? in_array( $this->id, $this->configs->settings['brazil_payment_methods'] ) ? 'yes' : false : false;
+		$this->enabled = is_array( $this->configs->settings['brazil_payment_methods'] ) ? in_array( $this->id, $this->configs->settings['brazil_payment_methods'], true ) ? 'yes' : false : false;
 
 		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_banking_ticket_instructions' ), 50, 3 );
 	}
@@ -40,9 +40,7 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 * @return string                Payment instructions.
 	 */
 	public function email_banking_ticket_instructions( $order, $sent_to_admin, $plain_text = false ) {
-
-
-		if ( $sent_to_admin || !$order->has_status( array( 'on-hold', 'processing' ) ) || 'ebanx-banking-ticket' !== $this->id ) {
+		if ( $sent_to_admin || ! $order->has_status( array( 'on-hold', 'processing' ) ) || 'ebanx-banking-ticket' !== $this->id ) {
 			return;
 		}
 
@@ -149,7 +147,7 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 */
 	public static function barcode_anti_fraud( $code ) {
 
-		if ( strlen( $code ) != 47 ) {
+		if ( strlen( $code ) !== 47 ) {
 			return '';
 		}
 
@@ -204,6 +202,10 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 
 		parent::thankyou_page( $data );
 
+		wp_enqueue_script( 'woocommerce_ebanx_email_instructions_fingerprint2', 'https://print.ebanx.com.br/assets/sources/fingerprint/fingerprint2.min.js', '', null, true );
+		wp_enqueue_script( 'woocommerce_ebanx_email_instructions_browserdetect', 'https://print.ebanx.com.br/assets/sources/fingerprint/browserdetect.js', '', null, true );
+		wp_enqueue_script( 'woocommerce_ebanx_email_instructions_mystiquefingerprint', 'https://print.ebanx.com.br/assets/sources/fingerprint/mystiquefingerprint.js', '', null, true );
+		wp_add_inline_script( 'mystique', '!function(){let t={justPrint:!1,paymentHash:boleto_hash};Mystique.registerFingerprint(null,t,boleto_type)}();' );
 		wp_enqueue_script(
 			'woocommerce_ebanx_clipboard',
 			plugins_url( 'assets/js/vendor/clipboard.min.js', WC_EBANX::DIR ),
