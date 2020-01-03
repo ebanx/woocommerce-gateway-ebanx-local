@@ -1,6 +1,6 @@
 FROM ebanx/woocommerce-gateway-ebanx
 
-RUN apt-get update && apt-get install vim -y
+RUN apt-get update && apt-get install git unzip vim -y --no-recomends
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
