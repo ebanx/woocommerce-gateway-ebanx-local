@@ -50,7 +50,7 @@ class WC_EBANX_Api_Controller {
 		if ( empty( WC_EBANX_Request::has( 'integration_key' ) )
 			|| ( WC_EBANX_Request::read( 'integration_key' ) !== $this->config->settings['live_private_key']
 			&& WC_EBANX_Request::read( 'integration_key' ) !== $this->config->settings['sandbox_private_key'] ) ) {
-			die( wp_json_encode( [] ) );
+			die( wp_json_encode( array() ) );
 		}
 
 		$where = "integration_key = '" . WC_EBANX_Request::read( 'integration_key' ) . "'";
@@ -71,7 +71,7 @@ class WC_EBANX_Api_Controller {
 	public function capture_payment( $order_id ) {
 		WC_EBANX_Capture_Payment::capture_payment( $order_id );
 
-		wp_redirect( $this->get_admin_order_url( $order_id ) );
+		wp_safe_redirect( $this->get_admin_order_url( $order_id ) );
 	}
 
 	/**
@@ -98,7 +98,7 @@ class WC_EBANX_Api_Controller {
 			|| $order->get_status() !== 'on-hold'
 			|| ! in_array( $order->get_payment_method(), WC_EBANX_Constants::$cash_payment_gateways_code, true )
 			) {
-			wp_redirect( get_site_url() );
+			wp_safe_redirect( get_site_url() );
 			return;
 		}
 
@@ -110,24 +110,24 @@ class WC_EBANX_Api_Controller {
 			$response = $ebanx->cancelPayment()->request( $hash );
 
 			WC_EBANX_Cancel_Logger::persist(
-				[
+				array(
 					'paymentHash' => $hash,
 					'$response'   => $response,
-				]
+				)
 			);
 
 			if ( 'SUCCESS' === $response['status'] ) {
 				$order->update_status( 'cancelled', __( 'EBANX: Cancelled by customer', 'woocommerce-gateway-ebanx' ) );
 			}
 
-			wp_redirect( $order->get_view_order_url() );
+			wp_safe_redirect( $order->get_view_order_url() );
 
 		} catch ( Exception $e ) {
 			$message = $e->getMessage();
 			WC_EBANX::log( "EBANX Error: $message" );
 
 			wc_add_notice( $message, 'error' );
-			wp_redirect( get_site_url() );
+			wp_safe_redirect( get_site_url() );
 		}
 	}
 

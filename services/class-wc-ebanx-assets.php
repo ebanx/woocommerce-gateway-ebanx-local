@@ -131,7 +131,9 @@ SVG;
 
 		wp_enqueue_style(
 			$style_name,
-			$file_path
+			$file_path,
+			array(),
+			WC_EBANX::get_plugin_version()
 		);
 	}
 }

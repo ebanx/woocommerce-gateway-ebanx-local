@@ -64,7 +64,8 @@ class WC_EBANX_Log {
 							'Author URI'  => 'Author URI',
 						)
 					);
-			}, get_option( 'active_plugins' )
+			},
+			get_option( 'active_plugins' )
 		);
 	}
 
@@ -74,7 +75,7 @@ class WC_EBANX_Log {
 	private static function get_theme_data() {
 		$wp_theme = wp_get_theme();
 
-		return [
+		return array(
 			'Name'        => $wp_theme->get( 'Name' ),
 			'ThemeURI'    => $wp_theme->get( 'ThemeURI' ),
 			'Description' => $wp_theme->get( 'Description' ),
@@ -86,7 +87,7 @@ class WC_EBANX_Log {
 			'Tags'        => $wp_theme->get( 'Tags' ),
 			'TextDomain'  => $wp_theme->get( 'TextDomain' ),
 			'DomainPath'  => $wp_theme->get( 'DomainPath' ),
-		];
+		);
 	}
 
 	/**

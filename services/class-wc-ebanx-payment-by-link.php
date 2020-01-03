@@ -108,16 +108,16 @@ class WC_EBANX_Payment_By_Link {
 	 */
 	private static function send_request() {
 		$person = new Person(
-			[
+			array(
 				'name'  => self::$order->get_billing_first_name() . ' ' . self::$order->get_billing_last_name(),
 				'email' => self::$order->get_billing_email(),
-			]
+			)
 		);
 
-		$address = new Address( [ 'country' => Country::fromIso( self::$order->get_billing_country() ) ] );
+		$address = new Address( array( 'country' => Country::fromIso( self::$order->get_billing_country() ) ) );
 
 		$data = new Request(
-			[
+			array(
 				'person'              => $person,
 				'address'             => $address,
 				'orderNumber'         => self::$order->get_id(),
@@ -126,11 +126,11 @@ class WC_EBANX_Payment_By_Link {
 				'amount'              => self::$order->get_total(),
 				'maxInstalments'      => get_post_meta( self::$order->get_id(), '_ebanx_instalments', true ),
 				'manualReview'        => 'yes' === self::$configs->settings['manual_review_enabled'],
-				'userValues'          => [
+				'userValues'          => array(
 					1 => 'from_woocommerce',
 					3 => 'version=' . WC_EBANX::get_plugin_version(),
-				],
-			]
+				),
+			)
 		);
 
 		$response = false;
@@ -141,11 +141,11 @@ class WC_EBANX_Payment_By_Link {
 			self::send_errors();
 		} finally {
 			WC_EBANX_Payment_By_Link_Logger::persist(
-				[
+				array(
 					'request'  => $data,
 					'response' => $response,
 					'errors'   => self::$errors,
-				]
+				)
 			);
 		}
 

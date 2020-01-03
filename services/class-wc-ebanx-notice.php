@@ -137,7 +137,8 @@ class WC_EBANX_Notice {
 		if ( isset( $this->view ) ) {
 			$view = $this->view;
 			add_action(
-				'admin_notices', function () use ( $view ) {
+				'admin_notices',
+				function () use ( $view ) {
 					include WC_EBANX_TEMPLATES_DIR . 'views/html-notice-' . $view . '.php';
 				}
 			);
@@ -151,7 +152,8 @@ class WC_EBANX_Notice {
 		$message        = $this->message;
 		$is_dismissible = $this->is_dismissible;
 		add_action(
-			'admin_notices', function () use ( $type, $message, $is_dismissible ) {
+			'admin_notices',
+			function () use ( $type, $message, $is_dismissible ) {
 				$classes = "notice notice-{$type}";
 				if ( $is_dismissible ) {
 					$classes .= ' is-dismissible';

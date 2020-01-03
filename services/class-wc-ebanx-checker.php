@@ -90,6 +90,7 @@ class WC_EBANX_Checker {
 		}
 
 		$context->notices
+			// translators: placeholder contains admin_url.
 			->with_message( sprintf( __( 'EBANX - We are almost there. To start selling, <a href="%s">set your integration keys.</a>', 'woocommerce-gateway-ebanx' ), admin_url( WC_EBANX_Constants::SETTINGS_URL ) ) )
 			->with_type( 'warning' )
 			->persistent();
@@ -119,6 +120,7 @@ class WC_EBANX_Checker {
 			}
 
 			$message = sprintf(
+				// translators: placeholder contains HTML code.
 				__( 'EBANX - Your <strong>%1$s Integration Key</strong> is invalid, please <a href="%2$s">adjust your settings</a>.', 'woocommerce-gateway-ebanx' ),
 				$context->is_sandbox_mode ? 'Sandbox' : 'Live',
 				WC_EBANX_Constants::SETTINGS_URL
@@ -156,6 +158,7 @@ class WC_EBANX_Checker {
 			}
 
 			$message = sprintf(
+				// translators: placeholder contains HTML code.
 				__( 'EBANX - Your <strong>%1$s Public Integration Key</strong> is invalid, please <a href="%2$s">adjust your settings</a>.', 'woocommerce-gateway-ebanx' ),
 				$context->is_sandbox_mode ? 'Sandbox' : 'Live',
 				WC_EBANX_Constants::SETTINGS_URL
@@ -185,6 +188,7 @@ class WC_EBANX_Checker {
 		$api_url = 'https://api.ebanx.com.br';
 
 		$message = sprintf(
+			// translators: placeholder contains HTML code.
 			__( 'EBANX - Could not connect to our servers. Please check if your server can reach our API (<a href="%1$s">%1$s</a>).', 'woocommerce-gateway-ebanx' ),
 			$api_url
 		);
@@ -214,6 +218,7 @@ class WC_EBANX_Checker {
 		$notice->with_type( 'error' )->persistent();
 
 		if ( version_compare( phpversion(), WC_EBANX_MIN_PHP_VER, '<' ) ) {
+			// translators: placeholder contains PHP version.
 			$message = __( 'EBANX - The minimum PHP version required for this plugin is %1$s. You are running %2$s.', 'woocommerce-gateway-ebanx' );
 
 			$message = sprintf( $message, WC_EBANX_MIN_PHP_VER, phpversion() );
@@ -228,6 +233,7 @@ class WC_EBANX_Checker {
 		}
 
 		if ( version_compare( WC_VERSION, WC_EBANX_MIN_WC_VER, '<' ) ) {
+			// translators: placeholder contains WooCommerce version.
 			$message = __( 'EBANX - The minimum WooCommerce version required for this plugin is %1$s. You are running %2$s.', 'woocommerce-gateway-ebanx' );
 
 			$message = sprintf( $message, WC_EBANX_MIN_WC_VER, WC_VERSION );
@@ -236,6 +242,7 @@ class WC_EBANX_Checker {
 		}
 
 		if ( version_compare( get_bloginfo( 'version' ), WC_EBANX_MIN_WP_VER, '<' ) ) {
+			// translators: placeholder contains WordPress version.
 			$message = __( 'EBANX - The minimum WordPress version required for this plugin is %1$s. You are running %2$s.', 'woocommerce-gateway-ebanx' );
 
 			$message = sprintf( $message, WC_EBANX_MIN_WP_VER, get_bloginfo( 'version' ) );
@@ -253,6 +260,7 @@ class WC_EBANX_Checker {
 	 */
 	public static function check_currency( $context ) {
 		if ( ! in_array( get_woocommerce_currency(), WC_EBANX_Constants::$allowed_currency_codes, true ) ) {
+			// translators: placeholder contains supported currency.
 			$message = __( 'EBANX Gateway - Does not support the Currency you have set on the WooCommerce settings. To process with the EBANX plugin choose one of the following: %1$s.', 'woocommerce-gateway-ebanx' );
 			$message = sprintf( $message, implode( ', ', WC_EBANX_Constants::$allowed_currency_codes ) );
 

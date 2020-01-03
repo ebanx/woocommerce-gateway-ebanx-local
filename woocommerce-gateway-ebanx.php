@@ -84,7 +84,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 		 *
 		 * @var array $settings
 		 */
-		private $settings = [];
+		private $settings = array();
 
 		/**
 		 * Initialize the plugin public actions.
@@ -276,7 +276,12 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			}
 
 			$cards = array_filter(
-				(array) get_user_meta( get_current_user_id(), '_ebanx_credit_card_token', true ), function ( $card ) {
+				(array) get_user_meta(
+					get_current_user_id(),
+					'_ebanx_credit_card_token',
+					true
+				),
+				function ( $card ) {
 					return ! empty( $card->brand ) && ! empty( $card->token ) && ! empty( $card->masked_number ); // TODO: Implement token due date.
 				}
 			);
@@ -287,7 +292,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 					'cards' => (array) $cards,
 				),
 				'woocommerce/ebanx/',
-				WC_EBANX::get_templates_path()
+				self::get_templates_path()
 			);
 		}
 
@@ -340,7 +345,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 
 			WC_EBANX_Plugin_Settings_Change_Logger::persist( $this->settings );
 
-			$this->settings = [];
+			$this->settings = array();
 		}
 
 		/**
@@ -632,7 +637,6 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 
 				WC_EBANX_Payment_By_Link::create( $post_id );
 			}
-			return;
 		}
 
 		/**
@@ -648,13 +652,13 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			$checkout_url     = get_post_meta( $order->get_id(), '_ebanx_checkout_url', true );
 
 			if ( ! $checkout_url
-				&& in_array( $order->get_status(), array( 'auto-draft', 'pending' ) )
-				&& in_array( strtoupper( get_woocommerce_currency() ), $ebanx_currencies ) ) {
+				&& in_array( $order->get_status(), array( 'auto-draft', 'pending' ), true )
+				&& in_array( strtoupper( get_woocommerce_currency() ), $ebanx_currencies, true ) ) {
 				wc_get_template(
 					'payment-by-link-action.php',
 					array(),
 					'woocommerce/ebanx/',
-					WC_EBANX::get_templates_path()
+					self::get_templates_path()
 				);
 			}
 		}
@@ -678,10 +682,11 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 						'payment_hash'         => $payment_hash,
 						'payment_checkout_url' => get_post_meta( $order->get_id(), '_ebanx_checkout_url', true ),
 						'is_sandbox_mode'      => $this->is_sandbox_mode,
+						// translators: placeholder contains payment hash identifier on dashboard.
 						'dashboard_link'       => sprintf( 'https://dashboard.ebanx.com.br/transaction/%s', ! empty( $merchant_payment_code ) ? base64_encode( $merchant_payment_code ) : '' ),
 					),
 					'woocommerce/ebanx/',
-					WC_EBANX::get_templates_path()
+					self::get_templates_path()
 				);
 			}
 		}

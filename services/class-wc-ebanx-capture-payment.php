@@ -114,7 +114,9 @@ class WC_EBANX_Capture_Payment {
 			$order->payment_complete();
 
 			if ( ! $is_recapture ) {
+				// translators: placeholder contains user email.
 				$order->add_order_note( sprintf( __( 'EBANX: The transaction was captured with the following: %s', 'woocommerce-gateway-ebanx' ), wp_get_current_user()->data->user_email ) );
+				// translators: placeholder contains oder id.
 				WC_EBANX_Flash::add_message( sprintf( __( 'Payment %s was captured successfully.', 'woocommerce-gateway-ebanx' ), $order_id ), 'warning', true );
 			}
 		} elseif ( 'CA' === $response['payment']['status'] ) {

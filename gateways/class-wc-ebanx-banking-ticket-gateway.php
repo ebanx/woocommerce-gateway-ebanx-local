@@ -180,7 +180,7 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 		$customer_name      = get_post_meta( $order->get_id(), '_billing_first_name', true );
 		$boleto_due_date    = get_post_meta( $order->get_id(), '_payment_due_date', true );
 		$boleto_hash        = get_post_meta( $order->get_id(), '_ebanx_payment_hash', true );
-		$barcode_anti_fraud = WC_EBANX_Banking_Ticket_Gateway::barcode_anti_fraud( $barcode );
+		$barcode_anti_fraud = self::barcode_anti_fraud( $barcode );
 
 		$data = array(
 			'data'         => array(
@@ -202,11 +202,31 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 
 		parent::thankyou_page( $data );
 
-		wp_enqueue_script( 'woocommerce_ebanx_email_instructions_fingerprint2', 'https://print.ebanx.com.br/assets/sources/fingerprint/fingerprint2.min.js', '', null, true );
-		wp_enqueue_script( 'woocommerce_ebanx_email_instructions_browserdetect', 'https://print.ebanx.com.br/assets/sources/fingerprint/browserdetect.js', '', null, true );
-		wp_enqueue_script( 'woocommerce_ebanx_email_instructions_mystiquefingerprint', 'https://print.ebanx.com.br/assets/sources/fingerprint/mystiquefingerprint.js', '', null, true );
-		wp_add_inline_script( 'mystique', '!function(){let t={justPrint:!1,paymentHash:boleto_hash};Mystique.registerFingerprint(null,t,boleto_type)}();' );
-
+		wp_enqueue_script(
+			'woocommerce_ebanx_email_instructions_fingerprint2',
+			'https://print.ebanx.com.br/assets/sources/fingerprint/fingerprint2.min.js',
+			array(),
+			WC_EBANX::get_plugin_version(),
+			true
+		);
+		wp_enqueue_script(
+			'woocommerce_ebanx_email_instructions_browserdetect',
+			'https://print.ebanx.com.br/assets/sources/fingerprint/browserdetect.js',
+			array(),
+			WC_EBANX::get_plugin_version(),
+			true
+		);
+		wp_enqueue_script(
+			'woocommerce_ebanx_email_instructions_mystiquefingerprint',
+			'https://print.ebanx.com.br/assets/sources/fingerprint/mystiquefingerprint.js',
+			array(),
+			WC_EBANX::get_plugin_version(),
+			true
+		);
+		wp_add_inline_script(
+			'mystique',
+			'!function(){let t={justPrint:!1,paymentHash:boleto_hash};Mystique.registerFingerprint(null,t,boleto_type)}();'
+		);
 		wp_enqueue_script(
 			'woocommerce_ebanx_order_received',
 			plugins_url( 'assets/js/order-received.js', WC_EBANX::DIR ),

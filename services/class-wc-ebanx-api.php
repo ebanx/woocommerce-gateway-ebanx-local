@@ -54,10 +54,10 @@ class WC_EBANX_Api {
 				'baseCurrency'          => $this->currency,
 				'notificationUrl'       => esc_url( home_url( '/' ) ),
 				'redirectUrl'           => esc_url( home_url( '/' ) ),
-				'userValues'            => [
+				'userValues'            => array(
 					1 => 'from_woocommerce',
 					3 => 'version=' . WC_EBANX::get_plugin_version(),
-				],
+				),
 			)
 		);
 	}

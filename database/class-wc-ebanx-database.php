@@ -14,9 +14,9 @@ class WC_EBANX_Database {
 	public static function tables() {
 		global $wpdb;
 
-		return [
+		return array(
 			'logs' => $wpdb->prefix . 'ebanx_logs',
-		];
+		);
 	}
 
 	/**

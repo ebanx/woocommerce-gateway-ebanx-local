@@ -27,7 +27,8 @@ abstract class WC_EBANX_Helper {
 	public static function flatten( array $array ) {
 		$return = array();
 		array_walk_recursive(
-			$array, function( $value ) use ( &$return ) {
+			$array,
+			function( $value ) use ( &$return ) {
 				$return[] = $value;
 			}
 		);

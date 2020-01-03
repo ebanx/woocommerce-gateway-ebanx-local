@@ -2,13 +2,13 @@
 	$order_id = get_query_var( 'order-pay' );
 
 if ( $order_id ) {
-	$order             = wc_get_order( $order_id );
-	$order_person_type = $order ? get_post_meta( $order->get_id(), '_billing_persontype', true ) : null;
-	$cpf               = $order ? get_post_meta( $order->get_id(), '_billing_cpf', true ) : null;
-	$cnpj              = $order ? get_post_meta( $order->get_id(), '_billing_cnpj', true ) : null;
+	$wp_order             = wc_get_order( $order_id );
+	$order_person_type = $wp_order ? get_post_meta( $wp_order->get_id(), '_billing_persontype', true ) : null;
+	$cpf               = $wp_order ? get_post_meta( $wp_order->get_id(), '_billing_cpf', true ) : null;
+	$cnpj              = $wp_order ? get_post_meta( $wp_order->get_id(), '_billing_cnpj', true ) : null;
 
-	$address = $order->get_address();
-	$company = $order->get_billing_company();
+	$address = $wp_order->get_address();
+	$company = $wp_order->get_billing_company();
 
 	$person_type = ( '1' === $order_person_type ||
 		'cpf' === $order_person_type ||

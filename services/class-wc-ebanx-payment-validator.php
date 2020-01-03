@@ -111,6 +111,7 @@ class WC_EBANX_Payment_Validator {
 	 */
 	private function validate_currency() {
 		if ( get_woocommerce_currency() !== WC_EBANX_Constants::$local_currencies[ strtolower( $this->order->get_billing_country() ) ] ) {
+			// translators: placeholder contains Currency code.
 			$this->add_error( sprintf( __( 'The selected Country doesn\'t support the chosen Currency (%s).', 'woocommerce-gateway-ebanx' ), get_woocommerce_currency() ) );
 			return true;
 		}

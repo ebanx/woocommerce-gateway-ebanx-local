@@ -43,8 +43,8 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			'subscription_payment_method_change',
 		);
 
-		add_action( 'wcs_default_retry_rules', [ $this, 'retryRules' ] );
-		add_action( 'woocommerce_scheduled_subscription_payment', [ $this, 'scheduled_subscription_payment' ] );
+		add_action( 'wcs_default_retry_rules', array( $this, 'retryRules' ) );
+		add_action( 'woocommerce_scheduled_subscription_payment', array( $this, 'scheduled_subscription_payment' ) );
 	}
 
 	/**
@@ -176,7 +176,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	public function checkout_assets() {
 		if ( is_checkout() ) {
 			wp_enqueue_script( 'wc-credit-card-form' );
-			wp_enqueue_script( 'ebanx', 'https://js.ebanxpay.com/ebanx-libjs-latest.min.js', '', null, true );
+			wp_enqueue_script( 'ebanx_libjs', 'https://js.ebanxpay.com/ebanx-libjs-latest.min.js', array(), WC_EBANX::get_plugin_version(), true );
 			wp_enqueue_script( 'woocommerce_ebanx_jquery_mask', plugins_url( 'assets/js/jquery-mask.js', WC_EBANX::DIR ), array( 'jquery' ), WC_EBANX::get_plugin_version(), true );
 			wp_enqueue_script( 'woocommerce_ebanx_credit_card', plugins_url( 'assets/js/credit-card.js', WC_EBANX::DIR ), array( 'jquery-payment', 'ebanx' ), WC_EBANX::get_plugin_version(), true );
 
@@ -280,7 +280,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		}
 
 		$cards = get_user_meta( $this->user_id, '_ebanx_credit_card_token', true );
-		$cards = ! empty( $cards ) ? $cards : [];
+		$cards = ! empty( $cards ) ? $cards : array();
 
 		$card = new \stdClass();
 
@@ -347,8 +347,10 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 * @return void
 	 */
 	public static function thankyou_page( $order ) {
+		$instalments_number = get_post_meta( $order->get_id(), '_instalments_number', true );
+
 		$order_amount       = $order->get_total();
-		$instalments_number = get_post_meta( $order->get_id(), '_instalments_number', true ) ?: 1;
+		$instalments_number = ! empty( $instalments_number ) ? $instalments_number : 1;
 		$currency           = $order->get_currency();
 
 		$data = array(
@@ -396,7 +398,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		try {
 			$apply_filters = apply_filters( 'ebanx_get_payment_terms', $instalments );
 		} catch ( Exception $e ) {
-			return [];
+			return array();
 		}
 
 		return $apply_filters;
@@ -430,7 +432,12 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 		if ( $save_card ) {
 			$cards = array_filter(
-				(array) get_user_meta( $this->user_id, '_ebanx_credit_card_token', true ), function ( $card ) {
+				(array) get_user_meta(
+					$this->user_id,
+					'_ebanx_credit_card_token',
+					true
+				),
+				function ( $card ) {
 					return ! empty( $card->brand ) && ! empty( $card->token ) && ! empty( $card->masked_number );
 				}
 			);

@@ -14,7 +14,8 @@ abstract class WC_EBANX_Logger {
 	 */
 	final protected static function save( $event, array $log_data ) {
 		WC_EBANX_Database::insert(
-			'logs', array(
+			'logs',
+			array(
 				'time'            => current_time( 'mysql' ),
 				'integration_key' => WC_EBANX_Helper::get_integration_key(),
 				'event'           => $event,
@@ -31,7 +32,7 @@ abstract class WC_EBANX_Logger {
 	 * @param array $log_data data to be logged.
 	 * @throws Exception In case sub classes do not reimplement an exception is thrown.
 	 */
-	public static function persist( array $log_data = [] ) {
+	public static function persist( array $log_data = array() ) {
 		throw new Exception( 'Logger child classes must reimplemented the persist function. See class-wc-ebanx-logger.php' );
 	}
 }

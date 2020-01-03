@@ -162,7 +162,7 @@ class WC_EBANX_Errors {
 	 * @return string
 	 */
 	public static function get_error_message( $exception, $country ) {
-		$code = $exception->getCode() ?: $exception->getMessage();
+		$code = ! empty( $exception->getCode() ) ? $exception->getCode() : $exception->getMessage();
 
 		$languages = array(
 			'ar' => 'es',
@@ -185,7 +185,7 @@ class WC_EBANX_Errors {
 			);
 			$amount   = $error_info[2];
 			$currency = $error_info[1];
-			return sprintf( $errors[ $language ][ $code ], wc_price( $amount, [ 'currency' => $currency ] ) );
+			return sprintf( $errors[ $language ][ $code ], wc_price( $amount, array( 'currency' => $currency ) ) );
 		}
 
 		return ! empty( $errors[ $language ][ $code ] ) ? $errors[ $language ][ $code ] : $errors[ $language ]['GENERAL'] . " ({$code})";

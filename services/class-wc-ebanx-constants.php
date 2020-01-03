@@ -36,9 +36,9 @@ abstract class WC_EBANX_Constants {
 	/**
 	 * Convert Country abbreviation to Country name
 	 */
-	const COUNTRY_NAME_FROM_ABBREVIATION = [
-		WC_EBANX_Constants::COUNTRY_BRAZIL => Country::BRAZIL,
-	];
+	const COUNTRY_NAME_FROM_ABBREVIATION = array(
+		self::COUNTRY_BRAZIL => Country::BRAZIL,
+	);
 
 	/**
 	 * Only the currencies allowed and processed by EBANX

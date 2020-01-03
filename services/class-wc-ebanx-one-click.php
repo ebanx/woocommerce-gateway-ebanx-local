@@ -285,7 +285,9 @@ class WC_EBANX_One_Click {
 
 		wp_enqueue_style(
 			'woocommerce_ebanx_one_click_style',
-			plugins_url( 'assets/css/one-click.css', WC_EBANX::DIR )
+			plugins_url( 'assets/css/one-click.css', WC_EBANX::DIR ),
+			array(),
+			WC_EBANX::get_plugin_version()
 		);
 	}
 
@@ -297,7 +299,14 @@ class WC_EBANX_One_Click {
 	protected function customer_has_ebanx_required_data() {
 		$card = current(
 			array_filter(
-				(array) array_filter( get_user_meta( $this->user_id, '_ebanx_credit_card_token', true ) ), function ( $card ) {
+				(array) array_filter(
+					get_user_meta(
+						$this->user_id,
+						'_ebanx_credit_card_token',
+						true
+					)
+				),
+				function ( $card ) {
 					return WC_EBANX_Request::read( 'ebanx-one-click-token' ) === $card->token;
 				}
 			)
@@ -386,7 +395,8 @@ class WC_EBANX_One_Click {
 		$instalments_terms = $this->gateway->get_payment_terms( $country, $cart_total );
 
 		$args = apply_filters(
-			'ebanx_template_args', array(
+			'ebanx_template_args',
+			array(
 				'cards'              => $this->cards,
 				'cart_total'         => $cart_total,
 				'product_id'         => $product->id,

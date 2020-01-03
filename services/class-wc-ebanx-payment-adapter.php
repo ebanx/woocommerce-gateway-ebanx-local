@@ -23,7 +23,7 @@ class WC_EBANX_Payment_Adapter {
 	 */
 	public static function transform( $order, $configs, $names, $gateway_id ) {
 		return new Payment(
-			[
+			array(
 				'amountTotal'         => $order->get_total(),
 				'orderNumber'         => $order->get_id(),
 				'dueDate'             => static::transform_due_date( $configs ),
@@ -31,9 +31,9 @@ class WC_EBANX_Payment_Adapter {
 				'person'              => static::transform_person( $order, $configs, $names, $gateway_id ),
 				'responsible'         => static::transform_person( $order, $configs, $names, $gateway_id ),
 				'items'               => static::transform_items( $order ),
-				'merchantPaymentCode' => substr( $order->get_id() . '-' . md5( rand( 123123, 9999999 ) ), 0, 40 ),
+				'merchantPaymentCode' => substr( $order->get_id() . '-' . md5( wp_rand( 123123, 9999999 ) ), 0, 40 ),
 				'riskProfileId'       => 'Wx' . str_replace( '.', 'x', WC_EBANX::get_plugin_version() ),
-			]
+			)
 		);
 	}
 
@@ -70,12 +70,12 @@ class WC_EBANX_Payment_Adapter {
 		$brand = WC_EBANX_Request::has( 'ebanx_brand' ) ? WC_EBANX_Request::read( 'ebanx_brand' ) : '';
 
 		$payment->card = new Card(
-			[
+			array(
 				'autoCapture' => ( 'yes' === $configs->settings['capture_enabled'] ),
 				'token'       => $token,
 				'cvv'         => WC_EBANX_Request::read( 'ebanx_billing_cvv' ),
 				'type'        => $brand,
-			]
+			)
 		);
 
 		$payment->manualReview = 'yes' === $configs->settings['manual_review_enabled']; // phpcs:ignore WordPress.NamingConventions.ValidVariableName
@@ -94,14 +94,14 @@ class WC_EBANX_Payment_Adapter {
 
 		$order_meta_data = self::get_order_meta_data( $order );
 
-		$order_address = [
+		$order_address = array(
 			'postcode'  => $order_meta_data['_billing_postcode'],
 			'address_1' => $order_meta_data['_billing_address_1'],
 			'number'    => ! empty( $order_meta_data['_billing_number'] ) ? $order_meta_data['_billing_number'] : '',
 			'address_2' => ! empty( $order_meta_data['_billing_address_2'] ) ? $order_meta_data['_billing_address_2'] : '',
 			'state'     => $order_meta_data['_billing_state'],
 			'city'      => ! empty( $order_meta_data['_billing_city'] ) ? $order_meta_data['_billing_city'] : '',
-		];
+		);
 
 		if (
 			empty( $order_address['postcode'] )
@@ -121,14 +121,14 @@ class WC_EBANX_Payment_Adapter {
 		$address_country = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country();
 
 		return new Address(
-			[
+			array(
 				'address'      => $addresses,
 				'streetNumber' => $number,
 				'city'         => $order_address['city'],
 				'country'      => Country::fromIso( $address_country ),
 				'state'        => $order_address['state'],
 				'zipcode'      => $order_address['postcode'],
-			]
+			)
 		);
 	}
 
@@ -142,7 +142,7 @@ class WC_EBANX_Payment_Adapter {
 	public static function transform_subscription_payment( $order, $configs ) {
 
 		return new Payment(
-			[
+			array(
 				'amountTotal'         => $order->get_total(),
 				'orderNumber'         => $order->get_id(),
 				'dueDate'             => static::transform_due_date( $configs ),
@@ -153,7 +153,7 @@ class WC_EBANX_Payment_Adapter {
 				'items'               => static::transform_items( $order ),
 				'merchantPaymentCode' => substr( $order->get_id() . '-' . md5( rand( 123123, 9999999 ) ), 0, 40 ),
 				'riskProfileId'       => 'Wx' . str_replace( '.', 'x', WC_EBANX::get_plugin_version() ),
-			]
+			)
 		);
 	}
 
@@ -187,9 +187,9 @@ class WC_EBANX_Payment_Adapter {
 		$payment = self::transform_subscription_payment( $order, $configs );
 
 		$payment->card = new Card(
-			[
+			array(
 				'token' => $user_cc_token,
-			]
+			)
 		);
 		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 		$payment->manualReview = 'yes' === $configs->settings['manual_review_enabled'];
@@ -266,14 +266,14 @@ class WC_EBANX_Payment_Adapter {
 		$document    = self::get_document_from_order( $order, $person_type );
 
 		return new Person(
-			[
+			array(
 				'type'        => $person_type,
 				'document'    => $document,
 				'email'       => $order->get_billing_email(),
 				'ip'          => WC_Geolocation::get_ip_address(),
 				'name'        => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
 				'phoneNumber' => $order->get_billing_phone(),
-			]
+			)
 		);
 	}
 
@@ -314,7 +314,7 @@ class WC_EBANX_Payment_Adapter {
 			throw new Exception( 'INVALID-FIELDS' );
 		}
 
-		$addresses = WC_EBANX_Request::read( 'billing_address_1', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_address_1'];
+		$addresses = WC_EBANX_Request::read_customizable_field( 'billing_address_1', $gateway_id );
 
 		if ( ! empty( WC_EBANX_Request::read( 'billing_address_2', null ) ) ) {
 			$addresses .= ' - ' . WC_EBANX_Request::read( 'billing_address_2', null );
@@ -325,15 +325,15 @@ class WC_EBANX_Payment_Adapter {
 		$addressCountry = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country(); // phpcs:ignore WordPress.NamingConventions.ValidVariableName
 
 		return new Address(
-			[
+			array(
 				'address'      => $addresses['streetName'],
 				'streetNumber' => $street_number,
-				'city'         => WC_EBANX_Request::read( 'billing_city', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_city'],
+				'city'         => WC_EBANX_Request::read_customizable_field( 'billing_city', $gateway_id ),
 				// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 				'country'      => Country::fromIso( $addressCountry ),
-				'state'        => WC_EBANX_Request::read( 'billing_state', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_state'],
-				'zipcode'      => WC_EBANX_Request::read( 'billing_postcode', null ) ?: WC_EBANX_Request::read( $gateway_id, null )['billing_postcode'],
-			]
+				'state'        => WC_EBANX_Request::read_customizable_field( 'billing_state', $gateway_id ),
+				'zipcode'      => WC_EBANX_Request::read_customizable_field( 'billing_postcode', $gateway_id ),
+			)
 		);
 	}
 
@@ -351,14 +351,14 @@ class WC_EBANX_Payment_Adapter {
 		$document = static::get_document( $configs, $names, $gateway_id );
 
 		return new Person(
-			[
+			array(
 				'type'        => static::get_person_type( $configs, $names, $gateway_id ),
 				'document'    => $document,
 				'email'       => $order->get_billing_email(),
 				'ip'          => WC_Geolocation::get_ip_address(),
 				'name'        => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
 				'phoneNumber' => '' !== $order->get_billing_phone() ? $order->get_billing_phone() : WC_EBANX_Request::read( $gateway_id, null )['billing_phone'],
-			]
+			)
 		);
 	}
 
@@ -391,8 +391,8 @@ class WC_EBANX_Payment_Adapter {
 	 * @throws Exception Throws parameter missing exception.
 	 */
 	private static function get_brazilian_document( $configs, $names, $gateway_id ) {
-		$cpf  = WC_EBANX_Request::read( $names['ebanx_billing_brazil_document'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_document'];
-		$cnpj = WC_EBANX_Request::read( $names['ebanx_billing_brazil_cnpj'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_cnpj'];
+		$cpf  = WC_EBANX_Request::read_customizable_field( $names['ebanx_billing_brazil_document'], $gateway_id );
+		$cnpj = WC_EBANX_Request::read_customizable_field( $names['ebanx_billing_brazil_cnpj'], $gateway_id );
 
 		$person_type = static::get_person_type( $configs, $names, $gateway_id );
 
@@ -434,7 +434,7 @@ class WC_EBANX_Payment_Adapter {
 			return Person::TYPE_BUSINESS;
 		}
 
-		$brazil_person_type = WC_EBANX_Request::read( $names['ebanx_billing_brazil_person_type'], null ) ?: WC_EBANX_Request::read( $gateway_id, null )['ebanx_billing_brazil_person_type'];
+		$brazil_person_type = WC_EBANX_Request::read_customizable_field( $names['ebanx_billing_brazil_person_type'], $gateway_id );
 
 		if ( 'cnpj' === $brazil_person_type || 2 === $brazil_person_type || 'pessoa jurídica' === strtolower( $brazil_person_type ) ) {
 			return Person::TYPE_BUSINESS;
@@ -453,14 +453,15 @@ class WC_EBANX_Payment_Adapter {
 		return array_map(
 			function( $product ) {
 					return new Item(
-						[
+						array(
 							'name'      => $product['name'],
 							'unitPrice' => $product['line_subtotal'],
 							'quantity'  => $product['qty'],
 							'type'      => $product['type'],
-						]
+						)
 					);
-			}, $order->get_items()
+			},
+			$order->get_items()
 		);
 	}
 }

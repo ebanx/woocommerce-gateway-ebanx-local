@@ -19,9 +19,9 @@ if ( ! defined( 'IS_TEST' ) ) {
  * Class WC_EBANX_Global_Gateway
  */
 final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
-	const CC_COUNTRIES_FROM_ISO = [
+	const CC_COUNTRIES_FROM_ISO = array(
 		WC_EBANX_Constants::COUNTRY_BRAZIL => 'Brazil',
-	];
+	);
 
 	/**
 	 * Mock to insert when plugin is installed
@@ -203,6 +203,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					$interest_rates_array   = array();
 					$interest_rates_array[] = array(
 						"{$country_abbr}_payments_options_title" => array(
+							// translators: placeholder contains country abbr.
 							'title' => sprintf( __( 'Interest Options for %s', 'woocommerce-gateway-ebanx' ), $country ),
 							'type'  => 'title',
 							'class' => 'ebanx-payments-option',
@@ -212,6 +213,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 						"{$country_abbr}_interest_rates_enabled" => array(
 							'type'        => 'checkbox',
 							'title'       => __( 'Interest Rates', 'woocommerce-gateway-ebanx' ),
+							// translators: placeholder contains country abbr.
 							'label'       => sprintf( __( 'Enable interest rates for %s', 'woocommerce-gateway-ebanx' ), $country ),
 							'description' => __( 'Enable and set a custom interest rate for your customers according to the number of Instalments you allow the payment.', 'woocommerce-gateway-ebanx' ),
 							'desc_tip'    => true,
@@ -220,6 +222,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					);
 					$interest_rates_array[] = array(
 						"{$country_abbr}_credit_card_instalments" => array(
+							// translators: placeholder contains maximum instalment number.
 							'title'       => sprintf( __( 'Maximum nº of Instalments for %s', 'woocommerce-gateway-ebanx' ), $country ),
 							'type'        => 'select',
 							'class'       => 'wc-enhanced-select ebanx-payments-option ebanx-credit-card-instalments',
@@ -232,10 +235,12 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				if ( in_array( strtoupper( $currency_code ), WC_EBANX_Constants::$credit_card_currencies, true ) ) {
 					$interest_rates_array[] = array(
 						"{$country_abbr}_min_instalment_value_$currency_code" => array(
+							// translators: placeholder contains minimum for instalments per country .
 							'title'             => sprintf( __( 'Minimum Instalment for %1$s (%2$s)', 'woocommerce-gateway-ebanx' ), $country, strtoupper( $currency_code ) ),
 							'type'              => 'number',
 							'class'             => 'ebanx-payments-option',
 							'placeholder'       => sprintf(
+								// translators: placeholder contains default instalments.
 								__( 'The default is %d', 'woocommerce-gateway-ebanx' ),
 								$this->get_min_instalment_value_for_currency( $currency_code )
 							),
@@ -252,6 +257,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				for ( $i = 1; $i <= 36; $i++ ) {
 					$interest_rates_array[] = array(
 						"{$country_abbr}_interest_rates_" . sprintf( '%02d', $i ) => array(
+							// translators: placeholder contains interest tx per instalment.
 							'title'             => sprintf( __( '%1$sx Interest Rate in %2$s', 'woocommerce-gateway-ebanx' ), $i, '%' ),
 							'type'              => 'number',
 							'custom_attributes' => array(
@@ -265,7 +271,8 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				}
 
 				return $interest_rates_array;
-			}, array_keys( WC_EBANX_Constants::$credit_card_countries )
+			},
+			array_keys( WC_EBANX_Constants::$credit_card_countries )
 		);
 
 		$countries_length = count( self::CC_COUNTRIES_FROM_ISO );
@@ -278,7 +285,8 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 		}
 
 		$fields = array_merge(
-			$fields, array(
+			$fields,
+			array(
 				'cash_options_title' => array(
 					'title' => __( 'Cash Payments', 'woocommerce-gateway-ebanx' ),
 					'type'  => 'title',
@@ -308,7 +316,8 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 		}
 
 		$fields = array_merge(
-			$fields, array(
+			$fields,
+			array(
 				'advanced_options_title'              => array(
 					'title' => __( 'Advanced Options', 'woocommerce-gateway-ebanx' ),
 					'type'  => 'title',

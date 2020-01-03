@@ -58,7 +58,8 @@ class WC_EBANX_Request {
 		return array_map(
 			function( $param ) use ( $default ) {
 				return self::read( $param, $default[ $param ] );
-			}, $params
+			},
+			$params
 		);
 	}
 
@@ -70,6 +71,7 @@ class WC_EBANX_Request {
 	 * @return boolean        True if $_REQUEST has $key key.
 	 */
 	public static function has( $key ) {
+		// @codingStandardsIgnoreLine
 		return array_key_exists( $key, $_REQUEST );
 	}
 
@@ -92,5 +94,29 @@ class WC_EBANX_Request {
 	public static function is_post_empty() {
 		// @codingStandardsIgnoreLine
 		return empty( $_POST );
+	}
+
+	/**
+	 * @param string $field_name
+	 * @param string $gateway_id
+	 * @param mixed  $default
+	 *
+	 * @throws Exception If missing default value.
+	 * @return mixed
+	 */
+	public static function read_customizable_field( $field_name, $gateway_id, $default = null ) {
+		$field_value = self::read( $field_name, null );
+
+		if ( ! is_null( $field_value ) ) {
+			return $field_value;
+		}
+
+		$gateway_values = self::read( $gateway_id, array() );
+
+		if ( isset( $gateway_values[ $field_name ] ) && '' !== $gateway_values[ $field_name ] ) {
+			return $gateway_values[ $field_name ];
+		}
+
+		return $default;
 	}
 }

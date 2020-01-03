@@ -35,7 +35,9 @@ class WC_EBANX_My_Account {
 	public function assets() {
 		wp_enqueue_style(
 			'woocommerce_my_account_style',
-			plugins_url( 'assets/css/my-account.css', WC_EBANX::DIR )
+			plugins_url( 'assets/css/my-account.css', WC_EBANX::DIR ),
+			array(),
+			WC_EBANX::get_plugin_version()
 		);
 	}
 

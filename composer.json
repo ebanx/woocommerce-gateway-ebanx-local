@@ -18,6 +18,6 @@
     "scripts": {
         "test": "phpunit",
         "test-all": "composer test && composer style-check",
-        "style-check" : "phpcs -p ./"
+        "style-check" : "phpcs -p -n --ignore=*/tests/*,./vendor/* --extensions=php ./"
     }
 }

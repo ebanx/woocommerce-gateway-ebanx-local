@@ -88,7 +88,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 *
 	 * @var array
 	 */
-	protected static $ebanx_params = [];
+	protected static $ebanx_params = array();
 
 	/**
 	 *
@@ -119,12 +119,12 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			$this->log = new WC_Logger();
 		}
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'checkout_assets' ], 100 );
-		add_filter( 'woocommerce_checkout_fields', [ $this, 'checkout_fields' ] );
+		add_action( 'wp_enqueue_scripts', array( $this, 'checkout_assets' ), 100 );
+		add_filter( 'woocommerce_checkout_fields', array( $this, 'checkout_fields' ) );
 
-		$this->supports = [
+		$this->supports = array(
 			'refunds',
-		];
+		);
 
 		$this->icon              = $this->show_icon();
 		$this->names             = $this->get_billing_field_names();
@@ -141,24 +141,26 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			wp_enqueue_script(
 				'woocommerce_ebanx_checkout_fields',
 				plugins_url( 'assets/js/checkout-fields.js', WC_EBANX::DIR ),
-				[ 'jquery' ],
+				array( 'jquery' ),
 				WC_EBANX::get_plugin_version(),
 				true
 			);
-			$checkout_params = [
+			$checkout_params = array(
 				'is_sandbox'           => $this->is_sandbox_mode,
-				'sandbox_tag_messages' => [
+				'sandbox_tag_messages' => array(
 					'pt-br' => 'EM TESTE',
 					'es'    => 'EN PRUEBA',
-				],
-			];
+				),
+			);
 			wp_localize_script( 'woocommerce_ebanx_checkout_fields', 'wc_ebanx_checkout_params', apply_filters( 'wc_ebanx_checkout_params', $checkout_params ) );
 		}
 
 		if ( is_checkout() && $this->is_sandbox_mode ) {
 			wp_enqueue_style(
 				'woocommerce_ebanx_sandbox_style',
-				plugins_url( 'assets/css/sandbox-checkout-alert.css', WC_EBANX::DIR )
+				plugins_url( 'assets/css/sandbox-checkout-alert.css', WC_EBANX::DIR ),
+				array(),
+				WC_EBANX::get_plugin_version()
 			);
 		}
 
@@ -170,14 +172,16 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		) {
 			wp_enqueue_style(
 				'woocommerce_ebanx_paying_via_ebanx_style',
-				plugins_url( 'assets/css/paying-via-ebanx.css', WC_EBANX::DIR )
+				plugins_url( 'assets/css/paying-via-ebanx.css', WC_EBANX::DIR ),
+				array(),
+				WC_EBANX::get_plugin_version()
 			);
 
-			static::$ebanx_params = [
+			static::$ebanx_params = array(
 				'key'     => $this->public_key,
 				'mode'    => $this->is_sandbox_mode ? 'test' : 'production',
 				'ajaxurl' => admin_url( 'admin-ajax.php', null ),
-			];
+			);
 
 			self::$initialized_gateways++;
 
@@ -207,10 +211,10 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 				$response = $this->ebanx_gateway->create( $data );
 
 				WC_EBANX_Checkout_Logger::persist(
-					[
+					array(
 						'request'  => $data,
 						'response' => $response,
-					]
+					)
 				);
 
 				$this->process_response( $response, $order );
@@ -221,10 +225,10 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			do_action( 'ebanx_after_process_payment', $order );
 
 			return $this->dispatch(
-				[
+				array(
 					'result'   => 'success',
 					'redirect' => $this->get_return_url( $order ),
-				]
+				)
 			);
 		} catch ( Exception $e ) {
 			$country = $this->get_transaction_address( 'country' );
@@ -237,7 +241,8 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			wc_add_notice( $message, 'error' );
 
 			do_action( 'ebanx_process_payment_error', $message );
-			return [];
+
+			return array();
 		}
 	}
 
@@ -404,10 +409,10 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			$response = $this->ebanx->refund()->requestByHash( $hash, $amount, $reason );
 
 			WC_EBANX_Refund_Logger::persist(
-				[
-					'request'  => [ $hash, $amount, $reason ],
+				array(
+					'request'  => array( $hash, $amount, $reason ),
 					'response' => $response, // Response from request to EBANX.
-				]
+				)
 			);
 
 			if ( 'SUCCESS' !== $response['status'] ) {
@@ -450,7 +455,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	final public function process_hook( array $codes, $notification_type ) {
 		do_action( 'ebanx_before_process_hook', $codes, $notification_type );
 
-		WC_EBANX_Notification_Received_Logger::persist( [ 'data' => $_GET ] );
+		WC_EBANX_Notification_Received_Logger::persist( array( 'data' => $_GET ) );
 
 		if ( isset( $codes['hash'] ) && ! empty( $codes['hash'] ) && isset( $codes['merchant_payment_code'] ) && ! empty( $codes['merchant_payment_code'] ) ) {
 			unset( $codes['merchant_payment_code'] );
@@ -459,10 +464,10 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		$data = $this->ebanx->paymentInfo()->findByHash( $codes['hash'], $this->is_sandbox_mode );
 
 		WC_EBANX_Notification_Query_Logger::persist(
-			[
+			array(
 				'codes' => $codes,
 				'data'  => $data,
-			]
+			)
 		);
 
 		$order_id = WC_EBANX_Helper::get_post_id_by_meta_key_and_value( '_ebanx_payment_hash', $data['payment']['hash'] );
@@ -500,12 +505,12 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			return;
 		}
 
-		$status     = [
+		$status     = array(
 			'CO' => 'Confirmed',
 			'CA' => 'Canceled',
 			'PE' => 'Pending',
 			'OP' => 'Opened',
-		];
+		);
 		$new_status = null;
 		$old_status = $order->get_status();
 
@@ -526,6 +531,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 
 		if ( isset( $new_status ) && $new_status !== $old_status ) {
 			$payment_status = $status[ $data['payment']['status'] ];
+			// translators: placeholder contains a status updated.
 			$order->add_order_note( sprintf( __( 'EBANX: The payment has been updated to: %s.', 'woocommerce-gateway-ebanx' ), $payment_status ) );
 			$order->update_status( $new_status );
 		}
@@ -572,12 +578,12 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 * @return string
 	 */
 	private function get_order_note_from_payment_status( $status ) {
-		$notes = [
+		$notes = array(
 			'CO' => __( 'EBANX: The transaction was paid.', 'woocommerce-gateway-ebanx' ),
 			'PE' => __( 'EBANX: The order is awaiting payment.', 'woocommerce-gateway-ebanx' ),
 			'OP' => __( 'EBANX: The payment was opened.', 'woocommerce-gateway-ebanx' ),
 			'CA' => __( 'EBANX: The payment has failed.', 'woocommerce-gateway-ebanx' ),
-		];
+		);
 
 		return $notes[ strtoupper( $status ) ];
 	}
@@ -589,12 +595,12 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 * @return string
 	 */
 	private function get_order_status_from_payment_status( $payment_status ) {
-		$order_status = [
+		$order_status = array(
 			'CO' => 'processing',
 			'PE' => 'on-hold',
 			'CA' => 'failed',
 			'OP' => 'pending',
-		];
+		);
 
 		return $order_status[ strtoupper( $payment_status ) ];
 	}
