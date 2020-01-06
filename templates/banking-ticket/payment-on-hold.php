@@ -20,7 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<p>Pague o boleto no Internet Banking de seu banco apenas copiando o código de barras! Você também pode imprimir o boleto e pagar em casas lotéricas e no caixa do seu banco.</p>
 
 	<div>
-		<h3><?php echo esc_html( $barcode_fraud['boleto1'] ); ?>.<?php echo esc_html( $barcode_fraud['boleto2'] ); ?> <?php echo esc_html( $barcode_fraud['boleto3'] ); ?>.<?php echo esc_html( $barcode_fraud['boleto4'] ); ?> <?php echo esc_html( $barcode_fraud['boleto5'] ); ?>.<?php echo esc_html( $barcode_fraud['boleto6'] ); ?> <?php echo esc_html( $barcode_fraud['boleto7'] ); ?> <?php echo esc_html( $barcode_fraud['boleto8'] ); ?></h3>
+		<h3>
+			<span><?php echo esc_html( $barcode_fraud['boleto1'] ); ?></span>.<span><?php echo esc_html( $barcode_fraud['boleto2'] ); ?></span> <span><?php echo esc_html( $barcode_fraud['boleto3'] ); ?></span>.<span><?php echo esc_html( $barcode_fraud['boleto4'] ); ?></span> <span><?php echo esc_html( $barcode_fraud['boleto5'] ); ?></span>.<span><?php echo esc_html( $barcode_fraud['boleto6'] ); ?></span> <span><?php echo esc_html( $barcode_fraud['boleto7'] ); ?></span> <span><?php echo esc_html( $barcode_fraud['boleto8'] ); ?></span></h3>
 	</div>
 
 	<br>

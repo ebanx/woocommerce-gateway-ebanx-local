@@ -400,9 +400,7 @@ class WC_EBANX_Payment_Adapter {
 		$has_cnpj = ! empty( $cnpj );
 
 		if (
-			( Person::TYPE_BUSINESS === $person_type
-				&& ( ! $has_cnpj || ( empty( WC_EBANX_Request::read( 'billing_company', null ) )
-										&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_company'] ) ) ) )
+			( Person::TYPE_BUSINESS === $person_type && ( ! $has_cnpj || empty( WC_EBANX_Request::read_customizable_field( 'billing_company', $gateway_id ) ) ) )
 			|| ( Person::TYPE_PERSONAL === $person_type && ! $has_cpf )
 		) {
 			throw new Exception( 'INVALID-DOCUMENT' );
@@ -436,7 +434,7 @@ class WC_EBANX_Payment_Adapter {
 
 		$brazil_person_type = WC_EBANX_Request::read_customizable_field( $names['ebanx_billing_brazil_person_type'], $gateway_id );
 
-		if ( 'cnpj' === $brazil_person_type || 2 === $brazil_person_type || 'pessoa jurídica' === strtolower( $brazil_person_type ) ) {
+		if ( 'cnpj' === $brazil_person_type || '2' == $brazil_person_type || 'pessoa jurídica' === strtolower( $brazil_person_type ) ) {
 			return Person::TYPE_BUSINESS;
 		}
 

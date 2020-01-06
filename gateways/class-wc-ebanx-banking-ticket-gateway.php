@@ -146,20 +146,19 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 * @return array|string
 	 */
 	public static function barcode_anti_fraud( $code ) {
-
 		if ( strlen( $code ) !== 47 ) {
 			return '';
 		}
 
 		return array(
-			'boleto1' => '<span>' . substr( $code, 0, 5 ) . '</span>',
-			'boleto2' => '<span>' . substr( $code, 5, 5 ) . '</span>',
-			'boleto3' => '<span>' . substr( $code, 10, 5 ) . '</span>',
-			'boleto4' => '<span>' . substr( $code, 15, 6 ) . '</span>',
-			'boleto5' => '<span>' . substr( $code, 21, 5 ) . '</span>',
-			'boleto6' => '<span>' . substr( $code, 26, 6 ) . '</span>',
-			'boleto7' => '<span>' . substr( $code, 32, 1 ) . '</span>',
-			'boleto8' => '<span>' . substr( $code, 33, 14 ) . '</span>',
+			'boleto1' => substr( $code, 0, 5 ),
+			'boleto2' => substr( $code, 5, 5 ),
+			'boleto3' => substr( $code, 10, 5 ),
+			'boleto4' => substr( $code, 15, 6 ),
+			'boleto5' => substr( $code, 21, 5 ),
+			'boleto6' => substr( $code, 26, 6 ),
+			'boleto7' => substr( $code, 32, 1 ),
+			'boleto8' => substr( $code, 33, 14 ),
 		);
 	}
 
