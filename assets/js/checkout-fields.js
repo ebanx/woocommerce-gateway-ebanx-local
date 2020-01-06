@@ -29,7 +29,7 @@ jQuery(function ( $ ) {
 				return $( [] );
 		}
 
-		return $( '.woocommerce-checkout' ).find( 'p' ).filter(function ( index ) {
+		return $( '.woocommerce-checkout' ).find( 'p' ).filter(function ( ) {
 			return this.className.match( new RegExp( '.*ebanx_billing_' + filter + '.*$', 'i' ) );
 		});
 	};

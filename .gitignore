@@ -1,13 +1,8 @@
 .idea/
 vendor/
 .DS_Store
-*.log
-*.gz
-*.gz.*
 node_modules
-.vscode
 .data
-.env
 
 # Tests
 /report/

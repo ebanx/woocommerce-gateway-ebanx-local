@@ -5,7 +5,7 @@
  * Description: Offer local payment methods
  * Author: EBANX Pay
  * Author URI: https://www.ebanxpay.com
- * Version: 2.0.0
+ * Version: 2.0.1
  * License: MIT
  * Text Domain: woocommerce-gateway-ebanx-local
  * Domain Path: /languages
@@ -18,8 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'WC_EBANX_MIN_PHP_VER', '5.6.0' );
-define( 'WC_EBANX_MIN_WC_VER', '2.6.0' );
-define( 'WC_EBANX_MIN_WP_VER', '4.0.0' );
+define( 'WC_EBANX_MIN_WC_VER', '3.0.0' );
+define( 'WC_EBANX_MIN_WP_VER', '5.0.0' );
 define( 'WC_EBANX_DIR', __DIR__ . DIRECTORY_SEPARATOR );
 define( 'WC_EBANX_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . DIRECTORY_SEPARATOR );
 define( 'WC_EBANX_PLUGIN_NAME', WC_EBANX_PLUGIN_DIR_URL . basename( __FILE__ ) );
