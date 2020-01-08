@@ -1,6 +1,6 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/09ef5eb63a394dc3b76cb4319129fbf3)](https://www.codacy.com/app/EBANX/woocommerce-gateway-ebanx?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ebanx/woocommerce-gateway-ebanx&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/09ef5eb63a394dc3b76cb4319129fbf3)](https://www.codacy.com/app/EBANX/woocommerce-gateway-ebanx-local?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ebanx/woocommerce-gateway-ebanx-local&amp;utm_campaign=Badge_Grade)
 
-# EBANX Payment Gateway for WooCommerce
+# EBANX Local Payment Gateway for WooCommerce
 
 This plugin enables you to integrate your WooCommerce store with the EBANX payment gateway.
 
@@ -24,13 +24,13 @@ If you want to contribute to our repository the best way is to clone it and then
 	1. Go to the plugins folder on your WordPress: `cd /path/to/wordpress/wp-content/plugins`
 	2. Download the lastest WooCommerce build: `git clone https://github.com/woocommerce/woocommerce.git`
 	3. Configure it on WordPress Admin Dashboard
-3. Clone this repository to your wordpress plugins folder: `cd /path/to/wordpress/wp-content/plugins && git clone https://github.com/ebanx/woocommerce-gateway-ebanx`
+3. Clone this repository to your wordpress plugins folder: `cd /path/to/wordpress/wp-content/plugins && git clone https://github.com/ebanx/woocommerce-gateway-ebanx-local`
 4. Let the coding begin!
 
 ## Have you found a bug?
 
-You can create a new [Issue](https://github.com/ebanx/woocommerce-gateway-ebanx/issues/new) and wait for someone to fix it. Keep in mind that if you don't provide enough information no one will be able to help you.
+You can create a new [Issue](https://github.com/ebanx/woocommerce-gateway-ebanx-local/issues/new) and wait for someone to fix it. Keep in mind that if you don't provide enough information no one will be able to help you.
 
 ## So you want to code...
 
-If you want to code (and you are not an ebanker [yet](https://ebanx.recruiterbox.com/)) all you have to do is fork our repo create a [well named] branch from master and make a [pull request](https://github.com/ebanx/woocommerce-gateway-ebanx/compare) to our master.
+If you want to code (and you are not an ebanker [yet](https://ebanx.recruiterbox.com/)) all you have to do is fork our repo create a [well named] branch from master and make a [pull request](https://github.com/ebanx/woocommerce-gateway-ebanx-local/compare) to our master.

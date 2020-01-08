@@ -1,47 +1,46 @@
 === EBANX Local Payment Gateway for WooCommerce ===
+
 Contributors: ebanxpay
 Tags: credit card, boleto, ebanx, woocommerce, local payment gateway, brazil, cash payment, local payment, card payment, one-click payment, alternative payments, payment processing
 Requires at least: 5.0
 Tested up to: 5.3
 Stable tag: 2.0.1
+Requires PHP: 5.6.0
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
-Offer Latin American local payment methods & increase your conversion rates with the solution used by AliExpress, AirBnB and Spotify in Brazil.
+With EBANX Pay WooCommerce plugin you will be able to process cash and credit card payments in Brazil.
 
 == Description ==
 
-Accept with ease and security, the most popular local payment methods throughout Latin America and receive your settlement for all sales made, anywhere in the world.
+[EBANX Pay](https://www.ebanxpay.com/) is a payment processor that offers complete solutions for national businesses wanting to sell more in Brazil.
+Whether you are an enterprise or running your own startup, EBANX Pay can help you sell more with ease and efficiency.
 
-The WooCommerce EBANX Payment Gateway plugin will enable you to significantly increase your cross-border sales & conversion rates selling like a local in the world’s fastest growing eCommerce markets in Latin America.
 
-Ready to accept local payments but don’t have an account yet? Finish our [simple sign-up](https://www.ebanx.com/business/en/dashboard) or [request a call] (https://business.ebanx.com/en/contact-sales) with a Business Development Executive.
+The installation of EBANX Pay Gateway for WooCommerce is a 100% free and allows you to accept the most popular local payment methods in Brazil.
+With the EBANX Pay Gateway for WooCommerce you will be able to process relevant cash and credit card payments in Brazil.
 
-**Plugin Description**
+You can install the EBANX Pay with a few steps and get impressive results.
 
-The WooCommerce EBANX Local Payment Gateway plugin allows you to accept local payment methods directly on your eCommerce store. Using the EBANX Pay plugin you can process relevant cash and credit card payments in Brazil and access over 2.4M EBANX Account users, furthermore 30M Latin America unique end users. **No technical knowledge is needed to get impressive results; the installation is simple how it should be.**
+**No technical knowledge is needed to get impressive results; the installation is simple how it should be.**
 
-**EBANX Advantages**
+**EBANX Pay Advantages**
 
-* Security is already taken care of, the customer’s sensitive data doesn’t go to your server but is saved in EBANX environment using PCI standards
+* Security is already taken care of, the customer’s sensitive data doesn’t go to your server but is saved in EBANX environment using PCI standard
 * One-click purchases which allow your client to skip the checkout process
 * Checkout payment form is responsive and adapts nicely to all mobile screen sizes and themes
-* Everything you need in one plugin, you don’t have to install any external plugins or extensions
-* Sell to over 2.4M EBANX Account users
-* Join eCommerce merchants such as AliExpress, Airbnb and Spotify
+* Everything you need in one integration, you don’t have to install any external plugins or extensions
 
 **Customize and Manage Your Payments**
 
-With the EBANX plugin, you can:
+With the EBANX Pay plugin, you can:
 
-* Choose which payment methods are displayed on your checkout page
-* Set a maximum number of installments
+* Choose which payment methods are displayed at checkout
+* Set a maximum number of instalments
 * Select an expiration date for cash payments
-* Have all the requested information gathered on one checkout page entirely integrated with your platform
-* Allow your customers to save their credit card to buy with just one-click and improve your conversions
-* Set individual interest rates for each credit card installment plan
+* Allow customers to save their credit card information and buy with just one-click and improve your conversions
+* Set individual interest rates for each credit card instalment plan
 * Create orders & request refunds directly in your WooCommerce store
-* Accept Local Currencies based on your WooCommerce Currency Options, to be processed by EBANX
 
 The plugin also includes:
 
@@ -50,11 +49,15 @@ The plugin also includes:
 * Extra fields that are added automatically for payments made in Brazil, Argentina, Chile, and Colombia where customers must provide more information to local regulatory authorities
 * Support for checkout managers
 
+**Account & Pricing**
+
+Schedule a call with a Business Development Executive to learn more about our solutions and get to know our pricing per confirmed payment. 
+
 **Want to do a Test Drive?**
 
-Our demonstrations allow you to create a payment as a customer would and to explore all the plugin features **without having to install it**. Access the [Demo Store](https://www.ebanxdemo.com/) for your own first-hand experience.
+Our demonstrations allow you to create a payment as a customer would and to explore all the plugin features **without having to install it**.
 
-Looking for more detailed information? Visit our [Developer’s Academy](https://developers.ebanx.com/integrations/extensions-and-plugins/woocommerce-plugin/) for step-by-step guides, API references, and integration options or [request a call] (https://business.ebanx.com/en/contact-sales) with a Business Development Executive.
+Looking for more detailed information? Visit our [Developer’s Academy](https://developers.ebanxpagamentos.com/getting-started/integrations/extensions-and-plugins/woocommerce-plugin/) for step-by-step guides, API references, and integration options or request a call with a Business Development Executive.
 
 **Requirements**
 
@@ -121,8 +124,8 @@ Yes, you can.
 == Screenshots ==
 
 1. EBANX Features - Allow your customers to save their credit card data to buy with just one-click; in addition to increasing your sales even more.
-4. Plugin Configuration - To start your integration, send an email to [localintegration@ebanxpay.com](mailto:localintegration@ebanxpay.com) to request your test and live keys. Insert them and choose to enable the sandbox mode for testing.
-6. Plugin Configuration - Set more advanced options such as Save Card Data, One-click payment, Enable Auto-Capture, Maximum number of Installments, etc.
+4. Plugin Configuration - To start your integration, send an email to [hello@ebanxpay.com](mailto:hello@ebanxpay.com) to request your test and live keys. Insert them and choose to enable the sandbox mode for testing.
+6. Plugin Configuration - Set more advanced options such as Save Card Data, One-click payment, Enable Auto-Capture, Maximum number of Instalments, etc.
 
 == Security section ==
 
