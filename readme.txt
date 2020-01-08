@@ -46,7 +46,7 @@ The plugin also includes:
 
 * Sandbox mode for testing
 * Capture mode that when activated allows you to collect payments after a manual review
-* Extra fields that are added automatically for payments made in Brazil, Argentina, Chile, and Colombia where customers must provide more information to local regulatory authorities
+* Extra fields that are added automatically for payments made in Brazil where customers must provide more information to local regulatory authorities
 * Support for checkout managers
 
 **Account & Pricing**
@@ -61,17 +61,17 @@ Looking for more detailed information? Visit our [Developer’s Academy](https:/
 
 **Requirements**
 
-All pages that incorporate the EBANX plugin must be served over HTTPS.
+All pages that incorporate the EBANX Pay plugin must be served over HTTPS.
 
-**About EBANX**
+**About EBANX Pay**
 
-[EBANX is a local payments expert](https://www.ebanx.com/business/en) that offer complete solutions to connect eager buyers with global sellers, increasing the merchant's revenue in the fastest growing markets in Latin America. Whether you are an enterprise or running your startup, EBANX can help you sell internationally with ease and efficiency.
+[EBANX is a local payments expert](https://www.ebanxpay.com) that offer complete solutions to connect eager buyers with local sellers, increasing the merchant’s revenue in the fastest growing markets in Brazil. Whether you are an enterprise or running your startup, EBANX Pay can help you sell more with ease and efficiency.
 
 == Installation ==
 
 **Automatic**
 
-Automatic installation is the easiest way to do it, and it can be done without leaving your web browser. To do an automatic install of the EBANX plugin, login to the WordPress Dashboard, go to the Plugins menu, and select “Add New.” Then, search for the “EBANX” to find EBANX Payment Gateway for WooCommerce and click on “Install Now.” After the installation, you just have to activate and get ready to sell even more.
+Automatic installation is the easiest way to do it, and it can be done without leaving your web browser. To do an automatic install of the EBANX Pay plugin, login to the WordPress Dashboard, go to the Plugins menu, and select “Add New.” Then, search for the “EBANX Pay” to find “EBANX Local Payment Gateway for WooCommerce” and click on “Install Now.” After the installation, you just have to activate and get ready to sell even more.
 
 **Manual**
 
@@ -79,23 +79,17 @@ To install the plugin manually, download our plugin and upload it to your web se
 
 **Via GitHub**
 
-The EBANX Pay Gateway Plugin can also be installed using GitHub. You can find our repository [here](https://github.com/ebanx/checkout-woocommerce-local/ "EBANX GitHub repository"). To download the plugin from our repository, please view [our latest release](https://github.com/ebanx/woocommerce-gateway-ebanx/releases/latest "Latest Release from GitHub repository") and download the `woocommerce-gateway-ebanx.zip` package.
-
-Do you still need your API Keys? You can pick those up [here](https://dashboard.ebanx.com "EBANX API keys"). Just access your Dashboard Account, click on your user name, then on Account Settings and "Integration".
+The EBANX Pay Gateway Plugin can also be installed using GitHub. You can find our repository [here](https://github.com/ebanx/checkout-woocommerce-local/ "EBANX GitHub repository"). To download the plugin from our repository, please view [our latest release](https://github.com/ebanx/woocommerce-gateway-ebanx-local/releases/latest "Latest Release from GitHub repository") and download the `woocommerce-gateway-ebanx-local.zip` package.
 
 == Frequently Asked Questions ==
 
-= Does this plugin support subscriptions or recurring charges? =
-
-Not yet. However, customers are able to save credit card information and make one-click purchases. We are working on having the next version of the plugin support subscriptions.
-
 = Who can I contact if I still have questions? =
 
-Reach out to one of our integration specialists at locaintegration@ebanxpay.com or get in touch with us through our "Help & Support" tab inside the EBANX Dashboard. If you don't have an account yet, access our [EBANX Pay](https://www.ebanxpay.com).
+Reach out to one of our integration specialists at localintegration@ebanxpay.com or get in touch with us through our "Help & Support" tab inside the EBANX Dashboard. If you don't have an account yet, access our [EBANX Pay](https://www.ebanxpay.com).
 
 = Where can I find more documentation or instructions? =
 
-On the [EBANX Developer’s Academy](https://developers.ebanx.com/integrations/extensions-and-plugins/woocommerce-plugin/ "EBANX Developer's Academy") you will find instructions and detailed information about all our plugins.
+On the [EBANX Developer’s Academy](https://developers.ebanxpagamentos.com/getting-started/integrations/extensions-and-plugins/woocommerce-plugin/ "EBANX Pay Developer's Academy") you will find instructions and detailed information about all our plugins.
 
 = Which payment types does EBANX Pay process? =
 
@@ -118,8 +112,14 @@ Yes, you can.
 
 == Changelog ==
 
+= 2.0.2 =
+* 2020-01-08 - Improve reademe.txt file.
+
+= 2.0.1 =
+* 2020-01-08 - Fix some documentation files.
+
 = 2.0.0 =
-* 2016-12-30 - First Release.
+* 2020-01-08 - First Release.
 
 == Screenshots ==
 
