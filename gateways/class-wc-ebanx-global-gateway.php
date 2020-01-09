@@ -189,9 +189,9 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 			),
 			'billing_phone_required'           => array(
 				'type'        => 'checkbox',
-				'title'       => __( 'Billing phone required', 'woocommerce-gateway-ebanx' ),
-				'label'       => __( 'Billing phone required', 'woocommerce-gateway-ebanx' ),
-				'description' => __( 'Make billing phone required. Default is true.', 'woocommerce-gateway-ebanx' ),
+				'title'       => __( 'Billing phone is required', 'woocommerce-gateway-ebanx' ),
+				'label'       => __( 'Billing phone is required', 'woocommerce-gateway-ebanx' ),
+				'description' => __( 'Makes billing phone required. Default is true.', 'woocommerce-gateway-ebanx' ),
 				'desc_tip'    => true,
 				'class'       => 'ebanx-payments-option',
 			),

@@ -936,3 +936,11 @@ msgstr ""
 #: woocommerce-gateway-ebanx.php:565
 msgid "Settings"
 msgstr ""
+
+#: gateways/class-wc-ebanx-global-gateway.php
+msgid "Billing phone is required"
+msgstr ""
+
+#: gateways/class-wc-ebanx-global-gateway.php
+msgid "Makes billing phone required. Default is true."
+msgstr ""

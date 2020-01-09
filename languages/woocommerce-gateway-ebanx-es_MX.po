@@ -422,3 +422,11 @@ msgstr "Ninguna tarjeta de crédito encontrada"
 #: templates/my-account/ebanx-credit-cards.php:29
 msgid "To save a credit card, pay an order on checkout using credit card as payment method."
 msgstr "Para guardar una tarjeta de crédito, termina una compra seleccionando tarjeta de crédito como medio de pago."
+
+#: gateways/class-wc-ebanx-global-gateway.php
+msgid "Billing phone is required"
+msgstr "Se requiere teléfono de facturación"
+
+#: gateways/class-wc-ebanx-global-gateway.php
+msgid "Makes billing phone required. Default is true."
+msgstr "Se requiere un teléfono de facturación. El valor predeterminado es verdadero."

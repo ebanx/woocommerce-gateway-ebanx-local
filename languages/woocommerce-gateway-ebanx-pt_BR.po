@@ -205,7 +205,7 @@ msgstr "EBANX: O pagamento foi atualizado para: %s."
 
 #: gateways/class-wc-ebanx-gateway.php:655
 msgid "EBANX: The notification about change payment status was ignored, payment already Completed."
-msgstr "EBANX: A notificação sobre a mudança do status do pagamento foi ignorado, pagamento já está Completo"
+msgstr "EBANX: A notificação sobre a mudança do status do pagamento foi ignorado, pagamento já está Completo."
 
 #: gateways/class-wc-ebanx-gateway.php:1210
 #, php-format
@@ -1036,6 +1036,14 @@ msgstr "Telefone"
 #: templates/compliance-fields-br.php
 msgid "Company name"
 msgstr "Nome da empresa"
+
+#: gateways/class-wc-ebanx-global-gateway.php
+msgid "Billing phone is required"
+msgstr "Telefone de cobrança é obrigatório"
+
+#: gateways/class-wc-ebanx-global-gateway.php
+msgid "Makes billing phone required. Default is true."
+msgstr "Define a obrigatoriedade do telefone de cobrança. O padrão é obrigatório."
 
 #~ msgid "EBANX only supports instalments between 1 and 12"
 #~ msgstr "O EBANX suporta apenas número de parcelas entre 1 e 12"
