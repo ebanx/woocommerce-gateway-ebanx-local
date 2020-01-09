@@ -10,7 +10,7 @@ if ( $order_id ) {
 	$address = $wp_order->get_address();
 	$company = $wp_order->get_billing_company();
 
-	$person_type = ( '1' === $order_person_type ||
+	$person_type = ( '1' == $order_person_type ||
 		'cpf' === $order_person_type ||
 		'pessoa física' === strtolower( $order_person_type )
 	) ? 'cpf' : 'cnpj';

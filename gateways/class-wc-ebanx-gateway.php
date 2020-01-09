@@ -34,8 +34,6 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 	 */
 	public $user_id;
 
-	const REQUIRED_MARK = ' <abbr class="required" title="required">*</abbr>';
-
 	/**
 	 * Constructor
 	 */
@@ -87,6 +85,7 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 	 * @param  array $fields WooCommerce's fields.
 	 * @return array         The new fields.
 	 */
+
 	public function checkout_fields( $fields ) {
 		$fields_options = array();
 		if ( isset( $this->configs->settings['brazil_taxes_options'] ) && is_array( $this->configs->settings['brazil_taxes_options'] ) ) {
@@ -102,6 +101,7 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 			'type'    => 'select',
 			'label'   => __( 'Select an option', 'woocommerce-gateway-ebanx' ),
 			'default' => 'cpf',
+			'required' => true,
 			'class'   => array( 'ebanx_billing_brazil_selector', 'ebanx-select-field' ),
 			'options' => array(
 				'cpf'  => __( 'CPF - Individuals', 'woocommerce-gateway-ebanx' ),
@@ -111,19 +111,24 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 
 		$ebanx_billing_brazil_document = array(
 			'type'    => 'text',
-			'label'   => 'CPF' . self::REQUIRED_MARK,
+			'label'   => 'CPF',
+			'required' => true,
 			'class'   => array( 'ebanx_billing_brazil_document', 'ebanx_billing_brazil_cpf', 'ebanx_billing_brazil_selector_option', 'form-row-wide' ),
 			'default' => isset( $cpf ) ? $cpf : '',
 		);
 
 		$ebanx_billing_brazil_cnpj = array(
 			'type'    => 'text',
-			'label'   => 'CNPJ' . self::REQUIRED_MARK,
+			'label'   => 'CNPJ',
+			'required' => true,
 			'class'   => array( 'ebanx_billing_brazil_cnpj', 'ebanx_billing_brazil_cnpj', 'ebanx_billing_brazil_selector_option', 'form-row-wide' ),
 			'default' => isset( $cnpj ) ? $cnpj : '',
 		);
 
 		if ( ! $disable_own_fields ) {
+			$has_post_data = ! WC_EBANX_Request::is_post_empty();
+			$person_type   = WC_EBANX_Request::read( 'ebanx_billing_brazil_person_type', null );
+
 			// CPF and CNPJ are enabled.
 			if ( in_array( 'cpf', $fields_options, true ) && in_array( 'cnpj', $fields_options, true ) ) {
 				$fields['billing']['ebanx_billing_brazil_person_type'] = $ebanx_billing_brazil_person_type;
@@ -131,18 +136,25 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 
 			// CPF is enabled.
 			if ( in_array( 'cpf', $fields_options, true ) ) {
+				$ebanx_billing_brazil_document['required'] = ! $has_post_data || 'cpf' === $person_type;
+
 				$fields['billing']['ebanx_billing_brazil_document'] = $ebanx_billing_brazil_document;
 			}
 
 			// CNPJ is enabled.
 			if ( in_array( 'cnpj', $fields_options, true ) ) {
+				$ebanx_billing_brazil_cnpj['required'] =  ! $has_post_data || 'cnpj' === $person_type;
+
 				$fields['billing']['ebanx_billing_brazil_cnpj'] = $ebanx_billing_brazil_cnpj;
 			}
 		}
 
+		$is_billing_phone_required = ( 'yes' === $this->configs->get_setting_or_default('billing_phone_required', 'yes' ) );
+
+		$fields['billing_phone']['required'] = $is_billing_phone_required;
+
 		return $fields;
 	}
-
 	/**
 	 * Fetches the billing field names for compatibility with checkout managers
 	 *

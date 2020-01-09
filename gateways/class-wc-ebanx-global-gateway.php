@@ -40,6 +40,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 		'save_card_data'              => 'yes',
 		'one_click'                   => 'yes',
 		'capture_enabled'             => 'yes',
+		'billing_phone_required'      => 'yes',
 		'br_credit_card_instalments'  => '1',
 		'due_date_days'               => '3',
 		'brazil_taxes_options'        => 'cpf',
@@ -103,7 +104,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 			'integration_title'         => array(
 				'title'       => __( 'Integration', 'woocommerce-gateway-ebanx' ),
 				'type'        => 'title',
-				'description' => __( 'You can obtain the integration keys sending email to <a href="mailto:integration@ebanxpay.com">integration@ebanxpay.com</a>', 'woocommerce-gateway-ebanx' ),
+				'description' => __( 'You can obtain the integration keys sending email to <a href="mailto:localintegration@ebanxpay.com">localintegration@ebanxpay.com</a>', 'woocommerce-gateway-ebanx' ),
 			),
 			'sandbox_private_key'       => array(
 				'title' => __( 'Sandbox Integration Key', 'woocommerce-gateway-ebanx' ),
@@ -183,6 +184,14 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Enable Auto-Capture', 'woocommerce-gateway-ebanx' ),
 				'label'       => __( 'Capture the payment immediately', 'woocommerce-gateway-ebanx' ),
 				'description' => __( 'Automatically capture payments from your customers, just for credit card. Otherwise you will need to capture the payment going to: WooCommerce -> Orders. Not captured payments will be cancelled in 4 days.', 'woocommerce-gateway-ebanx' ),
+				'desc_tip'    => true,
+				'class'       => 'ebanx-payments-option',
+			),
+			'billing_phone_required'           => array(
+				'type'        => 'checkbox',
+				'title'       => __( 'Billing phone required', 'woocommerce-gateway-ebanx' ),
+				'label'       => __( 'Billing phone required', 'woocommerce-gateway-ebanx' ),
+				'description' => __( 'Make billing phone required. Default is true.', 'woocommerce-gateway-ebanx' ),
 				'desc_tip'    => true,
 				'class'       => 'ebanx-payments-option',
 			),
