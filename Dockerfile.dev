@@ -2,7 +2,7 @@ FROM ebanx/woocommerce-gateway-ebanx
 
 WORKDIR /var/www/html/wp-content/plugins/woocommerce-gateway-ebanx-local
 
-RUN apt-get update && apt-get install git unzip vim -y --no-recomends
+RUN apt-get update && apt-get install git unzip vim -y
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \

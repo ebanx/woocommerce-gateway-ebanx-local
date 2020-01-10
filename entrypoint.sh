@@ -31,7 +31,9 @@ if ! $(wp core is-installed --allow-root); then
   chown -Rf www-data:www-data $WP_ROOT
 
   wp core install --url=$WOOCOMMERCE_URL --title="$EBANX_SITE_TITLE" --admin_user=$EBANX_ADMIN_USERNAME --admin_password=$EBANX_ADMIN_PASSWORD --admin_email=$EBANX_SITE_EMAIL --skip-email --allow-root
-  wp config set WP_DEBUG false --raw --allow-root
+  wp config set WP_DEBUG true --raw --allow-root
+  wp config set WP_DEBUG_LOG true --raw --allow-root
+  wp config set WP_DEBUG_DISPLAY true --raw --allow-root
 
   # Install and activate storefrontheme
   wp theme install storefront --version=$EBANX_STOREFRONT_THEME_VERSION --activate --allow-root
