@@ -76,8 +76,7 @@ class WC_EBANX_Database {
 
 		$table_name = self::tables()[ $table ];
 
-		// @codingStandardsIgnoreLine
-		$wpdb->query( $wpdb->prepare( "DELETE FROM `$table_name` WHERE $where", null ) );
+		$wpdb->query( $wpdb->prepare( 'DELETE FROM `%s` WHERE %s', $table_name, $where ) );
 	}
 
 	/**

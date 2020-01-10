@@ -95,7 +95,9 @@ abstract class WC_EBANX_Helper {
 	 */
 	public static function get_post_id_by_meta_key_and_value( $key, $value ) {
 		global $wpdb;
-		$meta = $wpdb->get_results( 'SELECT * FROM `' . $wpdb->postmeta . "` WHERE meta_key='" . esc_sql( $key ) . "' AND meta_value='" . esc_sql( $value ) . "'" );
+
+		$query = sprintf( 'SELECT * FROM %s WHERE meta_key="%s" AND meta_value="%s"', $wpdb->postmeta, esc_sql( $key ),  esc_sql( $value ) );
+		$meta  = $wpdb->get_results( $query );
 		if ( is_array( $meta ) && ! empty( $meta ) && isset( $meta[0] ) ) {
 			$meta = $meta[0];
 		}

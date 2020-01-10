@@ -90,7 +90,7 @@ class WC_EBANX_Environment {
 				$database_server->name = 'MySQL';
 			}
 
-			$database_server->version = $wpdb->get_var( $wpdb->prepare( 'SELECT version() AS version', 'version' ) );
+			$database_server->version = $wpdb->db_version();
 		} else {
 			$database_server->name    = 'Unconnected';
 			$database_server->version = 'Unknown';

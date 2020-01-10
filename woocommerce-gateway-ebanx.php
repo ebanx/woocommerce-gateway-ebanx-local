@@ -1,7 +1,7 @@
 <?php //phpcs:disable WordPress.Files.FileName
 /**
  * Plugin Name: EBANX Local Payment Gateway for WooCommerce
- * Plugin URI: https://developers.ebanx.com/getting-started/extensions-and-plugins/woocommerce-plugin/
+ * Plugin URI: https://developers.ebanxpagamentos.com/getting-started/extensions-and-plugins/woocommerce-plugin/
  * Description: Offer local payment methods
  * Author: EBANX Pay
  * Author URI: https://www.ebanxpay.com
