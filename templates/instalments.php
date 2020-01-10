@@ -1,7 +1,8 @@
 <!-- Installments -->
 <?php
 
-$currency = ! empty( $currency ) ? $currency : get_woocommerce_currency();
+$currency            = ! empty( $currency ) ? $currency : get_woocommerce_currency();
+$selected_instalment = isset( $selected_instalment ) ? $selected_instalment : 1;
 
 if ( count( $instalments_terms ) > 1 ) : ?>
 	<section class="ebanx-form-row">

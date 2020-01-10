@@ -632,11 +632,13 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	private function save_document( $country ) {
 		$field_name = 'document';
 		if ( WC_EBANX_Constants::COUNTRY_BRAZIL === $country ) {
-			if ( WC_EBANX_Request::has( $this->names['ebanx_billing_brazil_person_type'] ) ) {
-				update_user_meta( $this->user_id, '_ebanx_billing_brazil_person_type', sanitize_text_field( WC_EBANX_Request::read( $this->names['ebanx_billing_brazil_person_type'] ) ) );
+			$person_type = sanitize_text_field( WC_EBANX_Request::read( $this->names['ebanx_billing_brazil_person_type'], null ) );
+			if ( ! empty ( $person_type ) ) {
+				update_user_meta( $this->user_id, '_ebanx_billing_brazil_person_type', $person_type );
 			}
 
-			if ( WC_EBANX_Request::has( $this->names['ebanx_billing_brazil_cnpj'] ) ) {
+			if ( ( 'cnpj' === $person_type || '2' == $person_type || 'pessoa jurídica' === strtolower( $person_type ) )
+				&& WC_EBANX_Request::has( $this->names['ebanx_billing_brazil_cnpj'] ) ) {
 				$field_name = 'cnpj';
 			}
 		}

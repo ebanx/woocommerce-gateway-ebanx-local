@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.0.6
+* 2020-01-10 - Fixes one-click purchase.
+
 ## 2.0.5
 * 2020-01-10 - Fixes and improve queries. Fixes on get database version.
 
