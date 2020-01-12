@@ -344,7 +344,7 @@ class WC_EBANX_Payment_Adapter {
 				'streetNumber' => $street_number,
 				'city'         => WC_EBANX_Request::read_customizable_field( 'billing_city', $gateway_id ),
 				// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-				'country'      => Country::fromIso( $addressCountry ),
+				'country'      => 'BRL',
 				'state'        => WC_EBANX_Request::read_customizable_field( 'billing_state', $gateway_id ),
 				'zipcode'      => WC_EBANX_Request::read_customizable_field( 'billing_postcode', $gateway_id ),
 			)
@@ -364,16 +364,20 @@ class WC_EBANX_Payment_Adapter {
 	private static function transform_person( $order, $configs, $names, $gateway_id ) {
 		$document = static::get_document( $configs, $names, $gateway_id );
 
-		return new Person(
-			array(
-				'type'        => static::get_person_type( $configs, $names, $gateway_id ),
-				'document'    => $document,
-				'email'       => $order->get_billing_email(),
-				'ip'          => WC_Geolocation::get_ip_address(),
-				'name'        => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
-				'phoneNumber' => '' !== $order->get_billing_phone() ? $order->get_billing_phone() : WC_EBANX_Request::read( $gateway_id, null )['billing_phone'],
-			)
+		$person_data = array(
+			'type'        => static::get_person_type( $configs, $names, $gateway_id ),
+			'document'    => $document,
+			'email'       => $order->get_billing_email(),
+			'ip'          => WC_Geolocation::get_ip_address(),
+			'name'        => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+			'phoneNumber' => '' !== $order->get_billing_phone() ? $order->get_billing_phone() : WC_EBANX_Request::read( $gateway_id, null )['billing_phone'],
 		);
+
+		if ( 'yes' === $configs->get_setting_or_default( 'enable_foreign_customer' , 'no') ) {
+			$person_data['documentCountry'] = $country = trim( strtolower( WC()->customer->get_billing_country() ) );
+		}
+
+		return new Person( $person_data );
 	}
 
 	/**
@@ -390,6 +394,10 @@ class WC_EBANX_Payment_Adapter {
 
 		if ( WC_EBANX_Constants::COUNTRY_BRAZIL === $country ) {
 			return static::get_brazilian_document( $configs, $names, $gateway_id );
+		}
+
+		if ( 'yes' === $configs->get_setting_or_default( 'enable_foreign_customer' , 'no') ) {
+			return '12345';
 		}
 
 		return '';
@@ -426,6 +434,7 @@ class WC_EBANX_Payment_Adapter {
 
 		return $cpf;
 	}
+
 
 	/**
 	 * @param WC_EBANX_Global_Gateway $configs

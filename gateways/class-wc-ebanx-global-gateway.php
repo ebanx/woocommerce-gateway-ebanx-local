@@ -19,10 +19,6 @@ if ( ! defined( 'IS_TEST' ) ) {
  * Class WC_EBANX_Global_Gateway
  */
 final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
-	const CC_COUNTRIES_FROM_ISO = array(
-		WC_EBANX_Constants::COUNTRY_BRAZIL => 'Brazil',
-	);
-
 	/**
 	 * Mock to insert when plugin is installed
 	 *
@@ -37,16 +33,24 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 			'ebanx-credit-card-br',
 			'ebanx-banking-ticket',
 		),
-		'save_card_data'              => 'yes',
-		'one_click'                   => 'yes',
-		'capture_enabled'             => 'yes',
-		'billing_phone_required'      => 'yes',
-		'br_credit_card_instalments'  => '1',
-		'due_date_days'               => '3',
-		'brazil_taxes_options'        => 'cpf',
-		'br_interest_rates_enabled'   => 'no',
-		'manual_review_enabled'       => 'no',
-		'br_min_instalment_value_brl' => '5',
+		'save_card_data'                         => 'yes',
+		'one_click'                              => 'yes',
+		'capture_enabled'                        => 'yes',
+		'billing_phone_required'                 => 'yes',
+		'enable_foreign_customer'                => 'yes',
+		'international_credit_card_instalments'  => '1',
+		'br_credit_card_instalments'             => '1',
+		'due_date_days'                          => '3',
+		'brazil_taxes_options'                   => 'cpf',
+		'br_interest_rates_enabled'              => 'no',
+		'manual_review_enabled'                  => 'no',
+		'br_min_instalment_value_brl'            => '5',
+		'international_min_instalment_value_brl' => '5',
+
+	);
+
+	const CC_COUNTRIES_FROM_ISO = array(
+		WC_EBANX_Constants::COUNTRY_BRAZIL => 'Brazil',
 	);
 
 	/**
@@ -146,8 +150,9 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'type'    => 'multiselect',
 				'class'   => 'wc-enhanced-select',
 				'options' => array(
-					'ebanx-credit-card-br' => 'Credit Card',
-					'ebanx-banking-ticket' => 'Boleto bancário',
+					'ebanx-credit-card-br'            => 'Credit Card',
+					'ebanx-credit-card-international' => 'International Credit Card',
+					'ebanx-banking-ticket'            => 'Boleto bancário',
 				),
 				'default' => array(
 					'ebanx-credit-card-br',
@@ -184,6 +189,14 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Enable Auto-Capture', 'woocommerce-gateway-ebanx' ),
 				'label'       => __( 'Capture the payment immediately', 'woocommerce-gateway-ebanx' ),
 				'description' => __( 'Automatically capture payments from your customers, just for credit card. Otherwise you will need to capture the payment going to: WooCommerce -> Orders. Not captured payments will be cancelled in 4 days.', 'woocommerce-gateway-ebanx' ),
+				'desc_tip'    => true,
+				'class'       => 'ebanx-payments-option',
+			),
+			'enable_foreign_customer'           => array(
+				'type'        => 'checkbox',
+				'title'       => __( 'Enable foreign customer', 'woocommerce-gateway-ebanx' ),
+				'label'       => __( 'Enable foreign customer', 'woocommerce-gateway-ebanx' ),
+				'description' => __( 'Enable foreign customer. Default is false.', 'woocommerce-gateway-ebanx' ),
 				'desc_tip'    => true,
 				'class'       => 'ebanx-payments-option',
 			),

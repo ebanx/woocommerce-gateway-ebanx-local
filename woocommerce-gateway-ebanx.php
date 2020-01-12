@@ -143,8 +143,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			/**
 			 * My account
 			 */
-			if ( $configs
-				&& $configs->get_setting_or_default( 'save_card_data', 'no' ) === 'yes' ) {
+			if ( $configs && $configs->get_setting_or_default( 'save_card_data', 'no' ) === 'yes' ) {
 
 				add_action( 'init', array( $this, 'my_account_endpoint' ) );
 				add_action( 'woocommerce_account_' . self::$my_account_endpoint . '_endpoint', array( $this, 'my_account_template' ) );
@@ -508,6 +507,9 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			include_once WC_EBANX_GATEWAYS_DIR . 'class-wc-ebanx-banking-ticket-gateway.php';
 			include_once WC_EBANX_GATEWAYS_DIR . 'class-wc-ebanx-credit-card-br-gateway.php';
 
+			// International Gateways.
+			include_once WC_EBANX_GATEWAYS_DIR . 'class-wc-ebanx-credit-card-international-gateway.php';
+
 			// Hooks/Actions.
 			include_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-payment-by-link.php';
 			include_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-payment-validator.php';
@@ -540,6 +542,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 		public function add_gateway( $methods ) {
 			// Global.
 			$methods[] = 'WC_EBANX_Global_Gateway';
+			$methods[] = 'WC_EBANX_Credit_Card_International_Gateway';
 
 			// Brazil.
 			$methods[] = 'WC_EBANX_Banking_Ticket_Gateway';

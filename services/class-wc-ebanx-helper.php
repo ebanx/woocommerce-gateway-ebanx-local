@@ -137,7 +137,7 @@ abstract class WC_EBANX_Helper {
 
 		return false;
 	}
-
+	
 	/**
 	 *
 	 * @param string $country_abbr

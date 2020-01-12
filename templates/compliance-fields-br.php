@@ -2,7 +2,7 @@
 	$order_id = get_query_var( 'order-pay' );
 
 if ( $order_id ) {
-	$wp_order             = wc_get_order( $order_id );
+	$wp_order          = wc_get_order( $order_id );
 	$order_person_type = $wp_order ? get_post_meta( $wp_order->get_id(), '_billing_persontype', true ) : null;
 	$cpf               = $wp_order ? get_post_meta( $wp_order->get_id(), '_billing_cpf', true ) : null;
 	$cnpj              = $wp_order ? get_post_meta( $wp_order->get_id(), '_billing_cnpj', true ) : null;
@@ -30,6 +30,11 @@ if ( $order_id ) {
 			'label'     => 'CPF',
 			'value'     => $cpf,
 			'class_row' => 'cpf-row',
+		),
+		'ebanx_billing_foreign_document' => array(
+			'label'     => 'Document',
+			'value'     => '',
+			'class_row' => 'foreign-document-row',
 		),
 		'billing_phone'                 => array(
 			'label' => 'Telephone',

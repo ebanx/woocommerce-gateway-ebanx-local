@@ -71,14 +71,12 @@ class WC_EBANX_My_Account {
 	 * @return void
 	 */
 	public static function order_details( $order ) {
-		// For test purposes.
-		$hash = get_post_meta( $order->get_id(), '_ebanx_payment_hash', true );
-
-		printf( '<input type="hidden" name="ebanx_payment_hash" value="%s" />', $hash ); // phpcs:ignore WordPress.XSS.EscapeOutput
-
 		switch ( $order->get_payment_method() ) {
 			case 'ebanx-credit-card-br':
 				WC_EBANX_Credit_Card_BR_Gateway::thankyou_page( $order );
+				break;
+			case 'ebanx-credit-card-international':
+				WC_EBANX_Credit_Card_International_Gateway::thankyou_page( $order );
 				break;
 			case 'ebanx-banking-ticket':
 				WC_EBANX_Banking_Ticket_Gateway::thankyou_page( $order );

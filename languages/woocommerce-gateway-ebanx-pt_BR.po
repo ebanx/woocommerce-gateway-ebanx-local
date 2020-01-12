@@ -502,7 +502,7 @@ msgstr ""
 
 #: gateways/class-wc-ebanx-global-gateway.php:453
 msgid "Entity Type Selector"
-msgstr "Tipo de Entidade"
+msgstr "Tipo de pessoa"
 
 #: gateways/class-wc-ebanx-global-gateway.php:456
 msgid "eg: billing_brazil_entity"

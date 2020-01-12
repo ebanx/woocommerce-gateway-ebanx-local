@@ -429,7 +429,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			return 'Número de parcelas';
 		}
 
-		return 'Número de parcelas';
+		return 'Instalments number';
 	}
 
 	/**

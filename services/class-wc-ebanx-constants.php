@@ -114,8 +114,9 @@ abstract class WC_EBANX_Constants {
 	 * @var array
 	 */
 	public static $gateway_to_payment_type_code = array(
-		'ebanx-banking-ticket' => '_boleto',
-		'ebanx-credit-card-br' => '_creditcard',
+		'ebanx-banking-ticket'            => '_boleto',
+		'ebanx-credit-card-br'            => '_creditcard',
+		'ebanx-credit-card-international' => '_creditcard',
 	);
 
 	/**

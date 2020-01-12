@@ -92,6 +92,36 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 			$fields_options = $this->configs->settings['brazil_taxes_options'];
 		}
 
+		$is_billing_phone_required = ( 'yes' === $this->configs->get_setting_or_default('billing_phone_required', 'yes' ) );
+
+		$fields['billing_phone']['required'] = $is_billing_phone_required;
+
+		$is_foreign_customer_enabled = ( 'yes' === $this->configs->get_setting_or_default('enable_foreign_customer', 'no' ) );
+
+		if ( ! $is_foreign_customer_enabled ) {
+			$ebanx_billing_foreign_document_country = array(
+				'type'     => 'text',
+				'label'    => __( 'Document Country', 'woocommerce-gateway-ebanx' ),
+				'required' => true,
+				'class'    => array( 'form-row-wide' ),
+				'default'  => ''
+			);
+
+			$fields['billing']['ebanx_billing_foreign_document_country'] = $ebanx_billing_foreign_document_country;
+
+			$ebanx_billing_foreign_document = array(
+				'type'     => 'text',
+				'label'    => __( 'Document', 'woocommerce-gateway-ebanx' ),
+				'required' => true,
+				'class'    => array( 'form-row-wide' ),
+				'default'  => ''
+			);
+
+			$fields['billing']['ebanx_billing_foreign_document'] = $ebanx_billing_foreign_document;
+
+			return $fields;
+		}
+
 		$disable_own_fields = isset( $this->configs->settings['checkout_manager_enabled'] ) && 'yes' === $this->configs->settings['checkout_manager_enabled'];
 
 		$cpf  = get_user_meta( $this->user_id, '_ebanx_billing_brazil_document', true );
@@ -149,12 +179,9 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 			}
 		}
 
-		$is_billing_phone_required = ( 'yes' === $this->configs->get_setting_or_default('billing_phone_required', 'yes' ) );
-
-		$fields['billing_phone']['required'] = $is_billing_phone_required;
-
 		return $fields;
 	}
+
 	/**
 	 * Fetches the billing field names for compatibility with checkout managers
 	 *
