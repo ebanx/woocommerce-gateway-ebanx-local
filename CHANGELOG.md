@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.0.8
+* 2020-01-10 - Fixes recurrent payment.
+
+## 2.0.7
+* 2020-01-10 - Increase plugin version.
+
 ## 2.0.6
 * 2020-01-10 - Fixes one-click purchase.
 

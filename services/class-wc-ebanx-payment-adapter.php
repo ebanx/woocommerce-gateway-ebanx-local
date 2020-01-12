@@ -164,7 +164,7 @@ class WC_EBANX_Payment_Adapter {
 	 * @return array
 	 */
 	private static function get_order_meta_data( $order ) {
-		$data        = get_post_meta( $order->data['id'] );
+		$data        = get_post_meta( $order->get_id() );
 		$data_values = array();
 
 		foreach ( $data as $key => $value ) {
@@ -214,18 +214,16 @@ class WC_EBANX_Payment_Adapter {
 		if ( count( $fields_options ) === 1 && 'cnpj' === $fields_options[0] ) {
 			return Person::TYPE_BUSINESS;
 		}
-		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-		$brazilPersonType = get_post_meta( $order->get_id(), '_billing_persontype', true );
-		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-		if ( empty( $brazilPersonType ) ) {
-			return Person::TYPE_PERSONAL;
-		}
-		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-		if ( 'cpf' === $brazilPersonType || 1 == $brazilPersonType || 'pessoa física' === strtolower( $brazilPersonType ) ) {
+		$brazil_person_ype = get_user_meta( $order->get_user_id(), '_ebanx_billing_brazil_person_type', true );
+		if ( empty( $brazil_person_ype ) ) {
 			return Person::TYPE_PERSONAL;
 		}
 
-		return Person::TYPE_BUSINESS;
+		if ( 'cnpj' === $brazil_person_ype || 2 == $brazil_person_ype || 'pessoa jurídica' === strtolower( $brazil_person_ype ) ) {
+			return Person::TYPE_BUSINESS;
+		}
+
+		return Person::TYPE_PERSONAL;
 	}
 
 	/**
@@ -237,8 +235,8 @@ class WC_EBANX_Payment_Adapter {
 	 * @throws Exception Throws parameter missing exception.
 	 */
 	private static function get_document_from_order( $order, $person_type ) {
-		$cpf  = get_post_meta( $order->get_id(), '_billing_cpf', true );
-		$cnpj = get_post_meta( $order->get_id(), '_billing_cnpj', true );
+		$cpf  = get_user_meta( $order->get_user_id(), '_ebanx_document', true );
+		$cnpj = get_user_meta( $order->get_user_id(), '_ebanx_cnpj', true );
 
 		$has_cpf  = ! empty( $cpf );
 		$has_cnpj = ! empty( $cnpj );
@@ -251,7 +249,7 @@ class WC_EBANX_Payment_Adapter {
 			return $cnpj;
 		}
 
-		throw new Exception( 'INVALID-BRL-DOCUMENT' );
+		throw new Exception( 'INVALID-DOCUMENT' );
 	}
 
 	/**
@@ -270,7 +268,7 @@ class WC_EBANX_Payment_Adapter {
 				'type'        => $person_type,
 				'document'    => $document,
 				'email'       => $order->get_billing_email(),
-				'ip'          => WC_Geolocation::get_ip_address(),
+				'ip'          => get_post_meta( $order->get_id(),  '_customer_ip_address', true ),
 				'name'        => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
 				'phoneNumber' => $order->get_billing_phone(),
 			)
