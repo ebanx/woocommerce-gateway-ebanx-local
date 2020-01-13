@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.0.9
+* 2020-01-10 - Fixes recurrent payment adding payment_type_code on credit card transaction
+
 ## 2.0.8
 * 2020-01-10 - Fixes recurrent payment.
 

@@ -88,27 +88,31 @@ class WC_EBANX_Payment_Adapter {
 	 * @param WC_Order $order
 	 *
 	 * @return Address
-	 * @throws Exception Throws parameter missing exception.
+	 * @throws WC_EBANX_Payment_Exception Throws parameter missing exception.
 	 */
 	private static function transform_address_from_post_data( $order ) {
-
 		$order_meta_data = self::get_order_meta_data( $order );
 
 		$order_address = array(
-			'postcode'  => $order_meta_data['_billing_postcode'],
-			'address_1' => $order_meta_data['_billing_address_1'],
+			'postcode'  => ! empty( $order_meta_data['_billing_postcode'] ) ? $order_meta_data['_billing_postcode'] : '',
+			'address_1' => ! empty( $order_meta_data['_billing_address_1'] ) ? $order_meta_data['_billing_address_1'] : '',
 			'number'    => ! empty( $order_meta_data['_billing_number'] ) ? $order_meta_data['_billing_number'] : '',
 			'address_2' => ! empty( $order_meta_data['_billing_address_2'] ) ? $order_meta_data['_billing_address_2'] : '',
-			'state'     => $order_meta_data['_billing_state'],
+			'state'     => ! empty( $order_meta_data['_billing_state'] ) ? $order_meta_data['_billing_state'] : '',
 			'city'      => ! empty( $order_meta_data['_billing_city'] ) ? $order_meta_data['_billing_city'] : '',
+			'country'   => self::get_country_from_iso( $order->get_billing_country() ),
 		);
 
 		if (
 			empty( $order_address['postcode'] )
 			|| empty( $order_address['address_1'] )
 			|| empty( $order_address['state'] )
+			|| empty( $order_address['country'] )
 		) {
-			throw new Exception( 'INVALID-ADDRESS' );
+			throw new WC_EBANX_Payment_Exception(
+				__( 'Missing billing address required fields: postal code, address, state, or country.', 'woocommerce-gateway-ebanx' ),
+				500
+			);
 		}
 
 		$addresses = $order_address['address_1'];
@@ -117,15 +121,14 @@ class WC_EBANX_Payment_Adapter {
 			$addresses .= ' - ' . $order_address['address_2'];
 		}
 
-		$number          = ! empty( $order_address['number'] ) ? trim( $order_address['number'] ) : 'S/N';
-		$address_country = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country();
+		$number = ! empty( $order_address['number'] ) ? trim( $order_address['number'] ) : 'S/N';
 
 		return new Address(
 			array(
 				'address'      => $addresses,
 				'streetNumber' => $number,
 				'city'         => $order_address['city'],
-				'country'      => Country::fromIso( $address_country ),
+				'country'      => $order_address['country'],
 				'state'        => $order_address['state'],
 				'zipcode'      => $order_address['postcode'],
 			)
@@ -137,15 +140,14 @@ class WC_EBANX_Payment_Adapter {
 	 * @param WC_Order                $order
 	 * @param WC_EBANX_Global_Gateway $configs
 	 *
+	 * @throws WC_EBANX_Payment_Exception If an error occurred on transform data
 	 * @return Payment
 	 */
 	public static function transform_subscription_payment( $order, $configs ) {
-
 		return new Payment(
 			array(
 				'amountTotal'         => $order->get_total(),
 				'orderNumber'         => $order->get_id(),
-				'dueDate'             => static::transform_due_date( $configs ),
 				'address'             => static::transform_address_from_post_data( $order ),
 				'person'              => static::transform_person_from_post_data( $order, $configs ),
 				'responsible'         => static::transform_person_from_post_data( $order, $configs ),
@@ -175,14 +177,32 @@ class WC_EBANX_Payment_Adapter {
 	}
 
 	/**
+	 * @param string $iso_country
+	 * @param bool   $should_use_default_country
+	 *
+	 * @return string|null
+	 */
+	private static function get_country_from_iso( $iso_country, $should_use_default_country = false ) {
+		$country = isset( WC()->countries->countries[ $iso_country ] ) ? WC()->countries->countries[ $iso_country ] : null;
+
+		if ( ! empty( $country ) ) {
+			return $country;
+		}
+
+		return $should_use_default_country ? WC()->countries->countries[ WC_EBANX_Constants::DEFAULT_COUNTRY ] : null;
+	}
+
+	/**
 	 *
 	 * @param WC_Order                $order
 	 * @param WC_EBANX_Global_Gateway $configs
 	 * @param string                  $user_cc_token
+	 * @param string                  $user_cc_brand
 	 *
+	 * @throws WC_EBANX_Payment_Exception If an error occurred on transform data
 	 * @return Payment
 	 */
-	public static function transform_card_subscription_payment( $order, $configs, $user_cc_token ) {
+	public static function transform_card_subscription_payment( $order, $configs, $user_cc_token, $user_cc_brand = null ) {
 
 		$payment = self::transform_subscription_payment( $order, $configs );
 
@@ -193,6 +213,10 @@ class WC_EBANX_Payment_Adapter {
 		);
 		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 		$payment->manualReview = 'yes' === $configs->settings['manual_review_enabled'];
+
+		if ( ! empty( $user_cc_brand ) ) {
+			$payment->card->type = $user_cc_brand;
+		}
 
 		return $payment;
 	}
@@ -234,19 +258,11 @@ class WC_EBANX_Payment_Adapter {
 	 * @return string
 	 * @throws Exception Throws parameter missing exception.
 	 */
-	private static function get_document_from_order( $order, $person_type ) {
-		$cpf  = get_user_meta( $order->get_user_id(), '_ebanx_document', true );
-		$cnpj = get_user_meta( $order->get_user_id(), '_ebanx_cnpj', true );
+	private static function get_document_from_order( $order ) {
+		$document  = get_user_meta( $order->get_user_id(), '_ebanx_document', true );
 
-		$has_cpf  = ! empty( $cpf );
-		$has_cnpj = ! empty( $cnpj );
-
-		if ( Person::TYPE_PERSONAL === $person_type && $has_cpf ) {
-			return $cpf;
-		}
-
-		if ( Person::TYPE_BUSINESS === $person_type && $has_cnpj ) {
-			return $cnpj;
+		if ( ! empty( $document ) ) {
+			return $document;
 		}
 
 		throw new Exception( 'INVALID-DOCUMENT' );
@@ -261,7 +277,7 @@ class WC_EBANX_Payment_Adapter {
 	 */
 	private static function transform_person_from_post_data( $order, $configs ) {
 		$person_type = self::get_person_type_from_order( $order, $configs );
-		$document    = self::get_document_from_order( $order, $person_type );
+		$document    = self::get_document_from_order( $order );
 
 		return new Person(
 			array(

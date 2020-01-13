@@ -75,7 +75,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 *
 	 * @param string $subscription_id subscription ID.
 	 *
-	 * @return bool
+	 * @return bool|void
 	 * @throws Exception Shows missing params message.
 	 */
 	public function scheduled_subscription_payment( $subscription_id ) {
@@ -89,48 +89,62 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$order = wcs_get_subscription( $subscription_id );
 
 		$country = $this->get_transaction_address( 'country' );
-		$user_cc = get_user_meta( $order->data['customer_id'], '_ebanx_credit_card_token', true );
+		$user_cc = get_user_meta( $order->get_customer_id(), '_ebanx_credit_card_token', true );
 
 		$user_cc_token = ! empty( $user_cc ) && ! empty( $user_cc[0]->token ) ? $user_cc[0]->token : null;
+		$user_cc_brand = ! empty( $user_cc ) && ! empty( $user_cc[0]->brand ) ? $user_cc[0]->brand : null;
 
 		if ( ! is_null( $user_cc_token ) ) {
-			$data = WC_EBANX_Payment_Adapter::transform_card_subscription_payment( $order, $this->configs, $user_cc_token );
+			try {
+				$payment = WC_EBANX_Payment_Adapter::transform_card_subscription_payment( $order, $this->configs, $user_cc_token, $user_cc_brand );
 
-			$response = $this->ebanx->creditCard( $this->get_credit_card_config( $country ) )->create( $data );
+				$response = $this->ebanx->creditCard( $this->get_credit_card_config( $country ) )->create( $payment );
 
-			WC_EBANX_Subscription_Renewal_Logger::persist(
-				array(
-					'subscription_id' => $subscription_id,
-					'payment_method'  => $this->id,
-					'request'         => $data,
-					'response'        => $response, // Response from response to EBANX.
-				)
-			);
+				WC_EBANX_Subscription_Renewal_Logger::persist(
+					array(
+						'subscription_id' => $subscription_id,
+						'payment_method'  => $this->id,
+						'request'         => $payment,
+						'response'        => $response, // Response from response to EBANX.
+					)
+				);
 
-			if ( 'ERROR' === $response['status'] ) {
-				$order->payment_complete();
-				$order->update_status( 'failed' );
-				WC_EBANX::log( $response['status_message'] );
-			} elseif ( 'SUCCESS' === $response['status'] ) {
-				switch ( $response['payment']['status'] ) {
-					case 'CO':
-						$order->payment_complete( $response['payment']['hash'] );
-						WC_Subscriptions_Manager::activate_subscriptions_for_order( $order );
-						$order->add_order_note( __( 'EBANX: Transaction Received', 'woocommerce-gateway-ebanx' ) );
-						break;
-					case 'CA':
-						$order->cancel_order();
-						$order->add_order_note( __( 'EBANX: Transaction Failed', 'woocommerce-gateway-ebanx' ) );
-						break;
-					case 'OP':
-						$order->payment_failed();
-						$order->add_order_note( __( 'EBANX: Transaction Pending', 'woocommerce-gateway-ebanx' ) );
-						break;
+				if ( 'ERROR' === $response['status'] ) {
+					$order->payment_complete();
+					$order->update_status( 'failed' );
+					WC_EBANX::log( $response['status_message'] );
+				} elseif ( 'SUCCESS' === $response['status'] ) {
+					switch ( $response['payment']['status'] ) {
+						case 'CO':
+							$order->payment_complete( $response['payment']['hash'] );
+							WC_Subscriptions_Manager::activate_subscriptions_for_order( $order );
+							$order->add_order_note( __( 'EBANX: Transaction Received', 'woocommerce-gateway-ebanx' ) );
+							break;
+						case 'CA':
+							$order->cancel_order();
+							$order->add_order_note( __( 'EBANX: Transaction Failed', 'woocommerce-gateway-ebanx' ) );
+							break;
+						case 'OP':
+							$order->payment_failed();
+							$order->add_order_note( __( 'EBANX: Transaction Pending', 'woocommerce-gateway-ebanx' ) );
+							break;
+					}
+					return true;
 				}
-				return true;
+			} catch (WC_EBANX_Payment_Exception $exception ) {
+				$order->payment_failed();
+				$order->add_order_note(
+					sprintf(
+					'%s %s',
+						__( 'EBANX: Transaction Failed. Reason:', 'woocommerce-gateway-ebanx' ),
+						$exception->getMessage()
+					)
+				);
 			}
 		}
+
 		WC_Subscriptions_Manager::expire_subscriptions_for_order( $order );
+
 		return false;
 	}
 
