@@ -298,9 +298,9 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 		$card = new \stdClass();
 
-		$card->brand         = WC_EBANX_Request::read( 'ebanx_brand' );
-		$card->token         = WC_EBANX_Request::read( 'ebanx_token' );
-		$card->masked_number = WC_EBANX_Request::read( 'ebanx_masked_card_number' );
+		$card->brand         = WC_EBANX_Request::read( 'ebanx_brand', null );
+		$card->token         = WC_EBANX_Request::read( 'ebanx_token', null );
+		$card->masked_number = WC_EBANX_Request::read( 'ebanx_masked_card_number', null );
 
 		foreach ( $cards as $cd ) {
 			if ( empty( $cd ) ) {

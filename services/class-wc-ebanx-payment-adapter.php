@@ -67,7 +67,7 @@ class WC_EBANX_Payment_Adapter {
 			? WC_EBANX_Request::read( 'ebanx_debit_token' )
 			: WC_EBANX_Request::read( 'ebanx_token' );
 
-		$brand = WC_EBANX_Request::has( 'ebanx_brand' ) ? WC_EBANX_Request::read( 'ebanx_brand' ) : '';
+		$brand = WC_EBANX_Request::read( 'ebanx_brand' , '' );
 
 		$payment->card = new Card(
 			array(

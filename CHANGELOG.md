@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.0.11
+* 2020-01-24 - Fixes error when save user meta fields
+
 ## 2.0.10
 * 2020-01-24 - Refactor on-click payment process. Add streetComplement on address transformation.
 
