@@ -1,5 +1,6 @@
 <?php
 
+use Ebanx\Benjamin\Models\Configs\CreditCardConfig;
 use Ebanx\Benjamin\Models\Country;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,10 +36,10 @@ class WC_EBANX_Credit_Card_International_Gateway extends WC_EBANX_Credit_Card_Ga
 	 * @throws Exception Throws missing param message.
 	 */
 	public function is_available() {
-		$country = $this->get_transaction_address( 'country' );
+		$country = trim( strtolower( $this->get_transaction_address( 'country' ) ) );
 
-//		return parent::is_available() && ( 'yes' === $this->configs->settings['enable_foreign_customer'] );
-		return true;
+		return parent::is_available()
+			&& ! in_array( $country,  WC_EBANX_Constants::$allowed_countries, true );
 	}
 
 	/**
@@ -52,10 +53,14 @@ class WC_EBANX_Credit_Card_International_Gateway extends WC_EBANX_Credit_Card_Ga
 	 * @throws Exception Shows param missing message.
 	 */
 	public function process_payment( $order_id ) {
-		$billing_country = trim( strtolower( get_post_meta( $order_id, '_billing_country', true ) ) );
-		$country_abbr    = empty( $billing_country ) ? strtolower( WC_EBANX_Constants::DEFAULT_COUNTRY ) : $billing_country;
-
-		$this->ebanx_gateway = $this->ebanx->creditCard( $this->get_credit_card_config( $country_abbr ) );
+		$this->ebanx_gateway = $this->ebanx->creditCard(
+			new CreditCardConfig(
+				array(
+					'maxInstalments'      => 1,
+					'minInstalmentAmount' => 1,
+				)
+			)
+		);
 
 		return WC_EBANX_New_Gateway::process_payment( $order_id );
 	}

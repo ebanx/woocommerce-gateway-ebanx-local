@@ -325,7 +325,7 @@ class WC_EBANX_Payment_Adapter {
 			|| ( empty( WC_EBANX_Request::read( 'billing_state', null ) )
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_state'] ) )
 		) {
-			throw new Exception( 'INVALID-FIELDS' );
+			throw new Exception( 'INVALID-ADDRESS-FIELDS' );
 		}
 
 		$addresses = WC_EBANX_Request::read_customizable_field( 'billing_address_1', $gateway_id );
@@ -334,17 +334,16 @@ class WC_EBANX_Payment_Adapter {
 			$addresses .= ' - ' . WC_EBANX_Request::read( 'billing_address_2', null );
 		}
 
-		$addresses      = WC_EBANX_Helper::split_street( $addresses );
-		$street_number  = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
-		$addressCountry = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country(); // phpcs:ignore WordPress.NamingConventions.ValidVariableName
+		$addresses       = WC_EBANX_Helper::split_street( $addresses );
+		$street_number   = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
+		$address_country = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country();
 
 		return new Address(
 			array(
 				'address'      => $addresses['streetName'],
 				'streetNumber' => $street_number,
 				'city'         => WC_EBANX_Request::read_customizable_field( 'billing_city', $gateway_id ),
-				// phpcs:ignore WordPress.NamingConventions.ValidVariableName
-				'country'      => 'BRL',
+				'country'      => $address_country,
 				'state'        => WC_EBANX_Request::read_customizable_field( 'billing_state', $gateway_id ),
 				'zipcode'      => WC_EBANX_Request::read_customizable_field( 'billing_postcode', $gateway_id ),
 			)

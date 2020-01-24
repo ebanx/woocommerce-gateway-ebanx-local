@@ -14,4 +14,5 @@
 	</section>
 
 	<input type="hidden" name="ebanx-credit-card-installments" value="1" />
+	<div class="clear"></div>
 </div>
