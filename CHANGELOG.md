@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.0.10
+* 2020-01-24 - Refactor on-click payment process. Add streetComplement on address transformation.
+
 ## 2.0.9
 * 2020-01-10 - Fixes recurrent payment adding payment_type_code on credit card transaction
 

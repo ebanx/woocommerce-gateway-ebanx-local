@@ -4,7 +4,7 @@ Contributors: ebanxpay
 Tags: credit card, boleto, ebanx, woocommerce, local payment gateway, brazil, cash payment, local payment, card payment, one-click payment, alternative payments, payment processing
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 2.0.9
+Stable tag: 2.0.10
 Requires PHP: 5.6.0
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -111,6 +111,9 @@ Yes, you can.
 4. There you go, you’re all set!
 
 == Changelog ==
+
+= 2.0.10 =
+* 2020-01-24 - Refactor on-click payment process. Add streetComplement on address transformation.
 
 = 2.0.9 =
 * 2020-01-10 - Fixes recurrent payment adding payment_type_code in credit card transaction.

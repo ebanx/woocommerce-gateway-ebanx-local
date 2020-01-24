@@ -312,7 +312,8 @@ class WC_EBANX_One_Click {
 			)
 		);
 
-		$names = $this->gateway->names;
+		$names           = $this->gateway->names;
+		$billing_address = $this->get_user_billing_address();
 
 		WC_EBANX_Request::set( 'ebanx_token', $card->token );
 		WC_EBANX_Request::set( 'ebanx_masked_card_number', $card->masked_number );
@@ -324,10 +325,11 @@ class WC_EBANX_One_Click {
 
 		WC_EBANX_Request::set( $names['ebanx_billing_brazil_document'], get_user_meta( $this->user_id, '_ebanx_billing_brazil_document', true ) );
 
-		WC_EBANX_Request::set( 'billing_postcode', $this->get_user_billing_address()['postcode'] );
-		WC_EBANX_Request::set( 'billing_address_1', $this->get_user_billing_address()['address_1'] );
-		WC_EBANX_Request::set( 'billing_city', $this->get_user_billing_address()['city'] );
-		WC_EBANX_Request::set( 'billing_state', $this->get_user_billing_address()['state'] );
+		WC_EBANX_Request::set( 'billing_postcode', isset( $billing_address['postcode'] ) ? $billing_address['postcode'] : null );
+		WC_EBANX_Request::set( 'billing_address_1', isset( $billing_address['address_1'] ) ? $billing_address['address_1'] : null );
+		WC_EBANX_Request::set( 'billing_address_2', isset( $billing_address['address_2'] ) ? $billing_address['address_2'] : null );
+		WC_EBANX_Request::set( 'billing_city', isset( $billing_address['city'] ) ? $billing_address['city'] : null );
+		WC_EBANX_Request::set( 'billing_state', isset( $billing_address['state'] ) ? $billing_address['state'] : null );
 
 		return ! empty( WC_EBANX_Request::read( 'ebanx-one-click-token', null ) )
 			&& ! empty( WC_EBANX_Request::read( 'ebanx-credit-card-installments', null ) )
