@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.0.12
+* 2020-02-07 - Update benjamin library
+
 ## 2.0.11
 * 2020-01-24 - Fixes error when save user meta fields
 

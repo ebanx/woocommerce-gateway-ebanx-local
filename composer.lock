@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "ebanx/benjamin-local",
-            "version": "1.19.1",
+            "version": "1.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ebanx/benjamin-local.git",
-                "reference": "101f00e00050a5d472e6baaa5e0c36f93bd88a98"
+                "reference": "ed150a1062299ad2882e00d5eef0248411b73737"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ebanx/benjamin-local/zipball/101f00e00050a5d472e6baaa5e0c36f93bd88a98",
-                "reference": "101f00e00050a5d472e6baaa5e0c36f93bd88a98",
+                "url": "https://api.github.com/repos/ebanx/benjamin-local/zipball/ed150a1062299ad2882e00d5eef0248411b73737",
+                "reference": "ed150a1062299ad2882e00d5eef0248411b73737",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,7 @@
                 "proprietary"
             ],
             "description": "EBANX Pay's API library for local payments",
-            "time": "2019-10-22T22:01:51+00:00"
+            "time": "2020-02-07T21:42:44+00:00"
         }
     ],
     "packages-dev": [
