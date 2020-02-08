@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.0.14
+* 2020-02-08 - Fixes subscriptions cancelling after failed payment
+
 ## 2.0.13
 * 2020-02-08 - Fixes error when order total is 0 and save user meta fields
 

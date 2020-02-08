@@ -108,6 +108,8 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 						$exception->getMessage()
 					)
 				);
+
+				return false;
 			}
 
 			WC_EBANX_Subscription_Renewal_Logger::persist(
@@ -135,7 +137,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 						$subscription->add_order_note( __( 'EBANX: Transaction Received', 'woocommerce-gateway-ebanx' ) );
 						break;
 					case 'CA':
-						$subscription->cancel_order();
+						$subscription->payment_failed();
 						$subscription->add_order_note( __( 'EBANX: Transaction Failed', 'woocommerce-gateway-ebanx' ) );
 						break;
 					case 'OP':
@@ -144,8 +146,9 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 						break;
 				}
 
-				return true;
 			}
+
+			return true;
 		}
 
 		$subscription->add_order_note( 'EBANX: Token not found to renew subscriptions.');
