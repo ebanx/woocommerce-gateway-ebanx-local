@@ -4,7 +4,7 @@ Contributors: ebanxpay
 Tags: credit card, boleto, ebanx, woocommerce, local payment gateway, brazil, cash payment, local payment, card payment, one-click payment, alternative payments, payment processing
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 2.0.12
+Stable tag: 2.0.13
 Requires PHP: 5.6.0
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -111,6 +111,9 @@ Yes, you can.
 4. There you go, you’re all set!
 
 == Changelog ==
+
+= 2.0.13 =
+* 2020-02-08 - Fixes error when order total is 0 and save user meta fields
 
 = 2.0.12 =
 * 2020-02-07 - Update benjamin library

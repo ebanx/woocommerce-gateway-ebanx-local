@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.0.13
+* 2020-02-08 - Fixes error when order total is 0 and save user meta fields
+
 ## 2.0.12
 * 2020-02-07 - Update benjamin library
 

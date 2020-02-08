@@ -205,6 +205,9 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			$order = wc_get_order( $order_id );
 			apply_filters( 'ebanx_before_process_payment', $order );
 
+			// Save user's fields.
+			$this->save_user_meta_fields( $order );
+
 			if ( $order->get_total() > 0 ) {
 				$data = $this->transform_payment_data( $order );
 
@@ -317,9 +320,6 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 
 		$order->add_order_note( $this->get_order_note_from_payment_status( $payment_status ) );
 		$order->update_status( $this->get_order_status_from_payment_status( $payment_status ) );
-
-		// Save user's fields.
-		$this->save_user_meta_fields( $order );
 
 		do_action( 'ebanx_process_response', $order );
 	}

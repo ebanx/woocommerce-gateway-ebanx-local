@@ -86,54 +86,22 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			return;
 		}
 
-		$order = wcs_get_subscription( $subscription_id );
+		$subscription = wcs_get_subscription( $subscription_id );
 
 		$country = $this->get_transaction_address( 'country' );
-		$user_cc = get_user_meta( $order->get_customer_id(), '_ebanx_credit_card_token', true );
+		$user_cc = get_user_meta( $subscription->get_customer_id(), '_ebanx_credit_card_token', true );
 
 		$user_cc_token = ! empty( $user_cc ) && ! empty( $user_cc[0]->token ) ? $user_cc[0]->token : null;
 		$user_cc_brand = ! empty( $user_cc ) && ! empty( $user_cc[0]->brand ) ? $user_cc[0]->brand : null;
 
 		if ( ! is_null( $user_cc_token ) ) {
 			try {
-				$payment = WC_EBANX_Payment_Adapter::transform_card_subscription_payment( $order, $this->configs, $user_cc_token, $user_cc_brand );
+				$payment = WC_EBANX_Payment_Adapter::transform_card_subscription_payment( $subscription, $this->configs, $user_cc_token, $user_cc_brand );
 
 				$response = $this->ebanx->creditCard( $this->get_credit_card_config( $country ) )->create( $payment );
-
-				WC_EBANX_Subscription_Renewal_Logger::persist(
-					array(
-						'subscription_id' => $subscription_id,
-						'payment_method'  => $this->id,
-						'request'         => $payment,
-						'response'        => $response, // Response from response to EBANX.
-					)
-				);
-
-				if ( 'ERROR' === $response['status'] ) {
-					$order->payment_complete();
-					$order->update_status( 'failed' );
-					WC_EBANX::log( $response['status_message'] );
-				} elseif ( 'SUCCESS' === $response['status'] ) {
-					switch ( $response['payment']['status'] ) {
-						case 'CO':
-							$order->payment_complete( $response['payment']['hash'] );
-							WC_Subscriptions_Manager::activate_subscriptions_for_order( $order );
-							$order->add_order_note( __( 'EBANX: Transaction Received', 'woocommerce-gateway-ebanx' ) );
-							break;
-						case 'CA':
-							$order->cancel_order();
-							$order->add_order_note( __( 'EBANX: Transaction Failed', 'woocommerce-gateway-ebanx' ) );
-							break;
-						case 'OP':
-							$order->payment_failed();
-							$order->add_order_note( __( 'EBANX: Transaction Pending', 'woocommerce-gateway-ebanx' ) );
-							break;
-					}
-					return true;
-				}
 			} catch (WC_EBANX_Payment_Exception $exception ) {
-				$order->payment_failed();
-				$order->add_order_note(
+				$subscription->payment_failed();
+				$subscription->add_order_note(
 					sprintf(
 					'%s %s',
 						__( 'EBANX: Transaction Failed. Reason:', 'woocommerce-gateway-ebanx' ),
@@ -141,9 +109,55 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 					)
 				);
 			}
+
+			WC_EBANX_Subscription_Renewal_Logger::persist(
+				array(
+					'subscription_id' => $subscription_id,
+					'payment_method'  => $this->id,
+					'request'         => $payment,
+					'response'        => $response, // Response from response to EBANX.
+				)
+			);
+
+			if ( 'ERROR' === $response['status'] ) {
+				$subscription->payment_complete();
+				$subscription->update_status( 'failed' );
+				WC_EBANX::log( $response['status_message'] );
+
+				return false;
+			}
+
+			if ( 'SUCCESS' === $response['status'] ) {
+				switch ( $response['payment']['status'] ) {
+					case 'CO':
+						$subscription->payment_complete( $response['payment']['hash'] );
+						WC_Subscriptions_Manager::activate_subscriptions_for_order( $subscription );
+						$subscription->add_order_note( __( 'EBANX: Transaction Received', 'woocommerce-gateway-ebanx' ) );
+						break;
+					case 'CA':
+						$subscription->cancel_order();
+						$subscription->add_order_note( __( 'EBANX: Transaction Failed', 'woocommerce-gateway-ebanx' ) );
+						break;
+					case 'OP':
+						$subscription->payment_failed();
+						$subscription->add_order_note( __( 'EBANX: Transaction Pending', 'woocommerce-gateway-ebanx' ) );
+						break;
+				}
+
+				return true;
+			}
 		}
 
-		WC_Subscriptions_Manager::expire_subscriptions_for_order( $order );
+		$subscription->add_order_note( 'EBANX: Token not found to renew subscriptions.');
+
+		$parent_order = $subscription->get_parent();
+
+		if ( $parent_order ) {
+			$payment_method = get_post_meta( $parent_order->get_id(), '_payment_method', true );
+			$subscription->add_order_note( sprintf( 'EBANX: The parent order %s was processed by %s', $parent_order->get_id(), $payment_method ) );
+		}
+
+		WC_Subscriptions_Manager::expire_subscriptions_for_order( $subscription );
 
 		return false;
 	}
@@ -342,7 +356,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			$country     = Country::fromIso( $country_abbr );
 			$total_price = get_post_meta( $order_id, '_order_total', true );
 			// TODO: check if is token or new credit card.
-			$instalments     = WC_EBANX_Request::has( 'ebanx_billing_instalments' ) ? WC_EBANX_Request::read( 'ebanx_billing_instalments' ) : WC_EBANX_Request::read( 'ebanx-credit-card-installments' );
+			$instalments     = WC_EBANX_Request::has( 'ebanx_billing_instalments' ) ? WC_EBANX_Request::read( 'ebanx_billing_instalments' ) : WC_EBANX_Request::read( 'ebanx-credit-card-installments', 1 );
 			$instalment_term = self::get_instalment_term( $this->ebanx_gateway->getPaymentTermsForCountryAndValue( $country, $total_price ), $instalments );
 			// phpcs:ignore WordPress.NamingConventions.ValidVariableName
 			$total_price = $instalment_term->baseAmount;
