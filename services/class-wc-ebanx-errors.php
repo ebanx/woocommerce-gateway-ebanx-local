@@ -151,6 +151,9 @@ class WC_EBANX_Errors {
 				'REFUSED-CC'                 => 'No pudimos concluir tu compra. Ponte en contacto con el banco/emisor de la tarjeta o vuelve a intentarlo.',
 				'SANDBOX-INVALID-CC-NUMBER'  => 'Detectamos que estás en modo Sandbox y por eso restringimos algunos números de tarjetas. <a href="https://developers.ebanxpagamentos.com/guides/going-live/test-card-numbers/" target="_blank">Puedes utilizar una de nuestras tarjetas de prueba accediendo a EBANX Developer\'s Academy.</a>',
 			),
+			'en' => array(
+				'BP-DR-77' => 'Country is not enabled.',
+			),
 		);
 	}
 
@@ -172,7 +175,8 @@ class WC_EBANX_Errors {
 			'co' => 'es',
 			'br' => 'pt-br',
 		);
-		$language  = $languages[ $country ];
+
+		$language  = isset ( $languages[ $country ] ) ? $languages[ $country ] : 'en';
 
 		$errors = static::get_errors();
 
@@ -191,3 +195,4 @@ class WC_EBANX_Errors {
 		return ! empty( $errors[ $language ][ $code ] ) ? $errors[ $language ][ $code ] : $errors[ $language ]['GENERAL'] . " ({$code})";
 	}
 }
+

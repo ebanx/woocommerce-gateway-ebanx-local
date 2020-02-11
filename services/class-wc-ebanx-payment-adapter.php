@@ -3,6 +3,7 @@
 use Ebanx\Benjamin\Models\Address;
 use Ebanx\Benjamin\Models\Card;
 use Ebanx\Benjamin\Models\Country;
+use Ebanx\Benjamin\Models\Currency;
 use Ebanx\Benjamin\Models\Item;
 use Ebanx\Benjamin\Models\Payment;
 use Ebanx\Benjamin\Models\Person;
@@ -22,19 +23,28 @@ class WC_EBANX_Payment_Adapter {
 	 * @throws Exception Throws parameter missing exception.
 	 */
 	public static function transform( $order, $configs, $names, $gateway_id ) {
-		return new Payment(
-			array(
-				'amountTotal'         => $order->get_total(),
-				'orderNumber'         => $order->get_id(),
-				'dueDate'             => static::transform_due_date( $configs ),
-				'address'             => static::transform_address( $order, $gateway_id ),
-				'person'              => static::transform_person( $order, $configs, $names, $gateway_id ),
-				'responsible'         => static::transform_person( $order, $configs, $names, $gateway_id ),
-				'items'               => static::transform_items( $order ),
-				'merchantPaymentCode' => substr( $order->get_id() . '-' . md5( wp_rand( 123123, 9999999 ) ), 0, 40 ),
-				'riskProfileId'       => 'Wx' . str_replace( '.', 'x', WC_EBANX::get_plugin_version() ),
-			)
+		$payment_data = array(
+			'amountTotal'         => $order->get_total(),
+			'orderNumber'         => $order->get_id(),
+			'address'             => static::transform_address( $order, $configs, $gateway_id ),
+			'items'               => static::transform_items( $order ),
+			'merchantPaymentCode' => substr( $order->get_id() . '-' . md5( wp_rand( 123123, 9999999 ) ), 0, 40 ),
+			'riskProfileId'       => 'Wx' . str_replace( '.', 'x', WC_EBANX::get_plugin_version() ),
 		);
+
+		$person = static::transform_person( $order, $configs, $names, $gateway_id );
+
+		$payment_data['person'] = $person;
+
+		if ( Person::TYPE_BUSINESS === $person->type ) {
+			$payment_data['responsible'] = $person;
+		}
+
+		if ( 'ebanx-banking-ticket' === $gateway_id ) {
+			$payment_data['dueDate'] = static::transform_due_date( $configs );
+		}
+
+		return new Payment( $payment_data );
 	}
 
 	/**
@@ -77,8 +87,8 @@ class WC_EBANX_Payment_Adapter {
 				'type'        => $brand,
 			)
 		);
-
-		$payment->manualReview = 'yes' === $configs->settings['manual_review_enabled']; // phpcs:ignore WordPress.NamingConventions.ValidVariableName
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName
+		$payment->manualReview = 'yes' === $configs->settings['manual_review_enabled'];
 
 		return $payment;
 	}
@@ -311,12 +321,14 @@ class WC_EBANX_Payment_Adapter {
 	 *
 	 * @param WC_Order $order
 	 *
-	 * @param string   $gateway_id
+	 * @param WC_Order                $order
+	 * @param WC_EBANX_Global_Gateway $configs
+	 * @param string                  $gateway_id
 	 *
 	 * @return Address
 	 * @throws Exception Throws parameter missing exception.
 	 */
-	private static function transform_address( $order, $gateway_id ) {
+	private static function transform_address( $order, $configs, $gateway_id ) {
 		if (
 			( empty( WC_EBANX_Request::read( 'billing_postcode', null ) )
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_postcode'] ) )
@@ -328,27 +340,46 @@ class WC_EBANX_Payment_Adapter {
 			throw new Exception( 'INVALID-FIELDS' );
 		}
 
-		$addresses = WC_EBANX_Request::read_customizable_field( 'billing_address_1', $gateway_id );
+		$addresses = WC_EBANX_Request::read( 'billing_address_1', $gateway_id );
 
 		if ( ! empty( WC_EBANX_Request::read( 'billing_address_2', null ) ) ) {
 			$addresses .= ' - ' . WC_EBANX_Request::read( 'billing_address_2', null );
 		}
 
-		$addresses       = WC_EBANX_Helper::split_street( $addresses );
-		$street_number   = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] );
-		$address_country = empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country();
+		$split_address   = WC_EBANX_Helper::split_street( $addresses );
+		$street_number   = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
 
 		return new Address(
 			array(
-				'address'          => $addresses['streetName'],
+				'address'          => $split_address['streetName'],
 				'streetNumber'     => $street_number,
-				'streetComplement' => $addresses['additionToAddress'],
+				'streetComplement' => $split_address['additionToAddress'],
 				'city'             => WC_EBANX_Request::read_customizable_field( 'billing_city', $gateway_id ),
-				'country'          => Country::fromIso( $address_country ),
+				'country'          => self::get_country_to_address( $order, $configs ),
 				'state'            => WC_EBANX_Request::read_customizable_field( 'billing_state', $gateway_id ),
 				'zipcode'          => WC_EBANX_Request::read_customizable_field( 'billing_postcode', $gateway_id ),
 			)
 		);
+	}
+
+	/**
+	 * @param WC_Order                $order
+	 * @param WC_EBANX_Global_Gateway $configs
+	 *
+	 * @return string
+	 */
+	public static function get_country_to_address( $order, $configs ) {
+		$address_country  = $order->get_billing_country();
+		$currency_country = Currency::currencyToCountry( $order->get_currency() );
+		$iso_country      = Country::handleCountryToIso( $currency_country );
+
+		if ( 'yes' === $configs->get_setting_or_default( 'enable_international_credit_card' , 'no')
+			&& $address_country !== $iso_country
+		) {
+			return $currency_country;
+		}
+
+		return empty( $address_country ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $address_country;
 	}
 
 	/**
@@ -364,16 +395,22 @@ class WC_EBANX_Payment_Adapter {
 	private static function transform_person( $order, $configs, $names, $gateway_id ) {
 		$document = static::get_document( $configs, $names, $gateway_id );
 
-		return new Person(
-			array(
-				'type'        => static::get_person_type( $configs, $names, $gateway_id ),
-				'document'    => $document,
-				'email'       => $order->get_billing_email(),
-				'ip'          => WC_Geolocation::get_ip_address(),
-				'name'        => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
-				'phoneNumber' => '' !== $order->get_billing_phone() ? $order->get_billing_phone() : WC_EBANX_Request::read( $gateway_id, null )['billing_phone'],
-			)
+		$person_data = array(
+			'type'        => static::get_person_type( $configs, $names, $gateway_id ),
+			'document'    => $document,
+			'email'       => $order->get_billing_email(),
+			'ip'          => WC_Geolocation::get_ip_address(),
+			'name'        => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+			'phoneNumber' => '' !== $order->get_billing_phone() ? $order->get_billing_phone() : WC_EBANX_Request::read_customizable_field('billing_phone', $gateway_id, null ),
 		);
+
+		if ( 'yes' === $configs->get_setting_or_default( 'enable_international_credit_card' , 'no')
+			&& 'ebanx-credit-card-international' === $gateway_id
+		) {
+			$person_data['documentCountry'] = trim( strtolower( WC()->customer->get_billing_country() ) );
+		}
+
+		return new Person( $person_data );
 	}
 
 	/**
@@ -390,6 +427,12 @@ class WC_EBANX_Payment_Adapter {
 
 		if ( WC_EBANX_Constants::COUNTRY_BRAZIL === $country ) {
 			return static::get_brazilian_document( $configs, $names, $gateway_id );
+		}
+
+		if ( 'yes' === $configs->get_setting_or_default( 'enable_international_credit_card' , 'no')
+			&& 'ebanx-credit-card-international' === $gateway_id
+		) {
+			return WC_EBANX_Request::read( 'ebanx_billing_foreign_document', '' );
 		}
 
 		return '';
@@ -461,7 +504,7 @@ class WC_EBANX_Payment_Adapter {
 	 *
 	 * @return array
 	 */
-	private static function transform_items( $order ) {
+ 	private static function transform_items( $order ) {
 		return array_map(
 			function( $product ) {
 					return new Item(

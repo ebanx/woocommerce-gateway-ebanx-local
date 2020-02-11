@@ -92,6 +92,25 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 			$fields_options = $this->configs->settings['brazil_taxes_options'];
 		}
 
+		$is_billing_phone_required = ( 'yes' === $this->configs->get_setting_or_default('billing_phone_required', 'yes' ) );
+
+		$fields['billing_phone']['required'] = $is_billing_phone_required;
+
+		$is_international_credit_card_enabled = ( 'yes' === $this->configs->get_setting_or_default('enable_international_credit_card', 'no' ) );
+
+		if ( ! $is_international_credit_card_enabled ) {
+			$international_document  = get_user_meta( $this->user_id, '_ebanx_billing_foreign_document', true );
+			$ebanx_billing_foreign_document = array(
+				'type'     => 'text',
+				'label'    => __( 'Document', 'woocommerce-gateway-ebanx' ),
+				'required' => false,
+				'class'    => array( 'form-row-wide' ),
+				'default' => isset( $international_document ) ? $international_document : '',
+			);
+
+			$fields['billing']['ebanx_billing_foreign_document'] = $ebanx_billing_foreign_document;
+		}
+
 		$disable_own_fields = isset( $this->configs->settings['checkout_manager_enabled'] ) && 'yes' === $this->configs->settings['checkout_manager_enabled'];
 
 		$cpf  = get_user_meta( $this->user_id, '_ebanx_billing_brazil_document', true );
