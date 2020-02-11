@@ -507,6 +507,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			// Brazil Gateways.
 			include_once WC_EBANX_GATEWAYS_DIR . 'class-wc-ebanx-banking-ticket-gateway.php';
 			include_once WC_EBANX_GATEWAYS_DIR . 'class-wc-ebanx-credit-card-br-gateway.php';
+			include_once WC_EBANX_GATEWAYS_DIR . 'class-wc-ebanx-credit-card-international-gateway.php';
 
 			// Hooks/Actions.
 			include_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-payment-by-link.php';
@@ -544,6 +545,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			// Brazil.
 			$methods[] = 'WC_EBANX_Banking_Ticket_Gateway';
 			$methods[] = 'WC_EBANX_Credit_Card_BR_Gateway';
+			$methods[] = 'WC_EBANX_Credit_Card_International_Gateway';
 
 			return $methods;
 		}

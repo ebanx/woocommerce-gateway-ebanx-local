@@ -59,6 +59,15 @@ abstract class WC_EBANX_Constants {
 	);
 
 	/**
+	 * Only the countries allowed
+	 *
+	 * @var array
+	 */
+	public static $allowed_countries = array(
+		self::COUNTRY_BRAZIL
+	);
+
+	/**
 	 * Minimal instalment value for acquirers to approve based on currency
 	 */
 	const ACQUIRER_MIN_INSTALMENT_VALUE_BRL = 5;

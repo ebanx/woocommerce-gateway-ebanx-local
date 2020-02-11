@@ -24,8 +24,16 @@ class WC_EBANX_Credit_Card_International_Gateway extends WC_EBANX_Credit_Card_Ga
 
 		parent::__construct();
 
-		$this->icon    = null;
-		$this->enabled = 'yes' === $this->configs->get_setting_or_default('enable_international_credit_card', 'no');
+		$is_brazilian_method_selected = is_array( $this->configs->settings['brazil_payment_methods'] )
+			&& in_array( $this->id, $this->configs->settings['brazil_payment_methods'], true );
+
+		$is_international_credit_card_enabled = 'yes' === $this->configs->get_setting_or_default('enable_international_credit_card', 'no' );
+
+		$this->enabled = $is_brazilian_method_selected && $is_international_credit_card_enabled
+			? 'yes'
+			: false;
+
+		$this->icon = null;
 	}
 
 	/**

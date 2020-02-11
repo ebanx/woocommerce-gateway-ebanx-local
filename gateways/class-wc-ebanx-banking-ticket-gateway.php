@@ -15,11 +15,12 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->id           = 'ebanx-banking-ticket';
-		$this->method_title = __( 'EBANX - Banking Ticket', 'woocommerce-gateway-ebanx' );
-		$this->api_name     = 'boleto';
-		$this->title        = 'Boleto bancário';
-		$this->description  = 'Pague com boleto bancário.';
+		$this->id            = 'ebanx-banking-ticket';
+		$this->method_title  = __( 'EBANX - Banking Ticket', 'woocommerce-gateway-ebanx' );
+		$this->currency_code = WC_EBANX_Constants::CURRENCY_CODE_BRL;
+		$this->api_name      = 'boleto';
+		$this->title         = 'Boleto bancário';
+		$this->description   = 'Pague com boleto bancário.';
 
 		parent::__construct();
 

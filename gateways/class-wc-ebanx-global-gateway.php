@@ -150,8 +150,9 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'type'    => 'multiselect',
 				'class'   => 'wc-enhanced-select',
 				'options' => array(
-					'ebanx-credit-card-br' => 'Credit Card',
-					'ebanx-banking-ticket' => 'Boleto bancário',
+					'ebanx-credit-card-br'            => 'Credit Card',
+					'ebanx-banking-ticket'            => 'Boleto bancário',
+					'ebanx-credit-card-international' => 'International Credit Card',
 				),
 				'default' => array(
 					'ebanx-credit-card-br',
@@ -191,7 +192,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'class'       => 'ebanx-payments-option',
 			),
-			'enable_internationa_credit_card'  => array(
+			'enable_international_credit_card'  => array(
 				'type'        => 'checkbox',
 				'title'       => __( 'Enable international credit card', 'woocommerce-gateway-ebanx' ),
 				'label'       => __( 'Enable international credit card', 'woocommerce-gateway-ebanx' ),

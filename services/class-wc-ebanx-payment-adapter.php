@@ -337,7 +337,7 @@ class WC_EBANX_Payment_Adapter {
 			|| ( empty( WC_EBANX_Request::read( 'billing_state', null ) )
 				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_state'] ) )
 		) {
-			throw new Exception( 'INVALID-FIELDS' );
+			throw new Exception( 'INVALID-ADDRESS-FIELDS' );
 		}
 
 		$addresses = WC_EBANX_Request::read( 'billing_address_1', $gateway_id );
@@ -370,7 +370,7 @@ class WC_EBANX_Payment_Adapter {
 	 */
 	public static function get_country_to_address( $order, $configs ) {
 		$address_country  = $order->get_billing_country();
-		$currency_country = Currency::currencyToCountry( $order->get_currency() );
+		$currency_country = Currency::currencyToCountry( $configs->currency_code );
 		$iso_country      = Country::handleCountryToIso( $currency_country );
 
 		if ( 'yes' === $configs->get_setting_or_default( 'enable_international_credit_card' , 'no')
