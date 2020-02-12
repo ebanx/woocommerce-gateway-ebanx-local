@@ -349,7 +349,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 */
 	public function process_payment( $order_id ) {
 		// TODO: check if is token or new credit card.
-		$has_instalments = ( WC_EBANX_Request::has( 'ebanx_billing_instalments' ) || WC_EBANX_Request::has( 'ebanx-credit-card-installments' ) );
+		$has_instalments = ( WC_EBANX_Request::has( 'ebanx_billing_instalments', false ) || WC_EBANX_Request::has( 'ebanx-credit-card-installments', false ) );
 		$billing_country = trim( strtolower( get_post_meta( $order_id, '_billing_country', true ) ) );
 		$country_abbr    = empty( $billing_country ) ? strtolower( WC_EBANX_Constants::DEFAULT_COUNTRY ) : $billing_country;
 

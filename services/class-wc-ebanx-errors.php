@@ -57,6 +57,7 @@ class WC_EBANX_Errors {
 				'BP-DR-100'                  => 'Cartões de débito não realizam pagamentos parcelados, mas você pode tentar de novo com um cartão de crédito. :)',
 				'BP-DR-101'                  => 'Ops! Esse cartão não está liberado para fazer compras na internet. Entre em contato com o seu banco para mais informações.',
 				'BP-DR-102'                  => 'Ops, algo deu errado. Tente novamente com outro cartão.',
+				'BP-DR-140'                  => 'Não é possível efetuar o pagamento para usuários estrangeiros',
 				'BP-R-12'                    => 'Desculpa, mas o número de parcelas selecionado não está disponível. :/',
 				'BP-R-13'                    => 'O valor de cada parcela deve ser maior ou igual a R$X. Tente de novo com outro número de parcelas. :)',
 				'BP-R-28'                    => 'Ops! O número de parcelas que você escolheu não está disponível para esse valor. Tente de novo com outra opção de parcela.',
@@ -127,6 +128,7 @@ class WC_EBANX_Errors {
 				'BP-DR-100'                  => 'Pagos en mensualidades no son permitidos para tarjetas de débito.',
 				'BP-DR-101'                  => '¡Lo sentimos!, vuelva a intentarlo con otra tarjeta.',
 				'BP-DR-102'                  => '¡Ups!, algo salió mal, vuelve a intentarlo con otra tarjeta.',
+				'BP-DR-140'                  => '!No autorizado para transacciones con clientes extranjeros',
 				'BP-R-12'                    => '¡Lo sentimos!, el número de mensualidades seleccionado no está disponible.',
 				'BP-R-13'                    => 'El valor de cada mensualidad debe ser igual o mayor a $X.',
 				'BP-R-28'                    => '¡Ups! El número de mensualidades seleccionado es mayor al permitido.',
@@ -152,7 +154,8 @@ class WC_EBANX_Errors {
 				'SANDBOX-INVALID-CC-NUMBER'  => 'Detectamos que estás en modo Sandbox y por eso restringimos algunos números de tarjetas. <a href="https://developers.ebanxpagamentos.com/guides/going-live/test-card-numbers/" target="_blank">Puedes utilizar una de nuestras tarjetas de prueba accediendo a EBANX Developer\'s Academy.</a>',
 			),
 			'en' => array(
-				'BP-DR-77' => 'Country is not enabled.',
+				'BP-DR-77'  => 'Country is not enabled.',
+				'BP-DR-140' => 'Not authorized to foreign customer transactions',
 			),
 		);
 	}

@@ -626,7 +626,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 *
 	 * @param string $country
 	 *
-	 * @return string
+	 * @return string|bool
 	 * @throws Exception Throws parameter missing exception.
 	 */
 	private function save_document( $country ) {
@@ -644,6 +644,11 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		}
 
 		$country = strtolower( Country::fromIso( strtoupper( $country ) ) );
+
+		if ( WC_EBANX_Request::has( 'ebanx_billing_foreign_document' ) ) {
+			$foreign_document = WC_EBANX_Request::read( 'ebanx_billing_foreign_document' );
+			update_user_meta( $this->user_id, '_ebanx_billing_foreign_document', $foreign_document );
+		}
 
 		if ( ! WC_EBANX_Request::has( $this->names[ 'ebanx_billing_' . $country . '_' . $field_name ] ) ) {
 			return false;

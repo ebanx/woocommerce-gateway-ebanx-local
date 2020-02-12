@@ -96,9 +96,7 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 
 		$fields['billing_phone']['required'] = $is_billing_phone_required;
 
-		$is_international_credit_card_enabled = ( 'yes' === $this->configs->get_setting_or_default('enable_international_credit_card', 'no' ) );
-
-		if ( ! $is_international_credit_card_enabled ) {
+		if ( 'yes' === $this->configs->get_setting_or_default('enable_international_credit_card', 'no' ) ) {
 			$international_document  = get_user_meta( $this->user_id, '_ebanx_billing_foreign_document', true );
 			$ebanx_billing_foreign_document = array(
 				'type'     => 'text',

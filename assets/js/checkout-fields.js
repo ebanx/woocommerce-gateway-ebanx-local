@@ -70,6 +70,11 @@ jQuery(function ( $ ) {
 				enableFields( getBillingFields( country ) );
 			}
 
+			if ($( '#ebanx_billing_foreign_document_field' ).length > 0 && isEbanxMethodSelected() && country) {
+				let display = country === 'br' ? 'hide' : 'block';
+				$( '#ebanx_billing_foreign_document_field' ).css( { display: display } );
+			}
+
 			if (country === 'br' ) {
 				taxes.change();
 			}
