@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.1.0
+* 2020-02-12 - Add international credit card gateway
+
 ## 2.0.14
 * 2020-02-08 - Fixes subscriptions cancelling after failed payment
 
