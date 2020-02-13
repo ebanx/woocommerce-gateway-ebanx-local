@@ -70,19 +70,19 @@ abstract class WC_EBANX_Helper {
 			);
 		}
 
-		$street_name         = $matches[1];
-		$house_number        = $matches[2];
-		$addition_to_address = $matches[3] . $matches[4] . $matches[5];
+		$street     = $matches[1];
+		$number     = $matches[2];
+		$complement = $matches[3] . $matches[4] . $matches[5];
 
-		if ( empty( $street_name ) ) {
-			$street_name         = $matches[3];
-			$addition_to_address = $matches[5];
+		if ( empty( $street ) ) {
+			$street     = $matches[3];
+			$complement = $matches[5];
 		}
 
 		return array(
-			'streetName'        => $street_name,
-			'houseNumber'       => $house_number,
-			'additionToAddress' => $addition_to_address,
+			'street'     => $street,
+			'number'     => $number,
+			'complement' => $complement,
 		);
 	}
 

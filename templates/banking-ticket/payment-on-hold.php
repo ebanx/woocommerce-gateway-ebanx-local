@@ -39,6 +39,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php if ( ! wp_is_mobile() ) : ?>
 		<iframe id="ebanx-boleto-frame" src="<?php echo esc_attr( $url_iframe ); ?>" style="width: 100%; border: 0px; height: 1000px"></iframe>
 	<?php endif; ?>
-
-	<input type="hidden" id="ebanx-payment-hash" data-doraemon-hash="<?php echo esc_html( $hash ); ?>">
 </div>

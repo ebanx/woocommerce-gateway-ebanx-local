@@ -330,30 +330,31 @@ class WC_EBANX_Payment_Adapter {
 	 */
 	private static function transform_address( $order, $configs, $gateway_id ) {
 		if (
-			( empty( WC_EBANX_Request::read( 'billing_postcode', null ) )
-				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_postcode'] ) )
-			|| ( empty( WC_EBANX_Request::read( 'billing_address_1', null ) )
-				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_address_1'] ) )
-			|| ( empty( WC_EBANX_Request::read( 'billing_state', null ) )
-				&& empty( WC_EBANX_Request::read( $gateway_id, null )['billing_state'] ) )
+			empty( WC_EBANX_Request::read_customizable_field( 'billing_postcode', $gateway_id, null ) )
+			|| empty( WC_EBANX_Request::read_customizable_field( 'billing_address_1', $gateway_id, null ) )
+			|| empty( WC_EBANX_Request::read_customizable_field( 'billing_state', $gateway_id, null ) )
 		) {
 			throw new Exception( 'INVALID-ADDRESS-FIELDS' );
 		}
 
-		$addresses = WC_EBANX_Request::read( 'billing_address_1', $gateway_id );
+		$addresses = WC_EBANX_Request::read_customizable_field( 'billing_address_1', $gateway_id, '');
 
-		if ( ! empty( WC_EBANX_Request::read( 'billing_address_2', null ) ) ) {
+		if ( ! empty( WC_EBANX_Request::read( 'billing_number', '' ) ) ) {
+			$addresses .= ', ' . WC_EBANX_Request::read( 'billing_number', null );
+		}
+
+		if ( ! empty( WC_EBANX_Request::read( 'billing_address_2', '' ) ) ) {
 			$addresses .= ' - ' . WC_EBANX_Request::read( 'billing_address_2', null );
 		}
 
-		$split_address   = WC_EBANX_Helper::split_street( $addresses );
-		$street_number   = empty( $addresses['houseNumber'] ) ? 'S/N' : trim( $addresses['houseNumber'] . ' ' . $addresses['additionToAddress'] );
+		$split_address = WC_EBANX_Helper::split_street( $addresses );
+		$street_number = empty( $split_address['number'] ) ? 'S/N' : trim( $split_address['number'] );
 
 		return new Address(
 			array(
-				'address'          => $split_address['streetName'],
+				'address'          => $split_address['street'],
 				'streetNumber'     => $street_number,
-				'streetComplement' => $split_address['additionToAddress'],
+				'streetComplement' => $split_address['complement'],
 				'city'             => WC_EBANX_Request::read_customizable_field( 'billing_city', $gateway_id ),
 				'country'          => self::get_country_to_address( $order, $configs ),
 				'state'            => WC_EBANX_Request::read_customizable_field( 'billing_state', $gateway_id ),

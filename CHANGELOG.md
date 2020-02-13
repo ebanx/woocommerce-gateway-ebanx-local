@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.1.1
+* 2020-02-13 - Fixes street parse street number on address
+
 ## 2.1.0
 * 2020-02-12 - Add international credit card gateway
 
