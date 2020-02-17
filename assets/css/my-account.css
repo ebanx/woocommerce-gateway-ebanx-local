@@ -38,3 +38,7 @@
 .ebanx-credit-cards {
 	margin: 25px 0;
 }
+
+#ebanx_billing_foreign_document_field {
+	display: none;
+}

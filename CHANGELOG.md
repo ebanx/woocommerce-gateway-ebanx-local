@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.1.3
+* 2020-02-17 - Fix style to hide document field.
+
 ## 2.1.2
 * 2020-02-17 - Fix address validation when payment method is international credit card. Fix error when submit form with blank card.
 
