@@ -146,7 +146,7 @@ class WC_EBANX_Errors {
 				'MISSING-BANK-NAME'          => 'Por favor, escoge el banco para finalizar la compra.',
 				'MISSING-VOUCHER'            => 'Por favor, escoge el tipo de voucher que desea para finalizar la compra.',
 				'INVALID-SAFETYPAY-TYPE'     => 'Por favor, escoge una opción para el método de pago SafetyPay.',
-				'INVALID-ADDRESS- FIELDS'    => 'Los campos de la dirección no fueron llenados correctamente. Por favor verifica e inténtalo de nuevo.',
+				'INVALID-ADDRESS-FIELDS'     => 'Los campos de la dirección no fueron llenados correctamente. Por favor verifica e inténtalo de nuevo.',
 				'INVALID-DOCUMENT'           => 'El documento no fueron llenados correctamente. Por favor verifica e inténtalo de nuevo.',
 				'INVALID-BILLING-COUNTRY'    => 'Por favor, escoge un país.',
 				'INVALID-ADDRESS'            => 'Por favor, introduce tu dirección completa. Número de residencia o apartamento.',
@@ -179,7 +179,7 @@ class WC_EBANX_Errors {
 			'br' => 'pt-br',
 		);
 
-		$language  = isset ( $languages[ $country ] ) ? $languages[ $country ] : 'en';
+		$language  = isset ( $languages[ $country ] ) ? $languages[ $country ] : 'pt-br';
 
 		$errors = static::get_errors();
 

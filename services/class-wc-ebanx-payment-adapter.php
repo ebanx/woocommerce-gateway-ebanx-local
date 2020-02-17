@@ -330,9 +330,12 @@ class WC_EBANX_Payment_Adapter {
 	 */
 	private static function transform_address( $order, $configs, $gateway_id ) {
 		if (
-			empty( WC_EBANX_Request::read_customizable_field( 'billing_postcode', $gateway_id, null ) )
-			|| empty( WC_EBANX_Request::read_customizable_field( 'billing_address_1', $gateway_id, null ) )
-			|| empty( WC_EBANX_Request::read_customizable_field( 'billing_state', $gateway_id, null ) )
+			'ebanx-credit-card-international' !== $gateway_id
+			&& (
+				empty( WC_EBANX_Request::read_customizable_field( 'billing_postcode', $gateway_id, null ) )
+				|| empty( WC_EBANX_Request::read_customizable_field( 'billing_address_1', $gateway_id, null ) )
+				|| empty( WC_EBANX_Request::read_customizable_field( 'billing_state', $gateway_id, null ) )
+			)
 		) {
 			throw new Exception( 'INVALID-ADDRESS-FIELDS' );
 		}
@@ -356,7 +359,7 @@ class WC_EBANX_Payment_Adapter {
 				'streetNumber'     => $street_number,
 				'streetComplement' => $split_address['complement'],
 				'city'             => WC_EBANX_Request::read_customizable_field( 'billing_city', $gateway_id ),
-				'country'          => self::get_country_to_address( $order, $configs ),
+				'country'          => self::get_country_to_address( $order, $configs, $gateway_id ),
 				'state'            => WC_EBANX_Request::read_customizable_field( 'billing_state', $gateway_id ),
 				'zipcode'          => WC_EBANX_Request::read_customizable_field( 'billing_postcode', $gateway_id ),
 			)
@@ -366,21 +369,16 @@ class WC_EBANX_Payment_Adapter {
 	/**
 	 * @param WC_Order                $order
 	 * @param WC_EBANX_Global_Gateway $configs
+	 * @param string                  $gateway_id
 	 *
 	 * @return string
 	 */
-	public static function get_country_to_address( $order, $configs ) {
-		$address_country  = $order->get_billing_country();
-		$currency_country = Currency::currencyToCountry( $configs->currency_code );
-		$iso_country      = Country::handleCountryToIso( $currency_country );
-
-		if ( 'yes' === $configs->get_setting_or_default( 'enable_international_credit_card' , 'no')
-			&& $address_country !== $iso_country
-		) {
-			return $currency_country;
+	public static function get_country_to_address( $order, $configs, $gateway_id ) {
+		if ( 'ebanx-credit-card-international' === $gateway_id && WC_EBANX_Constants::DEFAULT_COUNTRY !== $order->get_billing_country() ) {
+			return Currency::currencyToCountry( $configs->merchant_currency );
 		}
 
-		return empty( $address_country ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $address_country;
+		return empty( $order->get_billing_country() ) ? WC_EBANX_Constants::DEFAULT_COUNTRY : $order->get_billing_country();
 	}
 
 	/**

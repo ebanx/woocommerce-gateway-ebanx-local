@@ -1,7 +1,10 @@
 # CHANGELOG
 
+## 2.1.2
+* 2020-02-17 - Fix address validation when payment method is international credit card. Fix error when submit form with blank card.
+
 ## 2.1.1
-* 2020-02-13 - Fixes street parse street number on address
+* 2020-02-13 - Fix parsing the street number of the address
 
 ## 2.1.0
 * 2020-02-12 - Add international credit card gateway

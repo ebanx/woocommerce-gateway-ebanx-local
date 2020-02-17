@@ -4,7 +4,7 @@ Contributors: ebanxpay
 Tags: credit card, boleto, ebanx, woocommerce, local payment gateway, brazil, cash payment, local payment, card payment, one-click payment, alternative payments, payment processing
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 Requires PHP: 5.6.0
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -112,8 +112,11 @@ Yes, you can.
 
 == Changelog ==
 
+= 2.1.2 =
+* 2020-02-17 - Fix address validation when payment method is international credit card. Fix error when submit form with blank card.
+
 = 2.1.1 =
-* 2020-02-13 - Fixes street parse street number on address
+* 2020-02-13 - Fix parsing the street number of the address
 
 = 2.1.0 =
 * 2020-02-12 - Add international credit card gateway

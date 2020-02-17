@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<div id="ebanx-credit-card-international-form" class="ebanx-payment-container ebanx-language-br">
+<div id="ebanx-credit-card-international-form" class="ebanx-payment-container ebanx-language-br ebanx-credit-card-form">
 	<section class="ebanx-form-row">
 		<div id="ebanx-container-new-credit-card">
 			<?php include_once 'card-template.php'; ?>

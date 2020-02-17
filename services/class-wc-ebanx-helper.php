@@ -64,9 +64,9 @@ abstract class WC_EBANX_Helper {
 
 		if ( 0 === $result ) {
 			return array(
-				'streetName'        => $address,
-				'houseNumber'       => '',
-				'additionToAddress' => '',
+				'street'        => $address,
+				'number'       => '',
+				'complement' => '',
 			);
 		}
 

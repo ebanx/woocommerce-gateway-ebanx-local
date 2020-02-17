@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<div id="ebanx-credit-cart-form" class="ebanx-payment-container ebanx-language-br">
+<div id="ebanx-credit-card-form" class="ebanx-payment-container ebanx-language-br ebanx-credit-card-form">
 	<?php require WC_EBANX::get_templates_path() . 'compliance-fields-br.php'; ?>
 
 	<section class="ebanx-form-row">

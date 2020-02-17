@@ -96,14 +96,16 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 
 		$fields['billing_phone']['required'] = $is_billing_phone_required;
 
-		if ( 'yes' === $this->configs->get_setting_or_default('enable_international_credit_card', 'no' ) ) {
-			$international_document  = get_user_meta( $this->user_id, '_ebanx_billing_foreign_document', true );
+		if ( in_array('ebanx-credit-card-international', $this->configs->get_setting_or_default('brazil_payment_methods', array( ) ) ) ) {
+			$international_document       = get_user_meta( $this->user_id, '_ebanx_billing_foreign_document', true );
+			$is_foreign_document_required = WC_EBANX_Request::is_post_empty() || WC_EBANX_Constants::DEFAULT_COUNTRY === WC_EBANX_Request::read( 'billing_country', '' );
+
 			$ebanx_billing_foreign_document = array(
 				'type'     => 'text',
 				'label'    => __( 'Document', 'woocommerce-gateway-ebanx' ),
-				'required' => false,
+				'required' => $is_foreign_document_required,
 				'class'    => array( 'form-row-wide' ),
-				'default' => isset( $international_document ) ? $international_document : '',
+				'default'  => isset( $international_document ) ? $international_document : '',
 			);
 
 			$fields['billing']['ebanx_billing_foreign_document'] = $ebanx_billing_foreign_document;
@@ -165,10 +167,6 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 				$fields['billing']['ebanx_billing_brazil_cnpj'] = $ebanx_billing_brazil_cnpj;
 			}
 		}
-
-		$is_billing_phone_required = ( 'yes' === $this->configs->get_setting_or_default('billing_phone_required', 'yes' ) );
-
-		$fields['billing_phone']['required'] = $is_billing_phone_required;
 
 		return $fields;
 	}

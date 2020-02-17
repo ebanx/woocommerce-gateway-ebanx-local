@@ -61,10 +61,10 @@ jQuery(function ( $ ) {
 		onError: function (e, res) {
 			wc_ebanx_form.removeErrors();
 
-			$( '#ebanx-credit-cart-form' ).prepend( '<p class="woocommerce-error">' + wc_ebanx_form.getError( res.response.error.err ) + '</p>' );
+			$( '.ebanx-credit-card-form:visible' ).prepend( '<p class="woocommerce-error">' + wc_ebanx_form.getError( res.response.error.err ) + '</p>' );
 
 			$( 'body, html' ).animate({
-				scrollTop: $( '#ebanx-credit-cart-form' ).find( '.woocommerce-error' ).offset().top - 20
+				scrollTop: $( '.ebanx-credit-card-form:visible' ).find( '.woocommerce-error' ).offset().top - 20
 			});
 
 			wc_ebanx_form.unblock();
