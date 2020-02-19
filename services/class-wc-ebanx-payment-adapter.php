@@ -69,9 +69,7 @@ class WC_EBANX_Payment_Adapter {
 			}
 		}
 
-		if ( ! empty( WC_EBANX_Request::read( 'ebanx_device_fingerprint', null ) ) ) {
-			$payment->device_id = WC_EBANX_Request::read( 'ebanx_device_fingerprint' );
-		}
+		$payment->deviceId = WC_EBANX_Request::read( 'ebanx_device_fingerprint', null );
 
 		$token = WC_EBANX_Request::has( 'ebanx_debit_token' )
 			? WC_EBANX_Request::read( 'ebanx_debit_token' )
@@ -83,7 +81,7 @@ class WC_EBANX_Payment_Adapter {
 			array(
 				'autoCapture' => ( 'yes' === $configs->settings['capture_enabled'] ),
 				'token'       => $token,
-				'cvv'         => WC_EBANX_Request::read( 'ebanx_billing_cvv' ),
+				'cvv'         => WC_EBANX_Request::read( 'ebanx_billing_cvv', '' ),
 				'type'        => $brand,
 			)
 		);
@@ -406,7 +404,7 @@ class WC_EBANX_Payment_Adapter {
 		if ( 'yes' === $configs->get_setting_or_default( 'enable_international_credit_card' , 'no')
 			&& 'ebanx-credit-card-international' === $gateway_id
 		) {
-			$person_data['documentCountry'] = trim( strtolower( WC()->customer->get_billing_country() ) );
+			$person_data['documentCountry'] = trim( strtolower( $order->get_billing_country() ) );
 		}
 
 		return new Person( $person_data );

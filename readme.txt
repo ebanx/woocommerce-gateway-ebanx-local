@@ -112,6 +112,9 @@ Yes, you can.
 
 == Changelog ==
 
+= 2.1.4 = 
+* 2020-02-19 - Add device finger print on benjamin request. Fix document country for foreign customers.
+
 = 2.1.3 =
 * 2020-02-17 - Fix style to hide document field.
 
