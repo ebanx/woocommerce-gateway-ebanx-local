@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.1.5
+* 2020-02-19 - Fix foreign document requirement.
+
 ## 2.1.4
 * 2020-02-19 - Add device finger print on benjamin request. Fix document country for foreign customers.
 

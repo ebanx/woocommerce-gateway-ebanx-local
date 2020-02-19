@@ -21,7 +21,7 @@ class WC_EBANX_Errors {
 				'BP-DR-20'                   => 'A sua data de nascimento deve estar formatada em dd/mm/aaaa.',
 				'BP-DR-21'                   => 'Ei, você precisa ter mais de 16 anos para realizar essa transação.',
 				'BP-DR-22'                   => 'Desculpa, mas o documento enviado é inválido.',
-				'BP-DR-23'                   => 'Preencha com um documento válido:',
+				'BP-DR-23'                   => 'Preencha com um documento válido.',
 				'BP-DR-24'                   => 'Falta pouco! Preencha o seu CEP.',
 				'BP-DR-25'                   => 'Ei, você esqueceu de informar o seu endereço.',
 				'BP-DR-26'                   => 'Não se esqueça de preencher o número do seu endereço.',
@@ -192,6 +192,7 @@ class WC_EBANX_Errors {
 			);
 			$amount   = $error_info[2];
 			$currency = $error_info[1];
+			
 			return sprintf( $errors[ $language ][ $code ], wc_price( $amount, array( 'currency' => $currency ) ) );
 		}
 
