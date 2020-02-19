@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.1.6
+* 2020-02-19 - Fix foreign document requirement when country is BR.
+
 ## 2.1.5
 * 2020-02-19 - Fix foreign document requirement.
 

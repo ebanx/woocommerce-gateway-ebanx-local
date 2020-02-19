@@ -96,9 +96,11 @@ class WC_EBANX_Gateway extends WC_Payment_Gateway {
 
 		$fields['billing_phone']['required'] = $is_billing_phone_required;
 
-		if ( in_array('ebanx-credit-card-international', $this->configs->get_setting_or_default('brazil_payment_methods', array( ) ) ) ) {
+		if ( in_array('ebanx-credit-card-international', $this->configs->get_setting_or_default('brazil_payment_methods', array( ) ), true )
+			&& 'yes' === $this->configs->get_setting_or_default('enable_international_credit_card', 'no' )
+		) {
 			$international_document       = get_user_meta( $this->user_id, '_ebanx_billing_foreign_document', true );
-			$is_foreign_document_required = WC_EBANX_Request::is_post_empty() || WC_EBANX_Constants::DEFAULT_COUNTRY === strtoupper( WC_EBANX_Request::read( 'billing_country', '' ) );
+			$is_foreign_document_required = WC_EBANX_Request::is_post_empty() || WC_EBANX_Constants::DEFAULT_COUNTRY !== strtoupper( WC_EBANX_Request::read( 'billing_country', '' ) );
 
 			$ebanx_billing_foreign_document = array(
 				'type'     => 'text',
