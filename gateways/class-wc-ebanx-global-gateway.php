@@ -208,14 +208,6 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'class'       => 'ebanx-payments-option',
 			),
-			'manual_review_enabled'     => array(
-				'type'        => 'checkbox',
-				'title'       => __( 'Manual Transactions’ Review', 'woocommerce-gateway-ebanx' ),
-				'label'       => __( 'Manual analysis of each credit card transaction by EBANX.', 'woocommerce-gateway-ebanx' ),
-				'description' => __( 'Enabling Manual Review all your transactions will be analyzed manually by EBANX who will approve it or not. The decision will be made according to our risk policy, trying to reduce the number of chargebacks.', 'woocommerce-gateway-ebanx' ),
-				'desc_tip'    => true,
-				'class'       => 'ebanx-payments-option manual-review-checkbox',
-			),
 		);
 
 		$interest_rates_array = array_map(
@@ -225,8 +217,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					$interest_rates_array   = array();
 					$interest_rates_array[] = array(
 						"{$country_abbr}_payments_options_title" => array(
-							// translators: placeholder contains country abbr.
-							'title' => sprintf( __( 'Interest Options for %s', 'woocommerce-gateway-ebanx' ), $country ),
+							'title' => __( sprintf( 'Interest Options for %s', $country ), 'woocommerce-gateway-ebanx' ),
 							'type'  => 'title',
 							'class' => 'ebanx-payments-option',
 						),
@@ -235,8 +226,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 						"{$country_abbr}_interest_rates_enabled" => array(
 							'type'        => 'checkbox',
 							'title'       => __( 'Interest Rates', 'woocommerce-gateway-ebanx' ),
-							// translators: placeholder contains country abbr.
-							'label'       => sprintf( __( 'Enable interest rates for %s', 'woocommerce-gateway-ebanx' ), $country ),
+							'label'       => __( sprintf( 'Enable interest rates for %s', $country ), 'woocommerce-gateway-ebanx' ),
 							'description' => __( 'Enable and set a custom interest rate for your customers according to the number of Instalments you allow the payment.', 'woocommerce-gateway-ebanx' ),
 							'desc_tip'    => true,
 							'class'       => 'ebanx-payments-option',
@@ -244,8 +234,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					);
 					$interest_rates_array[] = array(
 						"{$country_abbr}_credit_card_instalments" => array(
-							// translators: placeholder contains maximum instalment number.
-							'title'       => sprintf( __( 'Maximum nº of Instalments for %s', 'woocommerce-gateway-ebanx' ), $country ),
+							'title'       => __( sprintf( 'Maximum nº of Instalments for %s', $country ), 'woocommerce-gateway-ebanx' ),
 							'type'        => 'select',
 							'class'       => 'wc-enhanced-select ebanx-payments-option ebanx-credit-card-instalments',
 							'options'     => WC_EBANX_Helper::get_instalments_by_country( $country_abbr ),
@@ -257,8 +246,7 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 				if ( in_array( strtoupper( $currency_code ), WC_EBANX_Constants::$credit_card_currencies, true ) ) {
 					$interest_rates_array[] = array(
 						"{$country_abbr}_min_instalment_value_$currency_code" => array(
-							// translators: placeholder contains minimum for instalments per country .
-							'title'             => sprintf( __( 'Minimum Instalment for %1$s (%2$s)', 'woocommerce-gateway-ebanx' ), $country, strtoupper( $currency_code ) ),
+							'title'             =>  __( sprintf('Minimum Instalment for %s (%s)', $country, strtoupper( $currency_code ) ), 'woocommerce-gateway-ebanx' ) ,
 							'type'              => 'number',
 							'class'             => 'ebanx-payments-option',
 							'placeholder'       => sprintf(
@@ -276,11 +264,11 @@ final class WC_EBANX_Global_Gateway extends WC_Payment_Gateway {
 					);
 				}
 
-				for ( $i = 1; $i <= 36; $i++ ) {
+				for ( $i = 1; $i <= 12; $i++ ) {
 					$interest_rates_array[] = array(
 						"{$country_abbr}_interest_rates_" . sprintf( '%02d', $i ) => array(
 							// translators: placeholder contains interest tx per instalment.
-							'title'             => sprintf( __( '%1$sx Interest Rate in %2$s', 'woocommerce-gateway-ebanx' ), $i, '%' ),
+							'title'             => sprintf( __( '%dx interest rate in %s', 'woocommerce-gateway-ebanx' ), $i, '%' ),
 							'type'              => 'number',
 							'custom_attributes' => array(
 								'min'  => '0',

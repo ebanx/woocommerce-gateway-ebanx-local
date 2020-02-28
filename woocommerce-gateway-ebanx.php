@@ -5,7 +5,7 @@
  * Description: Offer local payment methods
  * Author: EBANX Pay
  * Author URI: https://www.ebanxpay.com
- * Version: 2.1.6
+ * Version: 2.1.7
  * License: MIT
  * Text Domain: woocommerce-gateway-ebanx
  * Domain Path: /languages
@@ -92,6 +92,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 		private function __construct() {
 			include_once WC_EBANX_SERVICES_DIR . 'class-wc-ebanx-notice.php';
 
+
 			$this->notices = new WC_EBANX_Notice();
 
 			if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
@@ -161,9 +162,6 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
 			add_filter( 'woocommerce_my_account_my_orders_actions', array( 'WC_EBANX_Cancel_Order', 'add_my_account_cancel_order_action' ), 10, 2 );
 			add_filter( 'woocommerce_admin_order_actions', array( 'WC_EBANX_Capture_Payment', 'add_order_capture_button' ), 10, 2 );
-
-			add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'get_instalments_admin_html' ) );
-
 		}
 
 		/**
@@ -676,6 +674,14 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			$payment_hash = get_post_meta( $order->get_id(), '_ebanx_payment_hash', true );
 			if ( $payment_hash ) {
 				$merchant_payment_code = get_post_meta( $order->get_id(), '_ebanx_payment_merchant_payment_code', true );
+				$instalments_number    = get_post_meta( $order->get_id(), '_instalments_number', true );
+				$boleto_url            = get_post_meta( $order->get_id(), '_boleto_url', true );
+				$boleto_barcode        = get_post_meta( $order->get_id(), '_boleto_barcode', true );
+
+				$dashboard_link = sprintf(
+				'https://dashboard.ebanx.com.br/transaction/%s',
+				! empty( $merchant_payment_code ) ? base64_encode( $merchant_payment_code ) : ''
+				);
 
 				wc_get_template(
 					'admin-order-details.php',
@@ -684,38 +690,15 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 						'payment_hash'         => $payment_hash,
 						'payment_checkout_url' => get_post_meta( $order->get_id(), '_ebanx_checkout_url', true ),
 						'is_sandbox_mode'      => $this->is_sandbox_mode,
-						// translators: placeholder contains payment hash identifier on dashboard.
-						'dashboard_link'       => sprintf( 'https://dashboard.ebanx.com.br/transaction/%s', ! empty( $merchant_payment_code ) ? base64_encode( $merchant_payment_code ) : '' ),
+						'dashboard_link'       => $dashboard_link,
+						'instalments_number'   => $instalments_number,
+						'boleto_url'           => $boleto_url,
+						'boleto_barcode'       => $boleto_barcode,
 					),
 					'woocommerce/ebanx/',
 					self::get_templates_path()
 				);
 			}
-		}
-
-		/**
-		 * Get instalments select.
-		 */
-		public function get_instalments_admin_html() {
-			echo '<div class="edit_address">
-				<p class="form-field form-field-wide">
-					<label>' . esc_html( __( 'Instalment for EBANX Credit Card:', 'woocommerce-gateway-ebanx' ) ) . '</label>
-					<select name="ebanx_instalments" id="_payment_method_instalment" class="first">
-						<option value="1" selected>1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
-						<option value="5">5</option>
-						<option value="6">6</option>
-						<option value="7">7</option>
-						<option value="8">8</option>
-						<option value="9">9</option>
-						<option value="10">10</option>
-						<option value="11">11</option>
-						<option value="12">12</option>
-					</select>
-				</p>
-			</div>';
 		}
 	}
 

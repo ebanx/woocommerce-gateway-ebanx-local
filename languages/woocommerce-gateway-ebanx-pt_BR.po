@@ -395,6 +395,13 @@ msgstr ""
 msgid "Maximum nº of Instalments"
 msgstr "Nº Máximo de Parcelas"
 
+msgid "Maximum nº of Instalments for Brazil"
+msgstr "Nº máximo de parcelas para o Brasil"
+
+#: gateways/class-wc-ebanx-global-gateway.php:301
+msgid "Minimum Instalment for Brazil (BRL)"
+msgstr "Valor mínimo da parcela para o Brasil"
+
 #: gateways/class-wc-ebanx-global-gateway.php:342
 msgid ""
 "Establish the maximum number of instalments in which your customer can pay, "
@@ -442,6 +449,10 @@ msgstr ""
 #: gateways/class-wc-ebanx-global-gateway.php:374
 msgid "1x Interest Rate in %"
 msgstr "1x - Taxa de Juros em %"
+
+#: gateways/class-wc-ebanx-global-gateway.php:374
+msgid "%dx interest rate in %s"
+msgstr "%dx - taxa de juros em %s"
 
 #: gateways/class-wc-ebanx-global-gateway.php:381
 #: gateways/class-wc-ebanx-global-gateway.php:393
@@ -1038,172 +1049,27 @@ msgid "Company name"
 msgstr "Nome da empresa"
 
 #: gateways/class-wc-ebanx-global-gateway.php
-msgid "Billing phone is required"
-msgstr "Telefone de cobrança é obrigatório"
-
-#: gateways/class-wc-ebanx-global-gateway.php
 msgid "Makes billing phone required. Default is true."
 msgstr "Define a obrigatoriedade do telefone de cobrança. O padrão é obrigatório."
 
-#~ msgid "EBANX only supports instalments between 1 and 12"
-#~ msgstr "O EBANX suporta apenas número de parcelas entre 1 e 12"
+msgid "Instalments number"
+msgstr "Número de parcelas"
 
-#~ msgid "Birth Date"
-#~ msgstr "Data de Nascimento"
+msgid "Boleto URL"
+msgstr "Link do boleto"
 
-#~ msgid "Birthdate Brazil"
-#~ msgstr "Data de Nascimento no Brasil"
+msgid "Boleto barcode"
+msgstr "Código de barras do boleto"
 
-#~ msgid "eg: billing_brazil_birth_date"
-#~ msgstr "ex: billing_brazil_birth_date"
+msgid "Enable international credit card"
+msgstr "Habilitar cartão de crédito internacional"
 
-#~ msgid "Birthdate Chile"
-#~ msgstr "Data de Nascimento no Chile"
+msgid "Billing phone is required"
+msgstr "Telefone do cliente obrigatório"
 
-#~ msgid "eg: billing_chile_birth_date"
-#~ msgstr "ex: billing_chile_birth_date"
+msgid "Interest Options for Brazil"
+msgstr "Opções de juros para o Brasil"
 
-#~ msgid "MM / AA"
-#~ msgstr "MM / AA"
+msgid "Enable interest rates for"
+msgstr "Habilitar taxas de juros para o"
 
-#~ msgid "CVV"
-#~ msgstr "CVV"
-
-#~ msgid "Usar um outro cartão"
-#~ msgstr "Usar um outro cartão"
-
-#~ msgid "Otra tarjeta de crédito"
-#~ msgstr "Usar um outro cartão"
-
-#~ msgid "Paga con PagoEfectivo."
-#~ msgstr "Pague com PagoEfectivo."
-
-#~ msgid "Saldo EBANX"
-#~ msgstr "Saldo EBANX"
-
-#~ msgid "Pague usando o saldo da sua conta do EBANX."
-#~ msgstr "Pague usando o saldo da sua conta do EBANX."
-
-#~ msgid "Baloto"
-#~ msgstr "Baloto"
-
-#~ msgid "Paga con Baloto."
-#~ msgstr "Paga com Baloto."
-
-#~ msgid "Boleto bancário"
-#~ msgstr "Boleto bancário"
-
-#~ msgid "Pague com boleto bancário."
-#~ msgstr "Pague com boleto bancário."
-
-#~ msgid "PSE - Pago Seguros en Línea"
-#~ msgstr "PSE - Pago Seguros en Línea"
-
-#~ msgid "Paga con PSE - Pago Seguros en Línea."
-#~ msgstr "Pague com PSE - Pago Seguros en Línea."
-
-#~ msgid "Multicaja"
-#~ msgstr "Multicaja"
-
-#~ msgid "Paga con multicaja."
-#~ msgstr "Pague com multicaja."
-
-#~ msgid "OXXO"
-#~ msgstr "OXXO"
-
-#~ msgid "Paga con boleta OXXO."
-#~ msgstr "Pague com OXXO."
-
-#~ msgid "PagoEfectivo"
-#~ msgstr "PagoEfectivo"
-
-#~ msgid "SafetyPay"
-#~ msgstr "SafetyPay"
-
-#~ msgid "Paga con SafetyPay."
-#~ msgstr "Pague com SafetyPay."
-
-#~ msgid "Sencillito"
-#~ msgstr "Sencillito"
-
-#~ msgid "Paga con Sencillito."
-#~ msgstr "Paga con Sencillito."
-
-#~ msgid "ServiPag"
-#~ msgstr "ServiPag"
-
-#~ msgid "Paga con Servipag."
-#~ msgstr "Pague com Servipag."
-
-#~ msgid "Débito Online"
-#~ msgstr "Débito Online"
-
-#~ msgid ""
-#~ "Selecione o seu banco. A seguir, você será redirecionado para concluir o "
-#~ "pagamento pelo seu internet banking."
-#~ msgstr ""
-#~ "Selecione o seu banco. A seguir, você será redirecionado para concluir o "
-#~ "pagamento pelo seu internet banking."
-
-#~ msgid "Webpay"
-#~ msgstr "Webpay"
-
-#~ msgid "Paga con Webpay."
-#~ msgstr "Pague com Webpay."
-
-#~ msgid "Resumo de la compra:"
-#~ msgstr "Resumo da compra:"
-
-#~ msgid "Valor:"
-#~ msgstr "Valor:"
-
-#~ msgid "Pago realizado en una sola exhibición"
-#~ msgstr "Pagamento realizado a vista."
-
-#~ msgid "Gracias por haber comprado con nosotros."
-#~ msgstr "Obrigado por comprar conosco"
-
-#~ msgid "Número do Cartão"
-#~ msgstr "Número do Cartão"
-
-#~ msgid "Data de validade (MM / AA)"
-#~ msgstr "Data de validade (MM / AA)"
-
-#~ msgid "Código de segurança"
-#~ msgstr "Código de segurança"
-
-#~ msgid "Salvar este cartão para compras futuras"
-#~ msgstr "Salvar este cartão para compras futuras"
-
-#~ msgid "Titular de la tarjeta"
-#~ msgstr "Titular do cartão"
-
-#~ msgid "Número de la tarjeta"
-#~ msgstr "Número do cartão"
-
-#~ msgid "Fecha de expiración (MM / AA)"
-#~ msgstr "Data de Validade (MM / AA)"
-
-#~ msgid "Código de verificación"
-#~ msgstr "Código de segurança"
-
-#~ msgid "Guarda esta tarjeta para compras futuras."
-#~ msgstr "Salvar este cartão para compras futuras"
-
-#~ msgid "Cartão de Crédito"
-#~ msgstr "Cartão de Crédito"
-
-#~ msgid "Pague com cartão de crédito."
-#~ msgstr "Pague com cartão de crédito."
-
-#~ msgid "Tarjeta de Crédito"
-#~ msgstr "Cartão de Crédito"
-
-#~ msgid "Pay with credit card."
-#~ msgstr "Pague com cartão de crédito"
-
-#~ msgid "Tarjeta de Débito"
-#~ msgstr "Cartão de Débito"
-
-#~ msgid "Paga con tarjeta de débito."
-#~ msgstr "Pague com seu Cartão de Débito"

@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.1.7
+* 2020-02-28 - Adds payment related information on admin panel. Adjust translations.
+
 ## 2.1.6
 * 2020-02-19 - Fix foreign document requirement when country is BR.
 

@@ -934,3 +934,6 @@ msgstr "Se requiere teléfono de facturación"
 #: gateways/class-wc-ebanx-global-gateway.php
 msgid "Makes billing phone required. Default is true."
 msgstr "Se requiere un teléfono de facturación. El valor predeterminado es verdadero."
+
+msgid "Instalments number"
+msgstr "Número de cuotas"
