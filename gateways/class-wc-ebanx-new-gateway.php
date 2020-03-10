@@ -630,7 +630,15 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 * @throws Exception Throws parameter missing exception.
 	 */
 	private function save_document( $country ) {
+		if ( 'ebanx-credit-card-international' === $this->id && WC_EBANX_Request::has( 'ebanx_billing_foreign_document' ) ) {
+			$foreign_document = sanitize_text_field( WC_EBANX_Request::read( 'ebanx_billing_foreign_document', null ) );
+			update_user_meta( $this->user_id, '_ebanx_billing_foreign_document', $foreign_document );
+
+			return $foreign_document;
+		}
+
 		$field_name = 'document';
+
 		if ( WC_EBANX_Constants::COUNTRY_BRAZIL === $country ) {
 			$person_type = sanitize_text_field( WC_EBANX_Request::read( $this->names['ebanx_billing_brazil_person_type'], null ) );
 			if ( ! empty ( $person_type ) ) {
@@ -644,11 +652,6 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		}
 
 		$country = strtolower( Country::fromIso( strtoupper( $country ) ) );
-
-		if ( WC_EBANX_Request::has( 'ebanx_billing_foreign_document' ) ) {
-			$foreign_document = WC_EBANX_Request::read( 'ebanx_billing_foreign_document' );
-			update_user_meta( $this->user_id, '_ebanx_billing_foreign_document', $foreign_document );
-		}
 
 		if ( ! WC_EBANX_Request::has( $this->names[ 'ebanx_billing_' . $country . '_' . $field_name ] ) ) {
 			return false;

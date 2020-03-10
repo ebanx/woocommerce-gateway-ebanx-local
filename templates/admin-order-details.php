@@ -38,6 +38,13 @@
 			<input type="text" value="<?php echo esc_url( $payment_checkout_url ); ?>" onfocus="this.select();" onmouseup="return false;" readonly>
 		</p>
 	<?php endif ?>
+	<?php if ( ! empty( $customer_document ) ) : ?>
+		<p>
+			<?php esc_html_e( 'Document', 'woocommerce-gateway-ebanx' ); ?>
+			<br>
+			<?php echo esc_html_e( $customer_document ); ?>
+		</p>
+	<?php endif ?>
 </div>
 
 

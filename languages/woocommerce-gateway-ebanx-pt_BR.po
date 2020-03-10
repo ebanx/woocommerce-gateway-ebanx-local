@@ -157,7 +157,7 @@ msgstr "DNI"
 #: gateways/class-wc-ebanx-gateway.php:236
 #: templates/compliance-fields-ar.php:14
 msgid "Document"
-msgstr ""
+msgstr "Documento"
 
 #: gateways/class-wc-ebanx-gateway.php:430
 msgid "No reason specified."
@@ -873,6 +873,9 @@ msgstr "Selecione no máximo 12 parcelas"
 #: templates/admin-order-details.php:2
 msgid "EBANX Order Details"
 msgstr "Detalhes do Pedido EBANX"
+
+msgid "EBANX Customer Info"
+msgstr "Informações do cliente EBANX"
 
 #: templates/admin-order-details.php:4
 msgid "Dashboard Payment Link"

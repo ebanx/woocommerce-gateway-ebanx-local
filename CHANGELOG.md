@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.1.8
+* 2020-03-10 - Add customer document on admin panel. Add instalments field on create new order.
+
 ## 2.1.7
 * 2020-02-28 - Adds payment related information on admin panel. Adjust translations.
 
