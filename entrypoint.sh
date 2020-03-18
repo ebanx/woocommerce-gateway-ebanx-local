@@ -28,7 +28,7 @@ if ! $(wp core is-installed --allow-root); then
 		EOF
   fi
 
-  chown -Rf www-data:www-data $WP_ROOT
+  chown -Rf www-data:www-data /var/www
 
   wp core install --url=$WOOCOMMERCE_URL --title="$EBANX_SITE_TITLE" --admin_user=$EBANX_ADMIN_USERNAME --admin_password=$EBANX_ADMIN_PASSWORD --admin_email=$EBANX_SITE_EMAIL --skip-email --allow-root
   wp config set WP_DEBUG true --raw --allow-root

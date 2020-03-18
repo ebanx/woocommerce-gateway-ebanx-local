@@ -11,8 +11,11 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
 RUN pecl install xdebug-2.5.5 && \
     echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini && \
     echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.remote_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    a2enmod rewrite
+    echo "xdebug.remote_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini
+
+RUN echo "upload_max_filesize=512M" > /usr/local/etc/php/conf.d/upload_max_filesize.ini
+
+RUN a2enmod rewrite
 
 COPY wait-for-it.sh /usr/local/bin/
 COPY entrypoint.sh /usr/local/bin/
