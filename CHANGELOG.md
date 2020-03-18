@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.2.0
+* 2020-03-18 - Enable installment when the cart has subscription.
+
 ## 2.1.8
 * 2020-03-10 - Add customer document on admin panel. Add instalments field on create new order.
 
