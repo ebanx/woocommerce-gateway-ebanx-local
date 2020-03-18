@@ -207,7 +207,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	public function checkout_assets() {
 		if ( is_checkout() ) {
 			wp_enqueue_script( 'wc-credit-card-form' );
-			wp_enqueue_script( 'ebanx_libjs', 'https://js.ebanxpay.com/ebanx-libjs-latest.min.js', array(), WC_EBANX::get_plugin_version(), true );
 			wp_enqueue_script( 'woocommerce_ebanx_jquery_mask', plugins_url( 'assets/js/jquery-mask.js', WC_EBANX::DIR ), array( 'jquery' ), WC_EBANX::get_plugin_version(), true );
 			wp_enqueue_script( 'woocommerce_ebanx_credit_card', plugins_url( 'assets/js/credit-card.js', WC_EBANX::DIR ), array( 'jquery', 'ebanx_libjs' ), WC_EBANX::get_plugin_version(), true );
 

@@ -1,4 +1,6 @@
 # CHANGELOG
+## 2.2.1
+* 2020-03-18 - Add EBANX javascript lib in global assets.
 
 ## 2.2.0
 * 2020-03-18 - Enable installment when the cart has subscription.
