@@ -140,21 +140,26 @@ abstract class WC_EBANX_Helper {
 
 	/**
 	 * Verifies if enable instalment on the cart with subscription in checkout
-	 *
+	 *a
 	 * @return bool
 	 */
-	public static function enable_instalment_with_subscription_checkout() {
-		if ( class_exists( 'WC_Subscription' ) && WC_Subscriptions_Cart::cart_contains_subscription() ) {
-			foreach ( WC()->cart->get_cart() as $cart_item ) {
-				$product = $cart_item['data'];
-				$subscription_period = $product->get_meta( '_subscription_period' );
-				if ( strpos( get_class( $product ), 'Subscription' ) !== false && 'year' === $subscription_period ) {
-					return true;
-				}
+	public static function disable_instalments_on_checkout() {
+		if ( ! class_exists( 'WC_Subscription' ) ) {
+			return false;
+		}
+
+		$disable_instalments_when_subscription = WC_Subscriptions_Cart::cart_contains_subscription();
+
+		foreach ( WC()->cart->get_cart() as $cart_item ) {
+			$product = $cart_item['data'];
+			$subscription_period = $product->get_meta( '_subscription_period' );
+			if ( strpos( get_class( $product ), 'Subscription' ) !== false && 'year' === $subscription_period ) {
+				$disable_instalments_when_subscription = false;
+				break;
 			}
 		}
 
-		return false;
+		return $disable_instalments_when_subscription;
 	}
 
 	/**

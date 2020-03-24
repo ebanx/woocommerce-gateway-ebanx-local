@@ -1,4 +1,8 @@
 # CHANGELOG
+
+## 2.2.2
+* 2020-03-24 - Fix condition to enable/disable instalments on checkout.
+
 ## 2.2.1
 * 2020-03-18 - Add EBANX javascript lib in global assets.
 

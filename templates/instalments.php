@@ -6,7 +6,7 @@ $selected_instalment = isset( $selected_instalment ) ? $selected_instalment : 1;
 
 if ( count( $instalments_terms ) > 1 ) : ?>
 	<section class="ebanx-form-row">
-		<?php if ( ! WC_EBANX_Helper::enable_instalment_with_subscription_checkout() ) : ?>
+		<?php if ( WC_EBANX_Helper::disable_instalments_on_checkout() ) : ?>
 			<input type="hidden" name="ebanx-credit-card-installments" value="1" />
 		<?php else : ?>
 			<label for="ebanx-card-installments">
