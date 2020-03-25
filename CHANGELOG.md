@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.2.3
+* 2020-03-25 - Fix checkout with international credit card with foreign document country.
+
 ## 2.2.2
 * 2020-03-24 - Fix condition to enable/disable instalments on checkout.
 

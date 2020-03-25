@@ -401,9 +401,7 @@ class WC_EBANX_Payment_Adapter {
 			'phoneNumber' => '' !== $order->get_billing_phone() ? $order->get_billing_phone() : WC_EBANX_Request::read_customizable_field('billing_phone', $gateway_id, null ),
 		);
 
-		if ( 'yes' === $configs->get_setting_or_default( 'enable_international_credit_card' , 'no')
-			&& 'ebanx-credit-card-international' === $gateway_id
-		) {
+		if ( 'ebanx-credit-card-international' === $gateway_id ) {
 			$person_data['documentCountry'] = trim( strtolower( $order->get_billing_country() ) );
 		}
 
