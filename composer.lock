@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "081cef03dab39db257579794901b5429",
+    "content-hash": "4727c73bcd8e2786bf33239b7fc649b4",
     "packages": [
         {
             "name": "ebanx/benjamin-local",
-            "version": "1.20.0",
+            "version": "1.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ebanx/benjamin-local.git",
-                "reference": "ed150a1062299ad2882e00d5eef0248411b73737"
+                "reference": "b1f25426ff258fd4d43e17a3cadf477262668bd6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ebanx/benjamin-local/zipball/ed150a1062299ad2882e00d5eef0248411b73737",
-                "reference": "ed150a1062299ad2882e00d5eef0248411b73737",
+                "url": "https://api.github.com/repos/ebanx/benjamin-local/zipball/b1f25426ff258fd4d43e17a3cadf477262668bd6",
+                "reference": "b1f25426ff258fd4d43e17a3cadf477262668bd6",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,7 @@
                 "proprietary"
             ],
             "description": "EBANX Pay's API library for local payments",
-            "time": "2020-02-07T21:42:44+00:00"
+            "time": "2020-03-25T20:09:17+00:00"
         }
     ],
     "packages-dev": [

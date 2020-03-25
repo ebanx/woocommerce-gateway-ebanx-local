@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.2.4
+* 2020-03-25 - Fix get country error with benjamin update.
+
 ## 2.2.3
 * 2020-03-25 - Fix checkout with international credit card with foreign document country.
 
