@@ -21,7 +21,7 @@ services:
     ports:
       - 8080:80
     volumes:
-      - ./:/var/www/html/wp-content/plugins/woocommerce-gateway-ebanx-local
+      - ./:/var/www/html/wp-content/plugins/woocommerce-gateway-ebanx-local:cached
     links:
       - mysql
 
@@ -33,4 +33,4 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - ./.data:/var/lib/mysql
+      - ./.data:/var/lib/mysql:cached

@@ -5,7 +5,7 @@
  * Description: Offer local payment methods
  * Author: EBANX Pay
  * Author URI: https://www.ebanxpay.com
- * Version: 2.2.4
+ * Version: 3.0.0
  * License: MIT
  * Text Domain: woocommerce-gateway-ebanx
  * Domain Path: /languages
@@ -17,9 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WC_EBANX_MIN_PHP_VER', '5.6.0' );
-define( 'WC_EBANX_MIN_WC_VER', '3.0.0' );
-define( 'WC_EBANX_MIN_WP_VER', '5.0.0' );
+define( 'WC_EBANX_MIN_PHP_VER', '7.1' );
+define( 'WC_EBANX_MIN_WC_VER', '4.0.1' );
+define( 'WC_EBANX_MIN_WP_VER', '5.4' );
 define( 'WC_EBANX_DIR', __DIR__ . DIRECTORY_SEPARATOR );
 define( 'WC_EBANX_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . DIRECTORY_SEPARATOR );
 define( 'WC_EBANX_PLUGIN_NAME', WC_EBANX_PLUGIN_DIR_URL . basename( __FILE__ ) );
@@ -109,7 +109,7 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 
 			$configs = new WC_EBANX_Global_Gateway();
 
-			wp_enqueue_script( 'ebanx_libjs', 'https://js.ebanxpay.com/ebanx-libjs-latest.min.js', array(), WC_EBANX::get_plugin_version(), true );
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_all_pages_scripts' ) );
 
 			/**
 			 * Actions.
@@ -166,6 +166,15 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			add_filter( 'woocommerce_admin_order_actions', array( 'WC_EBANX_Capture_Payment', 'add_order_capture_button' ), 10, 2 );
 
 			add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'get_instalments_admin_html' ) );
+		}
+
+		/**
+		 * Sets up all pages scripts
+		 *
+		 * @return void
+		 */
+		public function enqueue_all_pages_scripts() {
+			wp_enqueue_script( 'ebanx_libjs', '//js.ebanxpay.com/ebanx-libjs-latest.min.js', array(), WC_EBANX::get_plugin_version(), true );
 		}
 
 		/**

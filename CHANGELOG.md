@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.0.0
+* 2020-04-27 - Add support to WooCommerce 4.x. IMPORTANT NOTE: tested on PHP 7.1+, WordPress 5.4+ and WooCommerce 4.0+.
+
 ## 2.2.4
 * 2020-03-25 - Fix get country error with benjamin update.
 
