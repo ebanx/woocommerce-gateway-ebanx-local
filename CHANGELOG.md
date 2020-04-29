@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.0.1
+* 2020-04-29 - Fix get undefined web service version.
+
 ## 3.0.0
 * 2020-04-27 - Add support to WooCommerce 4.x. IMPORTANT NOTE: tested on PHP 7.1+, WordPress 5.4+ and WooCommerce 4.0+.
 

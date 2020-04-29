@@ -69,8 +69,8 @@ class WC_EBANX_Environment {
 			$web_server_value_parts_array  = explode( ' ', $web_server_information_string );
 			$web_server_parts              = explode( '/', $web_server_value_parts_array[0] );
 			$web_server                    = new stdClass();
-			$web_server->name              = str_replace( '-', ' ', $web_server_parts[0] );
-			$web_server->version           = $web_server_parts[1];
+			$web_server->name              = str_replace( '-', ' ', empty( $web_server_parts[0] ) ? '' :  $web_server_parts[0] );
+			$web_server->version           = empty( $web_server_parts[1] ) ? '' : $web_server_parts[1];
 		} else {
 			if ( isset( $_SERVER ) && isset( $_SERVER['SERVER_NAME'] ) ) {
 				$web_server          = new stdClass();
