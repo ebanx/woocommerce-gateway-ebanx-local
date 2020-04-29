@@ -1,9 +1,13 @@
-FROM wordpress:5.4.0-php7.2-apache
+FROM wordpress:5.4.0-php7.4-apache
 
 ARG WORDPRESS_DB_USER=root
 ARG WORDPRESS_DB_PASSWORD=root
 ARG WORDPRESS_DB_NAME=wordpress
 ARG WORDPRESS_DB_HOST=mysql
+
+RUN rm -Rf /var/www/html/* && \
+	mv -f /usr/src/wordpress/* /var/www/html/ && \
+	chown -Rf www-data:www-data /var/www/html
 
 WORKDIR /var/www/html
 
@@ -12,13 +16,13 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       vim  \
       git \
-      unzip
+      unzip \
+      default-mysql-client
 
 # Download WP-CLI, install and configure Wordpress
 RUN curl -O "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar" && \
     chmod +x wp-cli.phar && \
-    mv wp-cli.phar /usr/local/bin/wp && \
-    wp config create --allow-root --path=/usr/src/wordpress --dbname=$WORDPRESS_DB_NAME --dbuser=$WORDPRESS_DB_USER --dbpass=$WORDPRESS_DB_PASSWORD --dbhost=$WORDPRESS_DB_HOST --force --skip-check --extra-php="define( 'WP_DEBUG', true );define( 'WP_DEBUG_LOG', true );define( 'FS_METHOD', 'direct' );";
+    mv wp-cli.phar /usr/local/bin/wp
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
@@ -36,3 +40,7 @@ COPY entrypoint.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/wait-for-it.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
+
+CMD ["apache2-foreground"]
