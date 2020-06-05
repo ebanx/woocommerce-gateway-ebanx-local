@@ -4,7 +4,7 @@ Contributors: ebanxpay
 Tags: credit card, boleto, ebanx, woocommerce, local payment gateway, brazil, cash payment, local payment, card payment, one-click payment, alternative payments, payment processing
 Requires at least: 5.0
 Tested up to: 5.4
-Stable tag: 3.0.2
+Stable tag: 3.0.3
 Requires PHP: 7.1
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -114,6 +114,9 @@ Yes, you can.
 
 == 3.0.2 ==
 * 2020-06-05 - Fix credit card callback when fetching the deviceId and throw the error.
+
+== 3.0.3 ==
+* 2020-06-05 - Fix document fields if is a manual order.
 
 = 3.0.1 =
 * 2020-04-29 - Fix get undefined web service version.

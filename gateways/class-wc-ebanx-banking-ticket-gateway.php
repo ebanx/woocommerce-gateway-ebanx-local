@@ -105,7 +105,8 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 		wc_get_template(
 			'banking-ticket/checkout-instructions.php',
 			array(
-				'id' => $this->id,
+				'id'    => $this->id,
+				'names' => $this->names,
 			),
 			'woocommerce/ebanx/',
 			WC_EBANX::get_templates_path()

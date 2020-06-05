@@ -7,6 +7,10 @@ if ( $order_id ) {
 	$cpf               = $wp_order ? get_post_meta( $wp_order->get_id(), '_billing_cpf', true ) : null;
 	$cnpj              = $wp_order ? get_post_meta( $wp_order->get_id(), '_billing_cnpj', true ) : null;
 
+	$person_type_filed_name = $names['ebanx_billing_brazil_person_type'] ? $names['ebanx_billing_brazil_person_type'] : 'ebanx_billing_brazil_person_type';
+	$cpf_filed_name = $names['ebanx_billing_brazil_document'] ? $names['ebanx_billing_brazil_document'] : 'ebanx_billing_brazil_document';
+	$cnpj_field_name = $names['ebanx_billing_brazil_cnpj'] ? $names['ebanx_billing_brazil_cnpj'] : 'ebanx_billing_brazil_cnpj';
+
 	$address = $wp_order->get_address();
 	$company = $wp_order->get_billing_company();
 
@@ -16,17 +20,17 @@ if ( $order_id ) {
 	) ? 'cpf' : 'cnpj';
 
 	$fields = array(
-		'ebanx_billing_brazil_cnpj'     => array(
-			'label'     => 'CNPJ',
-			'value'     => $cnpj,
-			'class_row' => 'cnpj-row',
+		$cnpj_field_name => array(
+			'label'      => 'CNPJ',
+			'value'      => $cnpj,
+			'class_row'  => 'cnpj-row',
 		),
 		'billing_company'               => array(
-			'label'     => 'Company name',
+			'label'     => __( 'Company name', 'woocommerce-gateway-ebanx' ),
 			'value'     => $company,
 			'class_row' => 'cnpj-row',
 		),
-		'ebanx_billing_brazil_document' => array(
+		$cpf_filed_name => array(
 			'label'     => 'CPF',
 			'value'     => $cpf,
 			'class_row' => 'cpf-row',
@@ -61,8 +65,8 @@ if ( $order_id ) {
 <?php if ( $order_id ) : ?>
 	<div class="ebanx-compliance-fields ebanx-compliance-fiels-br">
 		<div class="ebanx-form-row ebanx-form-row-wide">
-			<label for="<?php echo esc_attr( "{$id}[ebanx_billing_brazil_person_type]" ); ?>"><?php esc_html_e( 'Person type', 'woocommerce-gateway-ebanx' ); ?></label>
-			<select name="<?php echo esc_attr( "{$id}[ebanx_billing_brazil_person_type]" ); ?>" id="<?php echo esc_attr( "{$id}[ebanx_billing_brazil_person_type]" ); ?>" class="ebanx-select-field ebanx-person-type-field">
+			<label for="<?php echo esc_attr( "{$id}[{$person_type_filed_name}]" ); ?>"><?php esc_html_e( 'Person type', 'woocommerce-gateway-ebanx' ); ?></label>
+			<select name="<?php echo esc_attr( "{$id}[{$person_type_filed_name}]" ); ?>" id="<?php echo esc_attr( "{$id}[{$person_type_filed_name}]" ); ?>" class="ebanx-select-field ebanx-person-type-field">
 				<option value="cpf" <?php echo 'cpf' === $person_type ? 'selected="selected"' : ''; ?>>CPF</option>
 				<option value="cnpj"<?php echo 'cnpj' === $person_type ? 'selected="selected"' : ''; ?>>CNPJ</option>
 			</select>

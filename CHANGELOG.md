@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.0.3
+* 2020-06-05 - Fix document fields if is a manual order.
+
 ## 3.0.2
 * 2020-06-05 - Fix credit card callback when fetching the deviceId and throw the error.
 
