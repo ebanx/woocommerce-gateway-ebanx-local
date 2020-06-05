@@ -503,6 +503,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 				'id'                  => $this->id,
 				'add_tax'             => false,
 				'with_interest'       => WC_EBANX_Constants::COUNTRY_BRAZIL === $country ? ' com taxas' : '',
+				'names'               => $this->names,
 			),
 			'woocommerce/ebanx/',
 			WC_EBANX::get_templates_path()
