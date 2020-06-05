@@ -128,6 +128,10 @@ jQuery(function ( $ ) {
 						response.data.deviceId = deviceId;
 
 						wc_ebanx_form.onEBANXReponse( response );
+					}, function () {
+						response.data.deviceId = '';
+
+						wc_ebanx_form.onEBANXReponse( response );
 					});
 				} else {
 					wc_ebanx_form.renderInstalments( creditcard.instalments || 1 );

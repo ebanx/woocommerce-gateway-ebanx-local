@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.0.2
+* 2020-06-05 - Fix credit card callback when fetching the deviceId and throw the error.
+
 ## 3.0.1
 * 2020-04-29 - Fix get undefined web service version.
 
