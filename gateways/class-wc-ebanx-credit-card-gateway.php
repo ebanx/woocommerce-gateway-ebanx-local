@@ -91,8 +91,10 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$country = $this->get_transaction_address( 'country' );
 		$user_cc = get_user_meta( $subscription->get_customer_id(), '_ebanx_credit_card_token', true );
 
-		$user_cc_token = ! empty( $user_cc ) && ! empty( $user_cc[0]->token ) ? $user_cc[0]->token : null;
-		$user_cc_brand = ! empty( $user_cc ) && ! empty( $user_cc[0]->brand ) ? $user_cc[0]->brand : null;
+		$first_user_cc = end($user_cc);
+
+		$user_cc_token = ! empty( $first_user_cc->token ) ? $first_user_cc->token : null;
+		$user_cc_brand = ! empty( $first_user_cc->brand ) ? $first_user_cc->brand : null;
 
 		if ( ! is_null( $user_cc_token ) ) {
 			try {

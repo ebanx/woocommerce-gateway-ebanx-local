@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.0.4
+* 2020-08-31 - Include WooCommerce compatibility version. Fix credit card token resolver.
+
 ## 3.0.3
 * 2020-06-05 - Fix document fields if is a manual order.
 
