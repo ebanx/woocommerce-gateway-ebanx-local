@@ -406,7 +406,9 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 				$reason = __( 'No reason specified.', 'woocommerce-gateway-ebanx' );
 			}
 
-			$response = $this->ebanx->refund()->requestByHash( $hash, $amount, $reason );
+			$split = self::get_split_if_exists( $order_id );
+
+			$response = $this->ebanx->refund()->requestByHashWithSplit( $hash, $amount, $reason, '', $split );
 
 			WC_EBANX_Refund_Logger::persist(
 				array(
@@ -685,5 +687,11 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		}
 
 		return $credit_card_config;
+	}
+
+	private function get_split_if_exists( $order_id ) {
+		$split = get_post_meta( $order_id, '_ebanx_order_split_rules', true );
+
+		return ! empty( $split ) && is_array( $split ) ? $split : [];
 	}
 }

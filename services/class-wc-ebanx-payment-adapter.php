@@ -2,7 +2,7 @@
 
 use Ebanx\Benjamin\Models\Address;
 use Ebanx\Benjamin\Models\Card;
-use Ebanx\Benjamin\Models\Country;
+use Ebanx\Benjamin\Models\SplitRule;
 use Ebanx\Benjamin\Models\Currency;
 use Ebanx\Benjamin\Models\Item;
 use Ebanx\Benjamin\Models\Payment;
@@ -41,7 +41,11 @@ class WC_EBANX_Payment_Adapter {
 		}
 
 		if ( 'ebanx-banking-ticket' === $gateway_id ) {
-			$payment_data['dueDate'] = static::transform_due_date( $configs );
+			$payment_data['dueDate'] = static::transform_due_date( $configs->settings );
+		}
+
+		if ( self::has_split_rules( $order->get_id() ) ) {
+			$payment_data['split'] = self::get_split_rules( $order->get_id() );
 		}
 
 		return new Payment( $payment_data );
@@ -306,11 +310,10 @@ class WC_EBANX_Payment_Adapter {
 	 * @return DateTime|string
 	 */
 	private static function transform_due_date( $configs ) {
-		$due_date = '';
-		if ( ! empty( $configs->settings['due_date_days'] ) ) {
-			$due_date = new DateTime();
-			$due_date->modify( "+{$configs->settings['due_date_days']} day" );
-		}
+		$due_date_days = empty( $configs['due_date_days'] ) ? 3 : $configs['due_date_days'];
+
+		$due_date = new DateTime();
+		$due_date->modify( "+{$due_date_days} day" );
 
 		return $due_date;
 	}
@@ -513,5 +516,25 @@ class WC_EBANX_Payment_Adapter {
 			},
 			$order->get_items()
 		);
+	}
+
+	/**
+	 * @param int $order_id
+	 *
+	 * @return bool
+	 */
+	private static function has_split_rules( $order_id ) {
+		$split_rules_post_meta = get_post_meta( $order_id, '_ebanx_order_split_rules', true );
+
+		return is_array( $split_rules_post_meta ) && ! empty( $split_rules_post_meta );
+	}
+
+	/**
+	 * @param int $order_id
+	 *
+	 * @return array
+	 */
+	private static function get_split_rules( $order_id ) {
+		return get_post_meta( $order_id, '_ebanx_order_split_rules', true );
 	}
 }

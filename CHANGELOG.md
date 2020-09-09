@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.1.0
+* 2020-09-09 - Add support to create payments with split rules.
+
 ## 3.0.4
 * 2020-08-31 - Include WooCommerce compatibility version. Fix credit card token resolver.
 
