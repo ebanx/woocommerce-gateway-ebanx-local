@@ -10,18 +10,19 @@ services:
       WORDPRESS_DB_PASSWORD: root
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_HOST: mysql
-      EBANX_STOREFRONT_THEME_VERSION: 2.2.8
+      EBANX_STOREFRONT_THEME_VERSION: 2.6.0
       EBANX_ADMIN_USERNAME: ebanx
       EBANX_ADMIN_PASSWORD: ebanx
       EBANX_SITE_TITLE: EBANX Pay
       EBANX_SITE_EMAIL: plugin@ebanxpay.com
-      WOOCOMMERCE_PLUGIN_VERSION: 4.0.1
+      WOOCOMMERCE_PLUGIN_VERSION: 4.4.1
+
       WOOCOMMERCE_URL: wclocal
       WOOCOMMERCE_EXTERNAL_PORT: 8080
     ports:
       - 8080:80
     volumes:
-      - ./:/var/www/html/wp-content/plugins/woocommerce-gateway-ebanx-local:cached
+      - ./:/var/www/html/wp-content/plugins/woocommerce-gateway-ebanx-local
     links:
       - mysql
 
@@ -33,4 +34,4 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - ./.data:/var/lib/mysql:cached
+      - ./.data:/var/lib/mysql

@@ -1,13 +1,9 @@
-FROM wordpress:5.4.0-php7.4-apache
+FROM wordpress:5.5.1-php7.4-apache
 
 ARG WORDPRESS_DB_USER=root
 ARG WORDPRESS_DB_PASSWORD=root
 ARG WORDPRESS_DB_NAME=wordpress
 ARG WORDPRESS_DB_HOST=mysql
-
-RUN rm -Rf /var/www/html/* && \
-	mv -f /usr/src/wordpress/* /var/www/html/ && \
-	chown -Rf www-data:www-data /var/www/html
 
 WORKDIR /var/www/html
 
