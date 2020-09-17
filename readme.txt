@@ -4,7 +4,7 @@ Contributors: ebanxpay
 Tags: credit card, boleto, ebanx, woocommerce, local payment gateway, brazil, cash payment, local payment, card payment, one-click payment, alternative payments, payment processing
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 Requires PHP: 7.1
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -111,6 +111,9 @@ Yes, you can.
 4. There you go, you’re all set!
 
 == Changelog ==
+
+== 3.1.1 ==
+* 2020-09-09 - Cart with only virtual and downloadable does not require processing.
 
 == 3.1.0 ==
 * 2020-09-09 - Add support to create payments with split rules.
