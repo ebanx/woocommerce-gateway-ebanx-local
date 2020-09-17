@@ -314,8 +314,10 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		$this->save_order_meta_fields( $order, WC_EBANX_Helper::array_to_object( $response ) );
 
 		$payment_status = $response['payment']['status'];
-		if ( $response['payment']['pre_approved'] && 'CO' === $payment_status ) {
+		if ( 'CO' === $payment_status ) {
 			$order->payment_complete( $response['payment']['hash'] );
+			do_action( 'ebanx_process_response', $order );
+			return;
 		}
 
 		$order->add_order_note( $this->get_order_note_from_payment_status( $payment_status ) );

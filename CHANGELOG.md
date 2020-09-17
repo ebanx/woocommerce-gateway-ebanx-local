@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.1.1
+* 2020-09-09 - Cart with only virtual and downloadable does not require processing.
+
 ## 3.1.0
 * 2020-09-09 - Add support to create payments with split rules.
 
