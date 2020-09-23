@@ -265,27 +265,34 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 *
 	 * @param  string $attr
 	 *
-	 * @return boolean|string
+	 * @return boolean|array
 	 * @throws Exception Throws parameter missing message.
 	 */
 	public function get_transaction_address( $attr = '' ) {
-		if (
-			! isset( WC()->customer )
-			|| is_admin()
-			|| empty( WC_EBANX_Request::read( 'billing_country', null ) )
-			&& empty( WC()->customer->get_billing_country() )
-		) {
+		$customer = WC()->customer;
+		$country_from_request = WC_EBANX_Request::read( 'billing_country', null );
+		$customer_country = empty( $customer ) ? null : $customer->get_billing_country();
+
+		if ( empty( $customer_country ) && empty( $country_from_request ) ) {
 			return false;
 		}
 
-		$address['country'] = trim( strtolower( WC()->customer->get_billing_country() ) );
-		if ( ! empty( WC_EBANX_Request::read( 'billing_country', null ) ) ) {
-			$address['country'] = trim( strtolower( WC_EBANX_Request::read( 'billing_country' ) ) );
+		$address = [
+			'country' => trim( strtolower( $customer_country ) ),
+			'address' => $customer->get_billing_address(),
+			'state' => $customer->get_billing_state(),
+			'city' => $customer->get_billing_city(),
+			'postcode' => $customer->get_billing_postcode(),
+		];
+
+		if ( ! empty( $country_from_request ) ) {
+			$address['country'] = trim( strtolower( $country_from_request ) );
 		}
 
-		if ( '' !== $attr && ! empty( $address[ $attr ] ) ) {
+		if ( ! empty( $attr ) && ! empty( $address[ $attr ] ) ) {
 			return $address[ $attr ];
 		}
+
 		return $address;
 	}
 

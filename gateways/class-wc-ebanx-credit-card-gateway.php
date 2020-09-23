@@ -41,6 +41,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			'subscription_amount_changes',
 			'subscription_date_changes',
 			'subscription_payment_method_change',
+			'subscription_payment_method_change_customer',
 		);
 
 		add_action( 'wcs_default_retry_rules', array( $this, 'retryRules' ) );
@@ -89,16 +90,12 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$subscription = wcs_get_subscription( $subscription_id );
 
 		$country = $this->get_transaction_address( 'country' );
-		$user_cc = get_user_meta( $subscription->get_customer_id(), '_ebanx_credit_card_token', true );
 
-		$first_user_cc = end($user_cc);
+		$card = self::get_card_to_renew_subscription( $subscription );
 
-		$user_cc_token = ! empty( $first_user_cc->token ) ? $first_user_cc->token : null;
-		$user_cc_brand = ! empty( $first_user_cc->brand ) ? $first_user_cc->brand : null;
-
-		if ( ! is_null( $user_cc_token ) ) {
+		if ( ! empty( $card['token'] ) ) {
 			try {
-				$payment = WC_EBANX_Payment_Adapter::transform_card_subscription_payment( $subscription, $this->configs, $user_cc_token, $user_cc_brand );
+				$payment = WC_EBANX_Payment_Adapter::transform_card_subscription_payment( $subscription, $this->configs, $card['token'], $card['brand'] );
 
 				$response = $this->ebanx->creditCard( $this->get_credit_card_config( $country ) )->create( $payment );
 			} catch (WC_EBANX_Payment_Exception $exception ) {
@@ -124,8 +121,11 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			);
 
 			if ( 'ERROR' === $response['status'] ) {
-				$subscription->payment_complete();
-				$subscription->update_status( 'failed' );
+				$subscription->payment_failed();
+				// translators: placeholders contain bp-dr code and corresponding message.
+				$error_message = sprintf( __( 'EBANX: An error occurred: %1$s - %2$s', 'woocommerce-gateway-ebanx' ), $response['status_code'], $response['status_message'] );
+				$subscription->add_order_note( $error_message );
+
 				WC_EBANX::log( $response['status_message'] );
 
 				return false;
@@ -147,7 +147,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 						$subscription->add_order_note( __( 'EBANX: Transaction Pending', 'woocommerce-gateway-ebanx' ) );
 						break;
 				}
-
 			}
 
 			return true;
@@ -313,19 +312,23 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$cards = get_user_meta( $this->user_id, '_ebanx_credit_card_token', true );
 		$cards = ! empty( $cards ) ? $cards : array();
 
+		$ebanx_token              = WC_EBANX_Request::read( 'ebanx_token', null );
+		$ebanx_brand              = WC_EBANX_Request::read( 'ebanx_brand', null );
+		$ebanx_masked_card_number = WC_EBANX_Request::read( 'ebanx_masked_card_number', null );
+
 		$card = new \stdClass();
 
-		$card->brand         = WC_EBANX_Request::read( 'ebanx_brand', null );
-		$card->token         = WC_EBANX_Request::read( 'ebanx_token', null );
-		$card->masked_number = WC_EBANX_Request::read( 'ebanx_masked_card_number', null );
+		$card->token         = $ebanx_token;
+		$card->brand         = $ebanx_brand;
+		$card->masked_number = $ebanx_masked_card_number;
 
-		foreach ( $cards as $cd ) {
-			if ( empty( $cd ) ) {
+		foreach ( $cards as $saved_card ) {
+			if ( empty( $saved_card ) ) {
 				continue;
 			}
 
-			if ( $cd->masked_number === $card->masked_number && $cd->brand === $card->brand ) {
-				$cd->token = $card->token;
+			if ( $saved_card->masked_number === $card->masked_number && $saved_card->brand === $card->brand ) {
+				$saved_card->token = $card->token;
 				unset( $card );
 			}
 		}
@@ -334,7 +337,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			$cards[] = $card;
 		}
 
-		update_user_meta( $this->user_id, '_ebanx_credit_card_token', $cards );
+		update_user_meta( $this->user_id, '_ebanx_credit_card_token', array_values( $cards ) );
 	}
 
 	/**
@@ -367,6 +370,8 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			$total_price *= $instalment_term->instalmentNumber;
 			update_post_meta( $order_id, '_order_total', $total_price );
 		}
+
+		self::save_subscription_credit_card_if_necessary( $order_id );
 
 		return parent::process_payment( $order_id );
 	}
@@ -533,5 +538,67 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		}
 
 		return $credit_card_config;
+	}
+
+	/**
+	 * @param WC_Subscription $subscription
+	 * @return array
+	 */
+	private static function get_card_to_renew_subscription( $subscription ) {
+		$ebanx_token              = get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_token', true );
+		$ebanx_brand              = get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_brand', true );
+		$ebanx_masked_card_number = get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_masked_number', true );
+
+		if ( ! empty( $ebanx_token ) ) {
+			return [
+				'token'              => $ebanx_token,
+				'brand'              => $ebanx_brand,
+				'masked_card_number' => $ebanx_masked_card_number,
+			];
+		}
+
+		$user_cc = get_user_meta( $subscription->get_customer_id(), '_ebanx_credit_card_token', true );
+
+		$last_user_cc = end($user_cc);
+
+		$user_cc_token      = ! empty( $last_user_cc->token ) ? $last_user_cc->token : null;
+		$user_cc_brand      = ! empty( $last_user_cc->brand ) ? $last_user_cc->brand : null;
+		$masked_card_number = ! empty( $last_user_cc->brand ) ? $last_user_cc->masked_card_number : null;
+
+		return [
+			'token'              => $user_cc_token,
+			'brand'              => $user_cc_brand,
+			'masked_card_number' => $masked_card_number,
+		];
+	}
+
+	/**
+	 * @param int $order_id
+	 */
+	private static function save_subscription_credit_card_if_necessary( $order_id ) {
+		if ( ! class_exists( 'WC_Subscription' ) ) {
+			return;
+		}
+
+		$order = wc_get_order( $order_id );
+
+		$is_or_contain_subscription = wcs_is_subscription( $order_id ) || wcs_order_contains_subscription( $order, 'any' );
+
+		if ( ! $is_or_contain_subscription ) {
+			return;
+		}
+
+		$subscription_renewal_id = get_post_meta( $order_id, '_subscription_renewal', true );
+		$subscription_id         = ! empty( $subscription_renewal_id ) ? (int) $subscription_renewal_id : $order_id;
+
+		$ebanx_token              = WC_EBANX_Request::read( 'ebanx_token', null );
+		$ebanx_brand              = WC_EBANX_Request::read( 'ebanx_brand', null );
+		$ebanx_masked_card_number = WC_EBANX_Request::read( 'ebanx_masked_card_number', null );
+
+		if ( ! empty( $ebanx_token ) ) {
+			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_token', $ebanx_token );
+			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_brand', $ebanx_brand );
+			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_masked_numberrr', $ebanx_masked_card_number );
+		}
 	}
 }

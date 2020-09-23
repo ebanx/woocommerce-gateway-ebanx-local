@@ -131,7 +131,7 @@ abstract class WC_EBANX_Helper {
 	 */
 	public static function checkout_contains_subscription() {
 		global $product;
-		if ( class_exists( 'WC_Subscription' ) ) {
+		if ( class_exists( 'WC_Subscription' ) && ! empty( $product ) ) {
 			return WC_Subscriptions_Cart::cart_contains_subscription() || strpos( get_class( $product ), 'Subscription' ) !== false;
 		}
 
