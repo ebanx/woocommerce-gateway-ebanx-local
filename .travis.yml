@@ -27,6 +27,7 @@ env:
 #  - nvm use stable
 
 install:
+  - composer self-update --rollback
   - composer install
 #  - cd $TRAVIS_BUILD_DIR/tests && npm ci
 #  - cd $TRAVIS_BUILD_DIR
