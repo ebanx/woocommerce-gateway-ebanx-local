@@ -1,6 +1,9 @@
 # CHANGELOG
 
-== 3.2.0 ==
+## 3.3.0
+* 2020-10-30 - Add filter to customize API response errors.
+
+## 3.2.0
 * 2020-09-23 - Add support to change payment method by user when order is subscriptions. Associate credit card token on subscription.
 
 ## 3.1.1
