@@ -351,22 +351,22 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			throw new Exception( 'SANDBOX-INVALID-CC-NUMBER' );
 		}
 
-		$code           = array_key_exists( 'status_code', $response ) ? $response['status_code'] : 'GENERAL';
-		$status_message = array_key_exists( 'status_message', $response ) ? $response['status_message'] : '';
+		$code           = ! empty ( $response['status_code'] ) ? $response['status_code'] : 'GENERAL';
+		$status_message = ! empty ( $response['status_message'] ) ? $response['status_message'] : '';
 
 		if ( $this->is_refused_credit_card( $response, $code ) ) {
 			$code           = 'REFUSED-CC';
 			$status_message = $response['payment']['transaction_status']['description'];
 		}
-		// translators: placeholders contain bp-dr code and corresponding message.
-		$error_message = sprintf( __( 'EBANX: An error occurred: %1$s - %2$s', 'woocommerce-gateway-ebanx' ), $code, $status_message );
 
-		$order->update_status( 'failed', $error_message );
-		$order->add_order_note( $error_message );
+		$error = apply_filters( 'handdle_ebanx_response_error_filter', $code, $status_message );
+
+		$order->update_status( 'failed', $error[ 'error_message' ] );
+		$order->add_order_note( $error[ 'error_message' ] );
 
 		do_action( 'ebanx_process_response_error', $order, $code );
 
-		throw new WC_EBANX_Payment_Exception( $status_message, $code );
+		throw new WC_EBANX_Payment_Exception( $error[ 'error_message' ], $error[ 'code' ] );
 	}
 
 	/**
