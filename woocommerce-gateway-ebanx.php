@@ -5,7 +5,7 @@
  * Description: Offer local payment methods
  * Author: EBANX Pay
  * Author URI: https://www.ebanxpay.com
- * Version: 3.3.0
+ * Version: 3.3.1
  * License: MIT
  * Text Domain: woocommerce-gateway-ebanx
  * Domain Path: /languages
@@ -169,8 +169,6 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 			add_filter( 'woocommerce_admin_order_actions', array( 'WC_EBANX_Capture_Payment', 'add_order_capture_button' ), 10, 2 );
 
 			add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'get_instalments_admin_html' ) );
-
-			add_filter( 'handdle_ebanx_response_error_filter', array ( $this, 'handdle_ebanx_response_error' ), 10, 2 );
 		}
 
 		/**
@@ -752,20 +750,6 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 					</select>
 				</p>
 			</div>';
-		}
-
-		/**
-		 * @param string $code
-		 * @param string $status_message
-		 *
-		 * @return array
-		 */
-		public function handdle_ebanx_response_error( $code, $status_message ) {
-			return [
-				'code' => $code,
-				// translators: placeholders contain bp-dr code and corresponding message.
-				'error_message' => sprintf( __( 'EBANX: An error occurred: %1$s - %2$s', 'woocommerce-gateway-ebanx' ), $code, $status_message ),
-			];
 		}
 	}
 

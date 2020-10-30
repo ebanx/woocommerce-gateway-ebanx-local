@@ -359,7 +359,13 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			$status_message = $response['payment']['transaction_status']['description'];
 		}
 
-		$error = apply_filters( 'handdle_ebanx_response_error_filter', $code, $status_message );
+		$ebanx_error = [
+			'code' => $code,
+			// translators: placeholders contain bp-dr code and corresponding message.
+			'error_message' => sprintf( __( 'EBANX: An error occurred: %1$s - %2$s', 'woocommerce-gateway-ebanx' ), $code, $status_message ),
+		];
+
+		$error = apply_filters( 'handdle_ebanx_response_error_filter', $ebanx_error, $code, $status_message );
 
 		$order->update_status( 'failed', $error[ 'error_message' ] );
 		$order->add_order_note( $error[ 'error_message' ] );

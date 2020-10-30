@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.3.1
+* 2020-10-30 - Refactor filter to customize API response errors.
+
 ## 3.3.0
 * 2020-10-30 - Add filter to customize API response errors.
 
