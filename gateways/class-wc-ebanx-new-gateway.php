@@ -348,31 +348,25 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			&& 'EBANX' === $response['payment']['transaction_status']['acquirer']
 			&& $this->is_sandbox_mode
 		) {
-			throw new Exception( 'SANDBOX-INVALID-CC-NUMBER' );
+//			throw new Exception( 'SANDBOX-INVALID-CC-NUMBER' );
 		}
 
-		$code           = ! empty ( $response['status_code'] ) ? $response['status_code'] : 'GENERAL';
+		$status_code    = ! empty ( $response['status_code'] ) ? $response['status_code'] : 'GENERAL';
 		$status_message = ! empty ( $response['status_message'] ) ? $response['status_message'] : '';
 
-		if ( $this->is_refused_credit_card( $response, $code ) ) {
-			$code           = 'REFUSED-CC';
+		if ( $this->is_refused_credit_card( $response, $status_code ) ) {
+			$status_code           = 'REFUSED-CC';
 			$status_message = $response['payment']['transaction_status']['description'];
 		}
 
-		$ebanx_error = [
-			'code' => $code,
-			// translators: placeholders contain bp-dr code and corresponding message.
-			'error_message' => sprintf( __( 'EBANX: An error occurred: %1$s - %2$s', 'woocommerce-gateway-ebanx' ), $code, $status_message ),
-		];
+		$error = self::handle_error( $status_code, $status_message );
 
-		$error = apply_filters( 'handdle_ebanx_response_error_filter', $ebanx_error, $code, $status_message );
+		$order->update_status( 'failed', $error['message'] );
+		$order->add_order_note( $error['message'] );
 
-		$order->update_status( 'failed', $error[ 'error_message' ] );
-		$order->add_order_note( $error[ 'error_message' ] );
+		do_action( 'ebanx_process_response_error', $order, $error['code'] );
 
-		do_action( 'ebanx_process_response_error', $order, $code );
-
-		throw new WC_EBANX_Payment_Exception( $error[ 'error_message' ], $error[ 'code' ] );
+		throw new WC_EBANX_Payment_Exception( $error['message'], $error['code'] );
 	}
 
 	/**
@@ -708,5 +702,26 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		$split = get_post_meta( $order_id, '_ebanx_order_split_rules', true );
 
 		return ! empty( $split ) && is_array( $split ) ? $split : [];
+	}
+
+	/**
+	 * @param $code
+	 * @param $message
+	 *
+	 * @return array
+	 */
+	private static function handle_error( $code, $message ) {
+		if ( has_filter( 'handdle_ebanx_response_error_filter' ) ) {
+			return [
+				'code' => 'CUSTOMIZED_ERROR_MESSAGE',
+				'message' => apply_filters( 'handdle_ebanx_response_error_filter', $message, $code ),
+			];
+		}
+
+		return [
+			'code' => $code,
+			// translators: placeholders contain bp-dr code and corresponding message.
+			'message' => sprintf( __( 'EBANX: An error occurred: %1$s - %2$s', 'woocommerce-gateway-ebanx' ), $code, $message ),
+		];
 	}
 }

@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.3.3
+* 2020-11-03 - Improves and simplifies the filter to handle error messages.
+
 ## 3.3.2
 * 2020-11-03 - Improve customized error code constant.
 

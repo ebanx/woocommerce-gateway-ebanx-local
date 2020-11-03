@@ -5,7 +5,7 @@
  * Description: Offer local payment methods
  * Author: EBANX Pay
  * Author URI: https://www.ebanxpay.com
- * Version: 3.3.2
+ * Version: 3.3.3
  * License: MIT
  * Text Domain: woocommerce-gateway-ebanx
  * Domain Path: /languages
