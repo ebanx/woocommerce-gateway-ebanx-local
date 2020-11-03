@@ -170,7 +170,7 @@ class WC_EBANX_Errors {
 	public static function get_error_message( $exception, $country ) {
 		$code = ! empty( $exception->getCode() ) ? $exception->getCode() : $exception->getMessage();
 
-		if ( 'CUSTOMIZED_ERROR_MESSAGE' === $code ) {
+		if ( 'CUSTOMIZED_ERROR_CODE' === $code ) {
 			return $exception->getMessage();
 		}
 

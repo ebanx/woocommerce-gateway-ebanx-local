@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.3.2
+* 2020-11-03 - Improve customized error code constant.
+
 ## 3.3.1
 * 2020-10-30 - Refactor filter to customize API response errors.
 
