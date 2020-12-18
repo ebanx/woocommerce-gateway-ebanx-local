@@ -140,7 +140,13 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 						break;
 					case 'CA':
 						$subscription->payment_failed();
-						$subscription->add_order_note( __( 'EBANX: Transaction Failed', 'woocommerce-gateway-ebanx' ) );
+						$subscription->add_order_note(
+							sprintf(
+								'%s %s',
+								__( 'EBANX: Transaction Failed. Reason:', 'woocommerce-gateway-ebanx' ),
+								$response['payment']['transaction_status']['description']
+							)
+						);
 						break;
 					case 'OP':
 						$subscription->payment_failed();
@@ -550,6 +556,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$ebanx_masked_card_number = get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_masked_number', true );
 
 		if ( ! empty( $ebanx_token ) ) {
+			$subscription->add_order_note( __( 'EBANX: Subscription credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
 			return [
 				'token'              => $ebanx_token,
 				'brand'              => $ebanx_brand,
@@ -565,6 +572,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$user_cc_brand      = ! empty( $last_user_cc->brand ) ? $last_user_cc->brand : null;
 		$masked_card_number = ! empty( $last_user_cc->brand ) ? $last_user_cc->masked_card_number : null;
 
+		$subscription->add_order_note( __( 'EBANX: User credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
 		return [
 			'token'              => $user_cc_token,
 			'brand'              => $user_cc_brand,
@@ -585,6 +593,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$is_or_contain_subscription = wcs_is_subscription( $order_id ) || wcs_order_contains_subscription( $order, 'any' );
 
 		if ( ! $is_or_contain_subscription ) {
+			$order->add_order_note( __( 'EBANX: The order is not a subscription.', 'woocommerce-gateway-ebanx' ) );
 			return;
 		}
 
@@ -599,6 +608,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_token', $ebanx_token );
 			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_brand', $ebanx_brand );
 			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_masked_numberrr', $ebanx_masked_card_number );
+			$order->add_order_note( __( 'EBANX: The subscription credit card was saved.', 'woocommerce-gateway-ebanx' ) );
 		}
 	}
 }

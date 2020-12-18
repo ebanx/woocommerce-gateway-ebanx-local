@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.3.4
+* 2020-12-21 - Improve notes on subscription payment process.
+
 ## 3.3.3
 * 2020-11-03 - Improves and simplifies the filter to handle error messages.
 

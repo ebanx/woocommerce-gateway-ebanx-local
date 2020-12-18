@@ -201,8 +201,8 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 * @return array
 	 */
 	public function process_payment( $order_id ) {
+		$order = wc_get_order( $order_id );
 		try {
-			$order = wc_get_order( $order_id );
 			apply_filters( 'ebanx_before_process_payment', $order );
 
 			// Save user's fields.
@@ -222,6 +222,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 
 				$this->process_response( $response, $order );
 			} else {
+				$order->add_order_note( __( 'EBANX: The order with value 0 was finished.', 'woocommerce-gateway-ebanx' ) );
 				$order->payment_complete();
 			}
 
@@ -240,6 +241,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 
 			WC()->session->set( 'refresh_totals', true );
 			WC_EBANX::log( "EBANX Error: $message" );
+			$order->add_order_note( "EBANX Error: $message" );
 
 			wc_add_notice( $message, 'error' );
 
@@ -323,6 +325,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		$payment_status = $response['payment']['status'];
 		if ( 'CO' === $payment_status ) {
 			$order->payment_complete( $response['payment']['hash'] );
+			$order->add_order_note( $this->get_order_note_from_payment_status( $payment_status ) );
 			do_action( 'ebanx_process_response', $order );
 			return;
 		}
