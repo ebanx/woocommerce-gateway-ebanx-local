@@ -13,6 +13,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 	/**
+	 * Max length of card token
+	 *
+	 * @var int
+	 */
+	const MAX_LENGTH_CARD_TOKEN = 128;
+
+	/**
+	 * Min length of card token
+	 *
+	 * @var int
+	 */
+	const MIN_LENGTH_CARD_TOKEN = 32;
+
+	/**
+	 * Max length of masked card number
+	 *
+	 * @var int
+	 */
+	const MAX_LENGTH_MASKED_CARD_NUMBER = 19;
+
+	/**
+	 * Min length of masked card number
+	 *
+	 * @var int
+	 */
+	const MIN_LENGTH_MASKED_CARD_NUMBER = 14;
+
+	/**
 	 * The rates for each instalment
 	 *
 	 * @var array
@@ -42,7 +70,11 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			'subscription_date_changes',
 			'subscription_payment_method_change',
 			'subscription_payment_method_change_customer',
+//			'subscription_payment_method_change_admin'
 		);
+
+		add_filter( 'woocommerce_subscription_payment_meta', array( $this, 'add_subscription_payment_meta' ), 10, 2 );
+		add_filter( 'woocommerce_subscription_validate_payment_meta', array( $this, 'validate_subscription_payment_meta' ), 10, 2 );
 
 		add_action( 'wcs_default_retry_rules', array( $this, 'retryRules' ) );
 		add_action( 'woocommerce_scheduled_subscription_payment', array( $this, 'scheduled_subscription_payment' ) );
@@ -607,7 +639,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 		$order = wc_get_order( $order_id );
 
-		$is_or_contain_subscription = wcs_is_subscription( $order_id ) || wcs_order_contains_subscription( $order, 'any' );
+ 		$is_or_contain_subscription = wcs_is_subscription( $order_id ) || wcs_order_contains_subscription( $order, 'any' );
 
 		if ( ! $is_or_contain_subscription ) {
 			return;
@@ -632,6 +664,72 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_brand', $ebanx_brand );
 			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_masked_number', $ebanx_masked_card_number );
 			$order->add_order_note( __( 'EBANX: The subscription credit card was saved.', 'woocommerce-gateway-ebanx' ) );
+		}
+	}
+
+	/**
+	 * Include the payment meta data required to process automatic recurring payments so that store managers can
+	 * manually set up automatic recurring payments for a customer via the Edit Subscriptions screen in 2.0+.
+	 *
+	 * @param array $payment_meta associative array of meta data required for automatic payments
+	 * @param WC_Subscription $subscription An instance of a subscription object
+	 *
+	 * @return array
+	 */
+	public function add_subscription_payment_meta( $payment_meta, $subscription ) {
+		$payment_meta[ $this->id ] = array(
+			'post_meta' => array(
+				'_ebanx_subscription_credit_card_token' => array(
+					'value' => get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_token', true ),
+					'label' => 'EBANX Card token',
+				),
+				'_ebanx_subscription_credit_card_brand' => array(
+					'value' => get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_brand', true ),
+					'label' => 'EBANX Card Brand',
+				),
+				'_ebanx_subscription_credit_card_masked_number' => array(
+					'value' => get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_masked_number', true ),
+					'label' => 'EBANX Masked Card Number',
+				),
+			),
+		);
+
+		return $payment_meta;
+	}
+
+	/**
+	 * Validate the payment meta data required to process automatic recurring payments so that store managers can
+	 * manually set up automatic recurring payments for a customer via the Edit Subscriptions screen in 2.0+.
+	 *
+	 * @param string $payment_method_id The ID of the payment method to validate
+	 * @param array $payment_meta associative array of meta data required for automatic payments
+	 */
+	public function validate_subscription_payment_meta( $payment_method_id, $payment_meta ) {
+		if ( $this->id === $payment_method_id ) {
+
+			if ( ! isset( $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] ) || empty( $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] ) ) {
+				throw new Exception( 'A card token value is required.' );
+			} elseif ( strlen( $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] ) > self::MAX_LENGTH_CARD_TOKEN) {
+				throw new Exception( 'Invalid card token. A valid card token must have length less or equal 128.' );
+			} elseif ( strlen( $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] ) < self::MIN_LENGTH_CARD_TOKEN) {
+				throw new Exception( 'Invalid card token. A valid card token must have length greater or equal 32.' );
+			}
+
+			$brands = array( 'amex', 'aura', 'discover', 'elo', 'hipercard', 'visa', 'mastercard' );
+			if ( ! isset( $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'] ) || empty( $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'] ) ) {
+				throw new Exception( 'A card brand value is required.' );
+			} elseif ( !in_array( $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'], $brands ) ) {
+				throw new Exception( 'Invalid card brand. Card brand is not supported.' );
+			}
+
+			if ( ! isset( $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] ) || empty( $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] ) ) {
+				throw new Exception( 'A masked card number value is required.' );
+			} elseif ( strlen( $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] ) > self::MAX_LENGTH_MASKED_CARD_NUMBER) {
+				throw new Exception( 'Invalid masked card number. A valid masked card number must have length less or equal 128.' );
+			} elseif ( strlen( $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] ) < self::MIN_LENGTH_MASKED_CARD_NUMBER) {
+				throw new Exception( 'Invalid masked card number. A valid masked card number must have length greater or equal 32.' );
+			}
+
 		}
 	}
 }
