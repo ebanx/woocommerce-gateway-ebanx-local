@@ -699,35 +699,60 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	}
 
 	/**
+	 * @param string $value Value of meta data to validate
+	 * @param int $min Min number of characters
+	 * @param int $max Max number of characters
+	 * @param string $label Name of the meta data to display
+	 *
+	 * @throws Exception
+	 */
+	public function validate_min_max_length_meta_data( $value, $min, $max, $label ) {
+		if ( empty( $value ) ) {
+			throw new Exception( "A {$label} value is required." );
+		} elseif ( strlen( $value ) > $max) {
+			throw new Exception( "Invalid {$label}. A valid {$label} must have length less or equal {$max}." );
+		} elseif ( strlen( $value ) < $min) {
+			throw new Exception( "Invalid {$label}. A valid {$label} must have length greater or equal {$min}." );
+		}
+	}
+
+	/**
+	 * @param string $value Value of card token meta data to validate
+	 */
+	protected function validate_card_token_meta_data( $value ) {
+		$this->validate_min_max_length_meta_data( $value, self::MIN_LENGTH_CARD_TOKEN, self::MAX_LENGTH_CARD_TOKEN, 'Card Token' );
+	}
+
+	/**
+	 * @param string $value Value of card brand meta data to validate
+	 *
+	 * @throws Exception
+	 */
+	protected function validate_card_brand_meta_data( $value ) {
+		$brands = array( 'amex', 'aura', 'discover', 'elo', 'hipercard', 'visa', 'mastercard' );
+		if ( empty( $value ) ) {
+			throw new Exception( 'A Card Brand value is required.' );
+		} elseif ( !in_array( $value, $brands ) ) {
+			throw new Exception( 'Invalid Card Brand. Card Brand is not supported.' );
+		}
+	}
+
+	/**
+	 * @param string $value Value of masked card number meta data to validate
+	 */
+	protected function validate_card_number_meta_data( $value ) {
+		$this->validate_min_max_length_meta_data( $value, self::MIN_LENGTH_MASKED_CARD_NUMBER, self::MAX_LENGTH_MASKED_CARD_NUMBER, 'Masked Card Number' );
+	}
+
+	/**
 	 * @param string $payment_method_id The ID of the payment method to validate
-	 * @param array $payment_meta associative array of meta data required for automatic payments
+	 * @param array $payment_meta Associative array of meta data required for automatic payments
 	 */
 	public function validate_subscription_payment_meta( $payment_method_id, $payment_meta ) {
 		if ( $this->id === $payment_method_id ) {
-
-			if ( ! isset( $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] ) || empty( $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] ) ) {
-				throw new Exception( 'A card token value is required.' );
-			} elseif ( strlen( $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] ) > self::MAX_LENGTH_CARD_TOKEN) {
-				throw new Exception( 'Invalid card token. A valid card token must have length less or equal 128.' );
-			} elseif ( strlen( $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] ) < self::MIN_LENGTH_CARD_TOKEN) {
-				throw new Exception( 'Invalid card token. A valid card token must have length greater or equal 32.' );
-			}
-
-			$brands = array( 'amex', 'aura', 'discover', 'elo', 'hipercard', 'visa', 'mastercard' );
-			if ( ! isset( $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'] ) || empty( $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'] ) ) {
-				throw new Exception( 'A card brand value is required.' );
-			} elseif ( !in_array( $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'], $brands ) ) {
-				throw new Exception( 'Invalid card brand. Card brand is not supported.' );
-			}
-
-			if ( ! isset( $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] ) || empty( $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] ) ) {
-				throw new Exception( 'A masked card number value is required.' );
-			} elseif ( strlen( $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] ) > self::MAX_LENGTH_MASKED_CARD_NUMBER) {
-				throw new Exception( 'Invalid masked card number. A valid masked card number must have length less or equal 128.' );
-			} elseif ( strlen( $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] ) < self::MIN_LENGTH_MASKED_CARD_NUMBER) {
-				throw new Exception( 'Invalid masked card number. A valid masked card number must have length greater or equal 32.' );
-			}
-
+			$this->validate_card_token_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] );
+			$this->validate_card_brand_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'] );
+			$this->validate_card_number_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] );
 		}
 	}
 
