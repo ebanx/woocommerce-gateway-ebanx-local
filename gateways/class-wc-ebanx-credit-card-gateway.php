@@ -70,14 +70,18 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			'subscription_date_changes',
 			'subscription_payment_method_change',
 			'subscription_payment_method_change_customer',
-//			'subscription_payment_method_change_admin'
+			'subscription_payment_method_change_admin',
+			'multiple_subscriptions'
 		);
 
 		add_filter( 'woocommerce_subscription_payment_meta', array( $this, 'add_subscription_payment_meta' ), 10, 2 );
 		add_filter( 'woocommerce_subscription_validate_payment_meta', array( $this, 'validate_subscription_payment_meta' ), 10, 2 );
 
 		add_action( 'wcs_default_retry_rules', array( $this, 'retryRules' ) );
-		add_action( 'woocommerce_scheduled_subscription_payment', array( $this, 'scheduled_subscription_payment' ) );
+		add_action( 'woocommerce_scheduled_subscription_payment', array( $this, 'scheduled_subscription_payment' ), 10, 2 );
+		add_action( 'woocommerce_subscription_failing_payment_method_updated', array( $this, 'update_failing_payment_method' ), 10, 2 );
+
+		add_filter( 'woocommerce_available_payment_gateways', array( $this, 'add_payment_gateway_if_necessary' ) );
 	}
 
 	/**
@@ -668,9 +672,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	}
 
 	/**
-	 * Include the payment meta data required to process automatic recurring payments so that store managers can
-	 * manually set up automatic recurring payments for a customer via the Edit Subscriptions screen in 2.0+.
-	 *
 	 * @param array $payment_meta associative array of meta data required for automatic payments
 	 * @param WC_Subscription $subscription An instance of a subscription object
 	 *
@@ -698,9 +699,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	}
 
 	/**
-	 * Validate the payment meta data required to process automatic recurring payments so that store managers can
-	 * manually set up automatic recurring payments for a customer via the Edit Subscriptions screen in 2.0+.
-	 *
 	 * @param string $payment_method_id The ID of the payment method to validate
 	 * @param array $payment_meta associative array of meta data required for automatic payments
 	 */
@@ -731,5 +729,28 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			}
 
 		}
+	}
+
+	/**
+	 * @param WC_Subscription $subscription The subscription for which the failing payment method relates.
+	 * @param WC_Order $renewal_order The order which recorded the successful payment (to make up for the failed automatic payment).
+	 */
+	public function update_failing_payment_method( $subscription, $renewal_order ) {
+		update_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_token', get_post_meta( $renewal_order->get_id(), '_ebanx_subscription_credit_card_token', true ) );
+		update_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_brand', get_post_meta( $renewal_order->get_id(), '_ebanx_subscription_credit_card_brand', true ) );
+		update_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_masked_number', get_post_meta( $renewal_order->get_id(), '_ebanx_subscription_credit_card_masked_number', true ) );
+	}
+
+	/**
+	 * @param object $gateway Gateway to check.
+	 * @return array
+	 */
+	public function add_payment_gateway_if_necessary ( $gateways ) {
+		if( $this->enabled !== 'yes' ) {
+			return $gateways;
+		}
+
+		$ebanx = array( $this->id => $this );
+		return array_merge( $gateways, $ebanx );
 	}
 }
