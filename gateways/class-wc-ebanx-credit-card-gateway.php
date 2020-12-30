@@ -79,7 +79,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 		add_action( 'wcs_default_retry_rules', array( $this, 'retryRules' ) );
 		add_action( 'woocommerce_scheduled_subscription_payment', array( $this, 'scheduled_subscription_payment' ), 10, 2 );
-		add_action( 'woocommerce_subscription_failing_payment_method_updated', array( $this, 'update_failing_payment_method' ), 10, 2 );
 
 		add_filter( 'woocommerce_available_payment_gateways', array( $this, 'add_payment_gateway_if_necessary' ) );
 	}
@@ -754,16 +753,6 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			$this->validate_card_brand_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'] );
 			$this->validate_card_number_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] );
 		}
-	}
-
-	/**
-	 * @param WC_Subscription $subscription The subscription for which the failing payment method relates.
-	 * @param WC_Order $renewal_order The order which recorded the successful payment (to make up for the failed automatic payment).
-	 */
-	public function update_failing_payment_method( $subscription, $renewal_order ) {
-		update_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_token', get_post_meta( $renewal_order->get_id(), '_ebanx_subscription_credit_card_token', true ) );
-		update_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_brand', get_post_meta( $renewal_order->get_id(), '_ebanx_subscription_credit_card_brand', true ) );
-		update_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_masked_number', get_post_meta( $renewal_order->get_id(), '_ebanx_subscription_credit_card_masked_number', true ) );
 	}
 
 	/**
