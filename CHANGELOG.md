@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.3.6
+* 2021-01-04 - Get metadata from order when not found on subscription.
+
 ## 3.3.5
 * 2021-01-04 - Save card metadata on subscription instead of saving in the order.
 
