@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.3.5
+* 2021-01-04 - Save card metadata on subscription instead of saving in the order.
+
 ## 3.3.4
 * 2020-12-21 - Improve notes on subscription payment process.
 
