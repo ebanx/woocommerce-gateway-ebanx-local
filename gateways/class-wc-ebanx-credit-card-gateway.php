@@ -593,12 +593,18 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$is_or_contain_subscription = wcs_is_subscription( $order_id ) || wcs_order_contains_subscription( $order, 'any' );
 
 		if ( ! $is_or_contain_subscription ) {
-			$order->add_order_note( __( 'EBANX: The order is not a subscription.', 'woocommerce-gateway-ebanx' ) );
 			return;
 		}
 
 		$subscription_renewal_id = get_post_meta( $order_id, '_subscription_renewal', true );
 		$subscription_id         = ! empty( $subscription_renewal_id ) ? (int) $subscription_renewal_id : $order_id;
+
+		if ( $order_id === $subscription_id ) {
+			$subscriptions = wcs_get_subscriptions_for_order( $order_id );
+			if ( ! empty( $subscriptions ) ) {
+				$subscription_id = end( $subscriptions )->get_id();
+			}
+		}
 
 		$ebanx_token              = WC_EBANX_Request::read( 'ebanx_token', null );
 		$ebanx_brand              = WC_EBANX_Request::read( 'ebanx_brand', null );
