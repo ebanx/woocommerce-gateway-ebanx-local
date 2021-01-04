@@ -613,7 +613,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		if ( ! empty( $ebanx_token ) ) {
 			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_token', $ebanx_token );
 			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_brand', $ebanx_brand );
-			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_masked_numberrr', $ebanx_masked_card_number );
+			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_masked_number', $ebanx_masked_card_number );
 			$order->add_order_note( __( 'EBANX: The subscription credit card was saved.', 'woocommerce-gateway-ebanx' ) );
 		}
 	}
