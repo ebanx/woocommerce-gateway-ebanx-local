@@ -271,7 +271,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		$country = '';
 		$order_id = (int) $_GET['post'];
 		$order = wc_get_order( $order_id );
-		$is_valid_order =  ! empty( $order_id )
+		$is_valid_order = ! empty( $order_id )
 			&& is_a( $order, WC_Order::class )
 			&& (int) $order->get_id() === $order_id
 			&& is_admin();
