@@ -263,6 +263,29 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	}
 
 	/**
+	 * Get the country from current order on the edit page of wc-admin
+	 *
+	 * @return string
+	 */
+	public function get_country_from_current_order_on_admin() {
+		global $post;
+
+		$country = '';
+		$post_types = array( 'shop_subscription', 'shop_order' );
+		$is_valid_order =  ! empty( $post )
+			&& in_array( $post->post_type, $post_types )
+			&& (int) $post->ID === (int) $_GET['post']
+			&& is_admin();
+
+		if ($is_valid_order) {
+			$order = new WC_Order($post->ID);
+			$country = ! empty( $order ) ? $order->get_billing_country() : null;
+		}
+
+		return $country;
+	}
+
+	/**
 	 * Get the customer's address
 	 *
 	 * @param  string $attr

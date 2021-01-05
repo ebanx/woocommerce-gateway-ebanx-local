@@ -37,6 +37,7 @@ class WC_EBANX_Credit_Card_BR_Gateway extends WC_EBANX_Credit_Card_Gateway {
 	 */
 	public function is_available() {
 		$iso_country = $this->get_transaction_address( 'country' );
+		$iso_country = empty( $iso_country ) ? $this->get_country_from_current_order_on_admin() : $iso_country;
 
 		$country = Country::fromIso( $iso_country );
 		return parent::is_available()

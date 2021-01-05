@@ -78,6 +78,7 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 */
 	public function is_available() {
 		$country = $this->get_transaction_address( 'country' );
+		$country = empty( $country ) ? $this->get_country_from_current_order_on_admin() : $country;
 
 		return parent::is_available() && $this->ebanx_gateway->isAvailableForCountry( Country::fromIso( $country ) );
 	}

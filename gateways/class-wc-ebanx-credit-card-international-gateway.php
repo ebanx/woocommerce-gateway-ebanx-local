@@ -44,6 +44,7 @@ class WC_EBANX_Credit_Card_International_Gateway extends WC_EBANX_Credit_Card_Ga
 	 */
 	public function is_available() {
 		$country = trim( strtolower( $this->get_transaction_address( 'country' ) ) );
+		$country = empty( $country ) ? $this->get_country_from_current_order_on_admin() : $country;
 		$is_international_credit_card_enabled = $this->configs->get_setting_or_default('enable_international_credit_card', false);
 
 		return parent::is_available()
