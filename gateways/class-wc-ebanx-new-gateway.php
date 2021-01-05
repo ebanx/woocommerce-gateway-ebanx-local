@@ -277,8 +277,8 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			&& (int) $post->ID === (int) $_GET['post']
 			&& is_admin();
 
-		if ($is_valid_order) {
-			$order = new WC_Order($post->ID);
+		if ( $is_valid_order ) {
+			$order = new WC_Order( $post->ID );
 			$country = ! empty( $order ) ? $order->get_billing_country() : null;
 		}
 
