@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.3.7
+* 2021-01-05 - Fix gateway availability check.
+
 ## 3.3.6
 * 2021-01-04 - Get metadata from order when not found on subscription.
 
