@@ -77,10 +77,18 @@ class WC_EBANX_Banking_Ticket_Gateway extends WC_EBANX_New_Gateway {
 	 * @throws Exception Throws missing param message.
 	 */
 	public function is_available() {
-		$country = $this->get_transaction_address( 'country' );
-		$country = empty( $country ) ? $this->get_country_from_current_order_on_admin() : $country;
+		$iso_country = $this->get_iso_country_from_customer_or_order_on_admin();
+		$country = Country::fromIso( $iso_country );
 
-		return parent::is_available() && $this->ebanx_gateway->isAvailableForCountry( Country::fromIso( $country ) );
+		if ( ! parent::is_available() ) {
+			return false;
+		}
+
+		if ( ! $this->ebanx_gateway->isAvailableForCountry( $country ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

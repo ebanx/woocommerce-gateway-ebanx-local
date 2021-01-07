@@ -268,19 +268,20 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 * @return string
 	 */
 	public function get_country_from_current_order_on_admin() {
-		$country = '';
-		$order_id = (int) $_GET['post'];
-		$order = wc_get_order( $order_id );
-		$is_valid_order = ! empty( $order_id )
-			&& is_a( $order, WC_Order::class )
-			&& (int) $order->get_id() === $order_id
-			&& is_admin();
-
-		if ( $is_valid_order ) {
-			$country = ! empty( $order ) ? $order->get_billing_country() : null;
+		if ( ! isset( $_GET['post'] ) || empty( $_GET['post'] ) ) {
+			return '';
 		}
 
-		return $country;
+		if ( ! is_admin() ) {
+			return '';
+		}
+
+		$order = wc_get_order( (int) $_GET['post'] );
+		if ( ! is_a( $order, WC_Order::class ) ) {
+			return '';
+		}
+
+		return $order->get_billing_country();
 	}
 
 	/**
@@ -320,6 +321,22 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	}
 
 	/**
+	 * Get the country from customer's address or
+	 * current order on the edit page of wc-admin
+	 *
+	 * @return string
+	 */
+	public function get_iso_country_from_customer_or_order_on_admin() {
+		$iso_country = $this->get_transaction_address( 'country' );
+
+		if ( empty( $iso_country ) ) {
+			$iso_country = $this->get_country_from_current_order_on_admin();
+		}
+
+		return $iso_country;
+	}
+
+		/**
 	 *
 	 * @param array    $response
 	 * @param WC_Order $order

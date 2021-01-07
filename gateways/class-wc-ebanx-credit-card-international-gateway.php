@@ -43,13 +43,23 @@ class WC_EBANX_Credit_Card_International_Gateway extends WC_EBANX_Credit_Card_Ga
 	 * @throws Exception Throws missing param message.
 	 */
 	public function is_available() {
-		$country = trim( strtolower( $this->get_transaction_address( 'country' ) ) );
-		$country = empty( $country ) ? $this->get_country_from_current_order_on_admin() : $country;
+		$iso_country = $this->get_iso_country_from_customer_or_order_on_admin();
+		$iso_country = trim( strtolower( $iso_country ) );
 		$is_international_credit_card_enabled = $this->configs->get_setting_or_default('enable_international_credit_card', false);
 
-		return parent::is_available()
-			&& $is_international_credit_card_enabled
-			&& ! in_array( $country, WC_EBANX_Constants::$allowed_countries, true );
+		if ( ! parent::is_available() ) {
+			return false;
+		}
+
+		if ( ! $is_international_credit_card_enabled ) {
+			return false;
+		}
+
+		if ( in_array( $iso_country, WC_EBANX_Constants::$allowed_countries, true ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
