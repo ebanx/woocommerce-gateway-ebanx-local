@@ -263,6 +263,28 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	}
 
 	/**
+	 * Get the country from current order on the edit page of wc-admin
+	 *
+	 * @return string
+	 */
+	public function get_country_from_current_order_on_admin() {
+		if ( ! isset( $_GET['post'] ) || empty( $_GET['post'] ) ) {
+			return '';
+		}
+
+		if ( ! is_admin() ) {
+			return '';
+		}
+
+		$order = wc_get_order( (int) $_GET['post'] );
+		if ( ! is_a( $order, WC_Order::class ) ) {
+			return '';
+		}
+
+		return $order->get_billing_country();
+	}
+
+	/**
 	 * Get the customer's address
 	 *
 	 * @param  string $attr
@@ -296,6 +318,34 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		}
 
 		return $address;
+	}
+
+	/**
+	 * Get the iso country from customer's address or
+	 * current order on the edit page of wc-admin
+	 *
+	 * @return string
+	 */
+	public function get_iso_country_from_customer_or_order_on_admin() {
+		$iso_country = $this->get_transaction_address( 'country' );
+
+		if ( empty( $iso_country ) ) {
+			$iso_country = $this->get_country_from_current_order_on_admin();
+		}
+
+		return $iso_country;
+	}
+
+	/**
+	 * Get the country from customer's address or
+	 * current order on the edit page of wc-admin
+	 *
+	 * @return string
+	 */
+	public function get_country_from_customer_or_order_on_admin() {
+		$iso_country = $this->get_iso_country_from_customer_or_order_on_admin();
+
+		return Country::fromIso( $iso_country );
 	}
 
 	/**

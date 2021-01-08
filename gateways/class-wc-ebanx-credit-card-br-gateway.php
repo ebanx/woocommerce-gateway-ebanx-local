@@ -36,12 +36,21 @@ class WC_EBANX_Credit_Card_BR_Gateway extends WC_EBANX_Credit_Card_Gateway {
 	 * @throws Exception Throws missing param message.
 	 */
 	public function is_available() {
-		$iso_country = $this->get_transaction_address( 'country' );
+		$country = $this->get_country_from_customer_or_order_on_admin();
 
-		$country = Country::fromIso( $iso_country );
-		return parent::is_available()
-			&& $country === Country::BRAZIL
-			&& $this->ebanx_gateway->isAvailableForCountry( $country );
+		if ( ! parent::is_available() ) {
+			return false;
+		}
+
+		if ( $country !== Country::BRAZIL ) {
+			return false;
+		}
+
+		if ( ! $this->ebanx_gateway->isAvailableForCountry( $country ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
