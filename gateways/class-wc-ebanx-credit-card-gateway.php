@@ -13,6 +13,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 	/**
+	 * Max length of card token
+	 *
+	 * @var int
+	 */
+	const MAX_LENGTH_CARD_TOKEN = 128;
+
+	/**
+	 * Min length of card token
+	 *
+	 * @var int
+	 */
+	const MIN_LENGTH_CARD_TOKEN = 32;
+
+	/**
+	 * Max length of masked card number
+	 *
+	 * @var int
+	 */
+	const MAX_LENGTH_MASKED_CARD_NUMBER = 19;
+
+	/**
+	 * Min length of masked card number
+	 *
+	 * @var int
+	 */
+	const MIN_LENGTH_MASKED_CARD_NUMBER = 14;
+
+	/**
 	 * The rates for each instalment
 	 *
 	 * @var array
@@ -42,7 +70,12 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			'subscription_date_changes',
 			'subscription_payment_method_change',
 			'subscription_payment_method_change_customer',
+			'subscription_payment_method_change_admin',
+			'multiple_subscriptions'
 		);
+
+		add_filter( 'woocommerce_subscription_payment_meta', array( $this, 'add_subscription_payment_meta' ), 10, 2 );
+		add_filter( 'woocommerce_subscription_validate_payment_meta', array( $this, 'validate_subscription_payment_meta' ), 10, 2 );
 
 		add_action( 'wcs_default_retry_rules', array( $this, 'retryRules' ) );
 		add_action( 'woocommerce_scheduled_subscription_payment', array( $this, 'scheduled_subscription_payment' ) );
@@ -569,9 +602,8 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 				$ebanx_brand              = get_post_meta( $order_id, '_ebanx_subscription_credit_card_brand', true );
 				$ebanx_masked_card_number = get_post_meta( $order_id, '_ebanx_subscription_credit_card_masked_number', true );
 
-				$subscription->add_order_note( __( 'EBANX: Order credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
-
 				if ( ! empty( $ebanx_brand ) && ! empty ( $ebanx_token ) && ! empty( $ebanx_masked_card_number ) ) {
+					$subscription->add_order_note( __( 'EBANX: Order credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
 					return [
 						'token'              => $ebanx_token,
 						'brand'              => $ebanx_brand,
@@ -607,7 +639,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 		$order = wc_get_order( $order_id );
 
-		$is_or_contain_subscription = wcs_is_subscription( $order_id ) || wcs_order_contains_subscription( $order, 'any' );
+ 		$is_or_contain_subscription = wcs_is_subscription( $order_id ) || wcs_order_contains_subscription( $order, 'any' );
 
 		if ( ! $is_or_contain_subscription ) {
 			return;
@@ -632,6 +664,91 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_brand', $ebanx_brand );
 			update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_masked_number', $ebanx_masked_card_number );
 			$order->add_order_note( __( 'EBANX: The subscription credit card was saved.', 'woocommerce-gateway-ebanx' ) );
+		}
+	}
+
+	/**
+	 * @param array $payment_meta associative array of meta data required for automatic payments
+	 * @param WC_Subscription $subscription An instance of a subscription object
+	 *
+	 * @return array
+	 */
+	public function add_subscription_payment_meta( $payment_meta, $subscription ) {
+		$payment_meta[ $this->id ] = array(
+			'post_meta' => array(
+				'_ebanx_subscription_credit_card_token' => array(
+					'value' => get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_token', true ),
+					'label' => 'EBANX Card token',
+				),
+				'_ebanx_subscription_credit_card_brand' => array(
+					'value' => get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_brand', true ),
+					'label' => 'EBANX Card Brand',
+				),
+				'_ebanx_subscription_credit_card_masked_number' => array(
+					'value' => get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_masked_number', true ),
+					'label' => 'EBANX Masked Card Number',
+				),
+			),
+		);
+
+		return $payment_meta;
+	}
+
+	/**
+	 * @param string $value Value of meta data to validate
+	 * @param int $min Min number of characters
+	 * @param int $max Max number of characters
+	 * @param string $label Name of the meta data to display
+	 *
+	 * @throws Exception
+	 */
+	public function validate_min_max_length_meta_data( $value, $min, $max, $label ) {
+		if ( empty( $value ) ) {
+			throw new Exception( "A {$label} value is required." );
+		} elseif ( strlen( $value ) > $max) {
+			throw new Exception( "Invalid {$label}. A valid {$label} must have length less or equal {$max}." );
+		} elseif ( strlen( $value ) < $min) {
+			throw new Exception( "Invalid {$label}. A valid {$label} must have length greater or equal {$min}." );
+		}
+	}
+
+	/**
+	 * @param string $value Value of card token meta data to validate
+	 */
+	protected function validate_card_token_meta_data( $value ) {
+		$this->validate_min_max_length_meta_data( $value, self::MIN_LENGTH_CARD_TOKEN, self::MAX_LENGTH_CARD_TOKEN, 'Card Token' );
+	}
+
+	/**
+	 * @param string $value Value of card brand meta data to validate
+	 *
+	 * @throws Exception
+	 */
+	protected function validate_card_brand_meta_data( $value ) {
+		$brands = array( 'amex', 'aura', 'discover', 'elo', 'hipercard', 'visa', 'mastercard' );
+		if ( empty( $value ) ) {
+			throw new Exception( 'A Card Brand value is required.' );
+		} elseif ( !in_array( $value, $brands ) ) {
+			throw new Exception( 'Invalid Card Brand. Card Brand is not supported.' );
+		}
+	}
+
+	/**
+	 * @param string $value Value of masked card number meta data to validate
+	 */
+	protected function validate_card_number_meta_data( $value ) {
+		$this->validate_min_max_length_meta_data( $value, self::MIN_LENGTH_MASKED_CARD_NUMBER, self::MAX_LENGTH_MASKED_CARD_NUMBER, 'Masked Card Number' );
+	}
+
+	/**
+	 * @param string $payment_method_id The ID of the payment method to validate
+	 * @param array $payment_meta Associative array of meta data required for automatic payments
+	 */
+	public function validate_subscription_payment_meta( $payment_method_id, $payment_meta ) {
+		if ( $this->id === $payment_method_id ) {
+			$this->validate_card_token_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_token']['value'] );
+			$this->validate_card_brand_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'] );
+			$this->validate_card_number_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] );
 		}
 	}
 }

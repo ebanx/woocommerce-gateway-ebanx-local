@@ -22,6 +22,12 @@ First install dependencies:
 composer install
 ```
 
+Then add to `/etc/hosts` file:
+
+```ssh
+127.0.0.1 wclocal
+```
+
 And run docker compose:
 
 ```ssh
