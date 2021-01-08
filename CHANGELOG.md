@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 3.4.0
-* 2020-12-29 - Add support to admin change payment method of subscription.
+* 2021-01-08 - Add support to admin change payment method of subscription.
 
 ## 3.3.7
 * 2021-01-08 - Fix gateway availability check.

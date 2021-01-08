@@ -602,9 +602,8 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 				$ebanx_brand              = get_post_meta( $order_id, '_ebanx_subscription_credit_card_brand', true );
 				$ebanx_masked_card_number = get_post_meta( $order_id, '_ebanx_subscription_credit_card_masked_number', true );
 
-				$subscription->add_order_note( __( 'EBANX: Order credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
-
 				if ( ! empty( $ebanx_brand ) && ! empty ( $ebanx_token ) && ! empty( $ebanx_masked_card_number ) ) {
+					$subscription->add_order_note( __( 'EBANX: Order credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
 					return [
 						'token'              => $ebanx_token,
 						'brand'              => $ebanx_brand,

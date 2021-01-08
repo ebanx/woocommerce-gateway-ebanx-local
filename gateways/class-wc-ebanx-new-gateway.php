@@ -268,7 +268,9 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	 * @return string
 	 */
 	public function get_country_from_current_order_on_admin() {
-		if ( ! isset( $_GET['post'] ) || empty( $_GET['post'] ) ) {
+		global $post;
+
+		if ( empty( $post ) || ! isset( $post->ID ) ) {
 			return '';
 		}
 
@@ -276,7 +278,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 			return '';
 		}
 
-		$order = wc_get_order( (int) $_GET['post'] );
+		$order = wc_get_order( (int) $post->ID );
 		if ( ! is_a( $order, WC_Order::class ) ) {
 			return '';
 		}
