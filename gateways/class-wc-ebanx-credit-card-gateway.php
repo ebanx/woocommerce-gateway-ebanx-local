@@ -78,9 +78,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		add_filter( 'woocommerce_subscription_validate_payment_meta', array( $this, 'validate_subscription_payment_meta' ), 10, 2 );
 
 		add_action( 'wcs_default_retry_rules', array( $this, 'retryRules' ) );
-		add_action( 'woocommerce_scheduled_subscription_payment', array( $this, 'scheduled_subscription_payment' ), 10, 2 );
-
-		add_filter( 'woocommerce_available_payment_gateways', array( $this, 'add_payment_gateway_if_necessary' ) );
+		add_action( 'woocommerce_scheduled_subscription_payment', array( $this, 'scheduled_subscription_payment' ) );
 	}
 
 	/**
@@ -753,18 +751,5 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 			$this->validate_card_brand_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_brand']['value'] );
 			$this->validate_card_number_meta_data( (string) $payment_meta['post_meta']['_ebanx_subscription_credit_card_masked_number']['value'] );
 		}
-	}
-
-	/**
-	 * @param object $gateway Gateway to check.
-	 * @return array
-	 */
-	public function add_payment_gateway_if_necessary ( $gateways ) {
-		if( $this->enabled !== 'yes' ) {
-			return $gateways;
-		}
-
-		$ebanx = array( $this->id => $this );
-		return array_merge( $gateways, $ebanx );
 	}
 }
