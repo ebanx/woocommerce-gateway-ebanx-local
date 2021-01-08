@@ -321,7 +321,7 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 	}
 
 	/**
-	 * Get the country from customer's address or
+	 * Get the iso country from customer's address or
 	 * current order on the edit page of wc-admin
 	 *
 	 * @return string
@@ -336,7 +336,19 @@ class WC_EBANX_New_Gateway extends WC_EBANX_Gateway {
 		return $iso_country;
 	}
 
-		/**
+	/**
+	 * Get the country from customer's address or
+	 * current order on the edit page of wc-admin
+	 *
+	 * @return string
+	 */
+	public function get_country_from_customer_or_order_on_admin() {
+		$iso_country = $this->get_iso_country_from_customer_or_order_on_admin();
+
+		return Country::fromIso( $iso_country );
+	}
+
+	/**
 	 *
 	 * @param array    $response
 	 * @param WC_Order $order
