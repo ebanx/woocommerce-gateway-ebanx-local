@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.4.1
+* 2021-01-15 - Update Benjamin dependency.
+
 ## 3.4.0
 * 2021-01-08 - Add support to admin change payment method of subscription.
 
