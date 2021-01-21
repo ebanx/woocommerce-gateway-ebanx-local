@@ -5,7 +5,7 @@
  * Description: Offer local payment methods
  * Author: EBANX Pay
  * Author URI: https://www.ebanxpay.com
- * Version: 3.4.1
+ * Version: 3.4.2
  * License: MIT
  * Text Domain: woocommerce-gateway-ebanx
  * Domain Path: /languages
@@ -696,9 +696,12 @@ if ( ! class_exists( 'WC_EBANX' ) ) {
 				$boleto_url            = get_post_meta( $order->get_id(), '_boleto_url', true );
 				$boleto_barcode        = get_post_meta( $order->get_id(), '_boleto_barcode', true );
 
+				$domain = $this->is_sandbox_mode ? 'dashboard-sandbox.ebanx.com.br' : 'dashboard.ebanx.com.br';
+
 				$dashboard_link = sprintf(
-				'https://dashboard.ebanx.com.br/transaction/%s',
-				! empty( $merchant_payment_code ) ? base64_encode( $merchant_payment_code ) : ''
+					'https://%s/transactions/%s',
+					$domain,
+					! empty( $merchant_payment_code ) ? base64_encode( $merchant_payment_code ) : ''
 				);
 
 				wc_get_template(
