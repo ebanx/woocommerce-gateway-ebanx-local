@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.4.2
+* 2021-01-22 - Different url for payment detail when in sandbox.
+
 ## 3.4.1
 * 2021-01-15 - Update Benjamin dependency.
 
