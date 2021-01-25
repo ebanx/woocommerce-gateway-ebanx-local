@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.4.3
+* 2021-01-25 - Update subscription metadata in the renewal.
+
 ## 3.4.2
 * 2021-01-22 - Different url for payment detail when in sandbox.
 

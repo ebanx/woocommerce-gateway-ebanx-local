@@ -580,6 +580,18 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	}
 
 	/**
+	 * @param int $subscription_id
+	 * @param string $ebanx_token
+	 * @param string $ebanx_brand
+	 * @param string $ebanx_masked_card_number
+	 */
+	private static function update_card_metadata( $subscription_id, $ebanx_token, $ebanx_brand, $ebanx_masked_card_number ) {
+		update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_token', $ebanx_token );
+		update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_brand', $ebanx_brand );
+		update_post_meta( $subscription_id, '_ebanx_subscription_credit_card_masked_number', $ebanx_masked_card_number );
+	}
+
+	/**
 	 * @param WC_Subscription $subscription
 	 * @return array
 	 */
@@ -604,6 +616,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 				if ( ! empty( $ebanx_brand ) && ! empty ( $ebanx_token ) && ! empty( $ebanx_masked_card_number ) ) {
 					$subscription->add_order_note( __( 'EBANX: Order credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
+					self::update_card_metadata( $subscription->get_id(), $ebanx_token, $ebanx_brand, $ebanx_masked_card_number );
 					return [
 						'token'              => $ebanx_token,
 						'brand'              => $ebanx_brand,
