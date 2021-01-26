@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.4.4
+* 2021-01-26 - Limit the search of metadata to the last 12 orders and performance adjustments in the subscription renewal.
+
 ## 3.4.3
 * 2021-01-25 - Update subscription metadata in the renewal.
 
