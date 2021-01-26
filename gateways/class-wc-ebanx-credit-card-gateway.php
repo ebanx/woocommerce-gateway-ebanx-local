@@ -13,6 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 	/**
+	 * Max orders renewals to search the card metadata
+	 *
+	 * @var int
+	 */
+	const MAX_RENEWALS_SEARCH_METADATA = 12;
+
+	/**
 	 * Max length of card token
 	 *
 	 * @var int
@@ -592,38 +599,70 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	}
 
 	/**
+	 * @param int $post_id
+	 * @return array
+	 */
+	private static function get_post_card_metadata( $post_id ) {
+		$ebanx_token = get_post_meta( $post_id, '_ebanx_subscription_credit_card_token', true );
+
+		if ( empty( $ebanx_token ) ) {
+			return [];
+		}
+
+		$ebanx_brand = get_post_meta( $post_id, '_ebanx_subscription_credit_card_brand', true );
+		$ebanx_masked_card_number = get_post_meta( $post_id, '_ebanx_subscription_credit_card_masked_number', true );
+
+		return [
+			'token' => $ebanx_token,
+			'brand' => $ebanx_brand,
+			'masked_card_number' => $ebanx_masked_card_number,
+		];
+	}
+
+	/**
+	 * @param WC_Subscription $subscription
+	 * @return array
+	 */
+	private static function get_subscription_metadata_from_orders( $subscription ) {
+		$orders_list = $subscription->get_related_orders( 'ids', [ 'parent', 'renewal' ] );
+		$orders_list = array_values( $orders_list );
+
+		foreach ( $orders_list as $index => $order_id ) {
+			if ( $index >= self::MAX_RENEWALS_SEARCH_METADATA ) {
+				break;
+			}
+
+			$metadata = self::get_post_card_metadata( $order_id );
+
+			if ( ! empty ( $metadata['token'] ) && ! empty( $metadata['brand'] ) && ! empty( $metadata['masked_card_number'] ) ) {
+				return $metadata;
+			}
+		}
+
+		return [];
+	}
+
+	/**
 	 * @param WC_Subscription $subscription
 	 * @return array
 	 */
 	private static function get_card_to_renew_subscription( $subscription ) {
-		$ebanx_token              = get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_token', true );
-		$ebanx_brand              = get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_brand', true );
-		$ebanx_masked_card_number = get_post_meta( $subscription->get_id(), '_ebanx_subscription_credit_card_masked_number', true );
-
-		if ( ! empty( $ebanx_token ) ) {
+		$card_metadata = self::get_post_card_metadata( $subscription->get_id() );
+		if ( ! empty ( $card_metadata['token'] ) ) {
 			$subscription->add_order_note( __( 'EBANX: Subscription credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
-			return [
-				'token'              => $ebanx_token,
-				'brand'              => $ebanx_brand,
-				'masked_card_number' => $ebanx_masked_card_number,
-			];
-		} else {
-			$orders_list = $subscription->get_related_orders( 'ids', array( 'parent', 'renewal' ) );
-			foreach ( $orders_list as $order_id ) {
-				$ebanx_token              = get_post_meta( $order_id, '_ebanx_subscription_credit_card_token', true );
-				$ebanx_brand              = get_post_meta( $order_id, '_ebanx_subscription_credit_card_brand', true );
-				$ebanx_masked_card_number = get_post_meta( $order_id, '_ebanx_subscription_credit_card_masked_number', true );
+			return $card_metadata;
+		}
 
-				if ( ! empty( $ebanx_brand ) && ! empty ( $ebanx_token ) && ! empty( $ebanx_masked_card_number ) ) {
-					$subscription->add_order_note( __( 'EBANX: Order credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
-					self::update_card_metadata( $subscription->get_id(), $ebanx_token, $ebanx_brand, $ebanx_masked_card_number );
-					return [
-						'token'              => $ebanx_token,
-						'brand'              => $ebanx_brand,
-						'masked_card_number' => $ebanx_masked_card_number,
-					];
-				}
-			}
+		$card_metadata = self::get_subscription_metadata_from_orders( $subscription );
+		if ( ! empty ( $card_metadata['token'] ) ) {
+			$subscription->add_order_note( __( 'EBANX: Order credit card selected for renewal.', 'woocommerce-gateway-ebanx' ) );
+			self::update_card_metadata(
+				$subscription->get_id(),
+				$card_metadata['token'],
+				$card_metadata['brand'],
+				$card_metadata['masked_card_number']
+			);
+			return $card_metadata;
 		}
 
 		$user_cc = get_user_meta( $subscription->get_customer_id(), '_ebanx_credit_card_token', true );
