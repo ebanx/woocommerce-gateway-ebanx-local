@@ -13,6 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 
 	/**
+	 * Max orders renewals to search the card metadata
+	 *
+	 * @var int
+	 */
+	const MAX_RENEWALS_SEARCH_METADATA = 12;
+
+	/**
 	 * Max length of card token
 	 *
 	 * @var int
@@ -621,7 +628,7 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		$orders_list = array_values( $orders_list );
 
 		foreach ( $orders_list as $index => $order_id ) {
-			if ( $index > 12 ) {
+			if ( $index >= self::MAX_RENEWALS_SEARCH_METADATA ) {
 				break;
 			}
 
