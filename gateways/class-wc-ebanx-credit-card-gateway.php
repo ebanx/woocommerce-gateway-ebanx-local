@@ -623,8 +623,23 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 	 * @param WC_Subscription $subscription
 	 * @return array
 	 */
-	private static function get_subscription_metadata_from_orders( $subscription ) {
-		$orders_list = $subscription->get_related_orders( 'ids', [ 'parent', 'renewal' ] );
+	private static function get_subscription_metadata_from_parent_order( $subscription ) {
+		$parent_order_id = end( $subscription->get_related_orders( 'ids', 'parent' ) );
+		$metadata = self::get_post_card_metadata( $parent_order_id );
+
+		if ( ! empty ( $metadata['token'] ) && ! empty( $metadata['brand'] ) && ! empty( $metadata['masked_card_number'] ) ) {
+			return $metadata;
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param WC_Subscription $subscription
+	 * @return array
+	 */
+	private static function get_subscription_metadata_from_renewal_orders( $subscription ) {
+		$orders_list = $subscription->get_related_orders( 'ids', 'renewal' );
 		$orders_list = array_values( $orders_list );
 
 		foreach ( $orders_list as $index => $order_id ) {
@@ -640,6 +655,19 @@ abstract class WC_EBANX_Credit_Card_Gateway extends WC_EBANX_New_Gateway {
 		}
 
 		return [];
+	}
+
+	/**
+	 * @param WC_Subscription $subscription
+	 * @return array
+	 */
+	private static function get_subscription_metadata_from_orders( $subscription ) {
+		$card_metadata = self::get_subscription_metadata_from_parent_order( $subscription );
+		if ( empty ( $card_metadata['token'] ) ) {
+			$card_metadata = self::get_subscription_metadata_from_renewal_orders($subscription);
+		}
+
+		return $card_metadata;
 	}
 
 	/**

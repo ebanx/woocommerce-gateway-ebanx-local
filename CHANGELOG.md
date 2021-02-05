@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.4.5
+* 2021-02-05 - Search metadata in parent order when not found on subscription.
+
 ## 3.4.4
 * 2021-01-26 - Limit the search of metadata to the last 12 orders and performance adjustments in the subscription renewal.
 
