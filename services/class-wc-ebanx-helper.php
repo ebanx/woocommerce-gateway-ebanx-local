@@ -138,6 +138,22 @@ abstract class WC_EBANX_Helper {
 		return false;
 	}
 
+	private static function is_change_payment_method_page_subscription() {
+		if ( empty( $_GET['change_payment_method'] ) ) {
+			return false;
+		}
+
+		if ( ! is_numeric( $_GET['change_payment_method'] ) ) {
+			return false;
+		}
+
+		if ( wcs_is_subscription( $_GET['change_payment_method'] ) ) {
+			return true;
+		}
+
+		return wcs_order_contains_subscription( $_GET['change_payment_method'], 'any' );
+	}
+
 	/**
 	 * Verifies if enable instalment on the cart with subscription in checkout
 	 *a
@@ -146,6 +162,10 @@ abstract class WC_EBANX_Helper {
 	public static function disable_instalments_on_checkout() {
 		if ( ! class_exists( 'WC_Subscription' ) ) {
 			return false;
+		}
+
+		if ( self::is_change_payment_method_page_subscription() ) {
+			return true;
 		}
 
 		$disable_instalments_when_subscription = WC_Subscriptions_Cart::cart_contains_subscription();
