@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.4.6
+* 2021-03-24 - Disable installments option in change payment method page.
+
 ## 3.4.5
 * 2021-02-05 - Search metadata in parent order when not found on subscription.
 
